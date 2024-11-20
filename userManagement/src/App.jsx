@@ -5,10 +5,10 @@ function App() {
   // const [count, setCount] = useState(0)
 
   return (
-    <>
-      <h1>Fast Tracker</h1>
-      <RegisterForm></RegisterForm>
-    </>
+    <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+      <h1 className="text-green-500 text-4xl font-bold">Fast Tracker</h1>
+      <RegisterForm />
+    </div>
   )
 }
 
