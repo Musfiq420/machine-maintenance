@@ -5,8 +5,10 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import RegisterForm from './components/RegisterForm/RegistrationForm';
 import Root from './components/Root/Root';
+import Home from './components/Home/Home';
+import MachineDetailsPage from './components/MachineDetailsPage/MachineDetailsPage';
+import SignUp from './components/SignUp/SignUp';
 
 const router = createBrowserRouter([
   {
@@ -14,8 +16,16 @@ const router = createBrowserRouter([
     element: <Root></Root>,
     children: [
       {
+        path: "/",
+        element: <Home></Home>,
+      },
+      {
+        path: "machine_details/",
+        element: <MachineDetailsPage></MachineDetailsPage>,
+      },
+      {
         path: "signup/",
-        element: <RegisterForm></RegisterForm>,
+        element: <SignUp></SignUp>,
       },
     ],
   },
