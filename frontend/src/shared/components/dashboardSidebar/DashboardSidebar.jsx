@@ -72,6 +72,11 @@ const DashboardSidebar = () => {
                   Machine Monitoring
                 </Link>
               </li>
+              <li>
+                <Link to="/qr-code-generator" className="block px-4 py-2 hover:bg-green-100">
+                  Machine QR Code Generator
+                </Link>
+              </li>
             </ul>
           )}
         </li>

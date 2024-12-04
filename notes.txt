@@ -1,0 +1,2 @@
+pip install djangorestframework-simplejwt  # For JWT-based authentication
+pip install django-cors-headers           # For Cross-Origin Resource Sharing (CORS) headers
