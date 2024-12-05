@@ -7,6 +7,7 @@ import Home from "../../features/landingPage/pages/home/Home";
 import MainDashboard from "../../features/maintenance/pages/mainDashboard/MainDashboard";
 import MachineDetailsDashboard from "../../features/maintenance/pages/machineDetailsDashboard/MachineDetailsDashboard";
 import About from "../../features/landingPage/pages/about/About";
+import QrCodeTable from "../../features/maintenance/pages/qrCodeTable/QrCodeTable";
 
 export const router = createBrowserRouter([
     {
@@ -24,6 +25,10 @@ export const router = createBrowserRouter([
         {
           path: "/machine-details", // Default route
           element: <MachineDetailsDashboard></MachineDetailsDashboard>, // Sign-up layout
+        },
+        {
+          path: "/qr-code-generator", // Default route
+          element: <QrCodeTable/>,
         },
         {
           path: "/about", // Default route
