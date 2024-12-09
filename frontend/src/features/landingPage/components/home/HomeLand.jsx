@@ -21,9 +21,12 @@ const HomeLand = () => {
                             <button className="btn btn-primary px-8 py-3 text-lg shadow-lg hover:bg-blue-700">
                                 Get Started
                             </button>
-                            <button className="btn btn-outline px-8 py-3 text-lg shadow-lg hover:text-blue-700">
-                                Learn More
-                            </button>
+                            <a href="/about">
+                                <button className="btn btn-outline px-8 py-3 text-lg shadow-lg hover:text-blue-700">
+                                    Learn More
+                                </button>
+                            </a>
+
                         </div>
                     </div>
                 </section>
@@ -58,9 +61,12 @@ const HomeLand = () => {
                         Join thousands of users who trust Fast Tracker to boost their
                         productivity.
                     </p>
-                    <button className="btn btn-lg btn-primary px-10 py-4 text-xl shadow-lg hover:bg-blue-700">
-                        Sign Up Now
-                    </button>
+                    <a href="/signup">
+                        <button className="btn btn-lg btn-primary px-10 py-4 text-xl shadow-lg hover:bg-blue-700">
+                            Sign Up Now
+                        </button>
+                    </a>
+
                 </section>
             </div>
         </div>

@@ -2,6 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { MaterialReactTable } from 'material-react-table'; // Importing MaterialReactTable
 import { Box } from '@mui/material'; // Importing Material UI components
 import QRCode from 'react-qr-code'; // Importing QRCode component
+import { getApiUrl } from '../../../../shared/components/getApiUrl';
 
 const QrCodeGenerator = () => {
   // Define the state for storing data and loading state
@@ -12,7 +13,9 @@ const QrCodeGenerator = () => {
   // Fetch data from API on component mount
   useEffect(() => {
     // Fetching data from the API
-    fetch('http://127.0.0.1:8000/api/maintenance/machines/')
+    // console.log(process.env.Machine_QR_Data);
+    const Machine_QR_Data_API = getApiUrl('Machine_QR_Data_API'); // Get the dynamic API URL
+    fetch(Machine_QR_Data_API)
       .then((response) => response.json())
       .then((data) => {
         setData(data); // Set the fetched data into state

@@ -7,7 +7,7 @@ const DashboardSidebar = () => {
   const [isPlanningOpen, setPlanningOpen] = useState(false);
 
   return (
-    <div className="bg-green-50 text-gray-700 w-64 h-full">
+    <div className="bg-green-50 text-gray-700 w-64 h-full ">
       <div className="flex items-center px-6 py-4">
         <div className="w-8 h-8 bg-green-500 flex items-center justify-center rounded">
           {/* Simulating the logo */}
@@ -22,7 +22,7 @@ const DashboardSidebar = () => {
           </Link>
         </li>
         <li>
-          <Link to="/" className="block px-4 py-2 hover:bg-green-100">
+          <Link to="/dashboard" className="block px-4 py-2 hover:bg-green-100">
             Dashboard
           </Link>
         </li>

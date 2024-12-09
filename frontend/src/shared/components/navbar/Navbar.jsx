@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom'; // Import Link from React Router
 
 const Navbar = () => {
     return (
-        <div>
-            <div className="navbar bg-base-100">
+        <div className="pt-16">
+            <div className="navbar bg-base-100 fixed top-0 left-0 right-0 z-50 shadow-lg">
                 <div className="navbar-start">
                     <div className="dropdown">
                         <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
@@ -28,6 +28,7 @@ const Navbar = () => {
                             <li><Link to="/dashboard">Dashboard</Link></li>
                             <li><Link to="/about">About</Link></li>
                             <li><Link to="/signup">Sign Up</Link></li> {/* Add the Sign Up link */}
+                            <li><Link to="/signin">Sign In</Link></li> {/* Add the Sign In link */}
                         </ul>
                     </div>
                 </div>
