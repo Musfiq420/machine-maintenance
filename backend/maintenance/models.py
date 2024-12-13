@@ -3,6 +3,7 @@ from user_management.models import Employee
 
 from django.db import models
 
+
 class Machine(models.Model):
     STATUS_CHOICES = [
         ('active', 'Active'),
@@ -11,7 +12,8 @@ class Machine(models.Model):
         ('broken', 'Broken'),
     ]
 
-    category = models.CharField(max_length=255, unique=True)
+    machine_id = models.CharField(max_length=255, primary_key=True)  # Add MachineID as the primary key
+    category = models.CharField(max_length=255, blank=True, null=True)
     type = models.CharField(max_length=255, blank=True, null=True)
     brand = models.CharField(max_length=255, blank=True, null=True)
     model_number = models.CharField(max_length=255, blank=True, null=True)
