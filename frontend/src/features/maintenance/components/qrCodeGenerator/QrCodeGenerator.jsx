@@ -1,7 +1,19 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { MaterialReactTable } from 'material-react-table';
 import {
-  Box, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, MenuItem, Select, InputLabel, FormControl, Alert
+  Box,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+  Alert,
+  CircularProgress, // Imported CircularProgress
 } from '@mui/material';
 import QRCode from 'react-qr-code';
 import { getApiUrl } from '../../../../shared/components/getApiUrl';
@@ -61,10 +73,10 @@ const QrCodeGenerator = () => {
   const [formError, setFormError] = useState('');
 
   const STATUS_CHOICES = [
-    {value: 'active', label: 'Active'},
-    {value: 'inactive', label: 'Inactive'},
-    {value: 'maintenance', label: 'Under Maintenance'},
-    {value: 'broken', label: 'Broken'},
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' },
+    { value: 'maintenance', label: 'Under Maintenance' },
+    { value: 'broken', label: 'Broken' },
   ];
 
   const statusColors = {
@@ -170,30 +182,30 @@ const QrCodeGenerator = () => {
 
     fetch(Machine_QR_Data_API, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     })
-    .then(res => {
-      if (!res.ok) {
-        return res.json().then(errData => {
-          if (res.status === 400 && errData && errData.machine_id) {
-            throw new Error(`Machine with ID "${newMachineId}" already exists.`);
-          }
-          throw new Error('Failed to create machine');
-        });
-      }
-      return res.json();
-    })
-    .then(() => fetch(Machine_QR_Data_API))
-    .then(res => res.json())
-    .then(updatedData => {
-      setData(updatedData);
-      handleCloseAddModal();
-    })
-    .catch(error => {
-      console.error(error);
-      setFormError(error.message);
-    });
+      .then((res) => {
+        if (!res.ok) {
+          return res.json().then((errData) => {
+            if (res.status === 400 && errData && errData.machine_id) {
+              throw new Error(`Machine with ID "${newMachineId}" already exists.`);
+            }
+            throw new Error('Failed to create machine');
+          });
+        }
+        return res.json();
+      })
+      .then(() => fetch(Machine_QR_Data_API))
+      .then((res) => res.json())
+      .then((updatedData) => {
+        setData(updatedData);
+        handleCloseAddModal();
+      })
+      .catch((error) => {
+        console.error(error);
+        setFormError(error.message);
+      });
   };
 
   const handleUpdateMachine = () => {
@@ -219,25 +231,25 @@ const QrCodeGenerator = () => {
 
     fetch(`${Machine_QR_Data_API}${updateMachineId}/`, {
       method: 'PUT',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     })
-    .then(res => {
-      if (!res.ok) {
-        throw new Error('Failed to update machine');
-      }
-      return res.json();
-    })
-    .then(() => fetch(Machine_QR_Data_API))
-    .then(res => res.json())
-    .then(updatedData => {
-      setData(updatedData);
-      handleCloseUpdateModal();
-    })
-    .catch(error => {
-      console.error(error);
-      alert(error.message);
-    });
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Failed to update machine');
+        }
+        return res.json();
+      })
+      .then(() => fetch(Machine_QR_Data_API))
+      .then((res) => res.json())
+      .then((updatedData) => {
+        setData(updatedData);
+        handleCloseUpdateModal();
+      })
+      .catch((error) => {
+        console.error(error);
+        alert(error.message);
+      });
   };
 
   const handleOpenDeleteConfirm = (machine) => {
@@ -254,23 +266,23 @@ const QrCodeGenerator = () => {
     if (!machineToDelete) return;
     const { machine_id } = machineToDelete;
     fetch(`${Machine_QR_Data_API}${machine_id}/`, {
-      method: 'DELETE'
+      method: 'DELETE',
     })
-    .then(res => {
-      if (!res.ok) {
-        throw new Error('Failed to delete machine');
-      }
-      return fetch(Machine_QR_Data_API);
-    })
-    .then(res => res.json())
-    .then(updatedData => {
-      setData(updatedData);
-      handleCloseDeleteConfirm();
-    })
-    .catch(error => {
-      console.error(error);
-      alert(error.message);
-    });
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Failed to delete machine');
+        }
+        return fetch(Machine_QR_Data_API);
+      })
+      .then((res) => res.json())
+      .then((updatedData) => {
+        setData(updatedData);
+        handleCloseDeleteConfirm();
+      })
+      .catch((error) => {
+        console.error(error);
+        alert(error.message);
+      });
   };
 
   const columns = useMemo(
@@ -314,7 +326,7 @@ const QrCodeGenerator = () => {
               {val}
             </Box>
           );
-        }
+        },
       },
       {
         accessorKey: 'qrCode',
@@ -356,7 +368,7 @@ const QrCodeGenerator = () => {
               </Button>
             </Box>
           );
-        }
+        },
       },
     ],
     []
@@ -372,9 +384,9 @@ const QrCodeGenerator = () => {
     const doc = new jsPDF('p', 'mm', 'a4');
     const pageWidth = doc.internal.pageSize.getWidth();
     const margin = 10;
-    const qrSize = 30; 
+    const qrSize = 30;
     const perRow = 4;
-    const perPage = 40; 
+    const perPage = 40;
 
     let x = margin;
     let y = margin + 10;
@@ -391,14 +403,14 @@ const QrCodeGenerator = () => {
       doc.setFontSize(10);
       doc.text(`ID: ${machine.machine_id}`, x, y + qrSize + 4);
 
-      x += (qrSize + margin);
+      x += qrSize + margin;
 
       if ((i + 1) % perRow === 0) {
         x = margin;
-        y += (qrSize + 15);
+        y += qrSize + 15;
       }
 
-      if ((i + 1) % perPage === 0 && (i + 1) < finalData.length) {
+      if ((i + 1) % perPage === 0 && i + 1 < finalData.length) {
         doc.addPage();
         doc.text('All Machine QRs', pageWidth / 2, margin, { align: 'center' });
         x = margin;
@@ -428,11 +440,51 @@ const QrCodeGenerator = () => {
     doc.save(`${machine_id}_qr.pdf`);
   };
 
-  if (loading) return <div>Loading...</div>;
+  // Updated loading state with CircularProgress spinner
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh', // Full viewport height
+          backgroundColor: '#f5f5f5', // Optional: Light background color
+        }}
+      >
+        <CircularProgress size={60} thickness={4} />
+      </Box>
+    );
+  }
+
   if (error) return <div>Error loading data: {error.message}</div>;
 
   return (
     <Box sx={{ width: '100%', height: '100%', position: 'relative', padding: '8px' }}>
+      {/* Optional: Loading Overlay if you prefer overlay instead of full screen spinner */}
+      {/* Uncomment the following block if you want an overlay spinner */}
+
+      {/* 
+      {loading && (
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(255, 255, 255, 0.7)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
+          }}
+        >
+          <CircularProgress size={60} thickness={4} />
+        </Box>
+      )}
+      */}
+
       <MaterialReactTable
         columns={columns}
         data={data}
@@ -468,31 +520,54 @@ const QrCodeGenerator = () => {
         }}
       />
 
-      {/* Modal for QR code details */}    
+      {/* Modal for QR code details */}
       <Dialog open={openModal} onClose={handleCloseModal} maxWidth="sm" fullWidth>
         <DialogTitle>Machine Details</DialogTitle>
         <DialogContent>
           {selectedMachine && (
             <>
-              <p><strong>Machine ID:</strong> {selectedMachine.machine_id}</p>
-              <p><strong>Category:</strong> {selectedMachine.category}</p>
-              <p><strong>Model Number:</strong> {selectedMachine.model_number}</p>
-              <p><strong>Type:</strong> {selectedMachine.type}</p>
-              <p><strong>Brand:</strong> {selectedMachine.brand}</p>
-              <p><strong>Serial No:</strong> {selectedMachine.serial_no}</p>
-              <p><strong>Floor No:</strong> {selectedMachine.floor_no}</p>
-              <p><strong>Line No:</strong> {selectedMachine.line_no}</p>
-              <p><strong>Supplier:</strong> {selectedMachine.supplier}</p>
-              <p><strong>Purchase Date:</strong> {selectedMachine.purchase_date}</p>
-              <p><strong>Location:</strong> {selectedMachine.location}</p>
-              <p><strong>Last Breakdown Start:</strong> {selectedMachine.last_breakdown_start}</p>
-              <p><strong>Status:</strong> {selectedMachine.status}</p>
+              <p>
+                <strong>Machine ID:</strong> {selectedMachine.machine_id}
+              </p>
+              <p>
+                <strong>Category:</strong> {selectedMachine.category}
+              </p>
+              <p>
+                <strong>Model Number:</strong> {selectedMachine.model_number}
+              </p>
+              <p>
+                <strong>Type:</strong> {selectedMachine.type}
+              </p>
+              <p>
+                <strong>Brand:</strong> {selectedMachine.brand}
+              </p>
+              <p>
+                <strong>Serial No:</strong> {selectedMachine.serial_no}
+              </p>
+              <p>
+                <strong>Floor No:</strong> {selectedMachine.floor_no}
+              </p>
+              <p>
+                <strong>Line No:</strong> {selectedMachine.line_no}
+              </p>
+              <p>
+                <strong>Supplier:</strong> {selectedMachine.supplier}
+              </p>
+              <p>
+                <strong>Purchase Date:</strong> {selectedMachine.purchase_date}
+              </p>
+              <p>
+                <strong>Location:</strong> {selectedMachine.location}
+              </p>
+              <p>
+                <strong>Last Breakdown Start:</strong> {selectedMachine.last_breakdown_start}
+              </p>
+              <p>
+                <strong>Status:</strong> {selectedMachine.status}
+              </p>
 
               <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                <QRCode
-                  value={selectedMachine.machine_id}
-                  size={128}
-                />
+                <QRCode value={selectedMachine.machine_id} size={128} />
               </Box>
             </>
           )}
@@ -513,28 +588,83 @@ const QrCodeGenerator = () => {
       <Dialog open={openAddModal} onClose={handleCloseAddModal} maxWidth="sm" fullWidth>
         <DialogTitle>Add Machine</DialogTitle>
         <DialogContent>
-          {formError && (
-            <Alert severity="error" sx={{ mb: 2 }}>{formError}</Alert>
-          )}
+          {formError && <Alert severity="error" sx={{ mb: 2 }}>{formError}</Alert>}
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
-            <TextField 
-              label="Machine ID" 
-              variant="outlined" 
-              value={newMachineId} 
+            <TextField
+              label="Machine ID"
+              variant="outlined"
+              value={newMachineId}
               onChange={(e) => setNewMachineId(e.target.value)}
               required
             />
-            <TextField label="Category" variant="outlined" value={newCategory} onChange={(e) => setNewCategory(e.target.value)} />
-            <TextField label="Type" variant="outlined" value={newType} onChange={(e) => setNewType(e.target.value)} />
-            <TextField label="Brand" variant="outlined" value={newBrand} onChange={(e) => setNewBrand(e.target.value)} />
-            <TextField label="Model Number" variant="outlined" value={newModelNumber} onChange={(e) => setNewModelNumber(e.target.value)} />
-            <TextField label="Serial No" variant="outlined" value={newSerialNo} onChange={(e) => setNewSerialNo(e.target.value)} />
-            <TextField label="Floor No" variant="outlined" value={newFloorNo} onChange={(e) => setNewFloorNo(e.target.value)} type="number" />
-            <TextField label="Line No" variant="outlined" value={newLineNo} onChange={(e) => setNewLineNo(e.target.value)} type="number" />
-            <TextField label="Supplier" variant="outlined" value={newSupplier} onChange={(e) => setNewSupplier(e.target.value)} />
-            <TextField label="Purchase Date (YYYY-MM-DD)" variant="outlined" value={newPurchaseDate} onChange={(e) => setNewPurchaseDate(e.target.value)} />
-            <TextField label="Location" variant="outlined" value={newLocation} onChange={(e) => setNewLocation(e.target.value)} />
-            <TextField label="Last Breakdown Start (YYYY-MM-DDTHH:MM:SS)" variant="outlined" value={newLastBreakdownStart} onChange={(e) => setNewLastBreakdownStart(e.target.value)} />
+            <TextField
+              label="Category"
+              variant="outlined"
+              value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value)}
+            />
+            <TextField
+              label="Type"
+              variant="outlined"
+              value={newType}
+              onChange={(e) => setNewType(e.target.value)}
+            />
+            <TextField
+              label="Brand"
+              variant="outlined"
+              value={newBrand}
+              onChange={(e) => setNewBrand(e.target.value)}
+            />
+            <TextField
+              label="Model Number"
+              variant="outlined"
+              value={newModelNumber}
+              onChange={(e) => setNewModelNumber(e.target.value)}
+            />
+            <TextField
+              label="Serial No"
+              variant="outlined"
+              value={newSerialNo}
+              onChange={(e) => setNewSerialNo(e.target.value)}
+            />
+            <TextField
+              label="Floor No"
+              variant="outlined"
+              value={newFloorNo}
+              onChange={(e) => setNewFloorNo(e.target.value)}
+              type="number"
+            />
+            <TextField
+              label="Line No"
+              variant="outlined"
+              value={newLineNo}
+              onChange={(e) => setNewLineNo(e.target.value)}
+              type="number"
+            />
+            <TextField
+              label="Supplier"
+              variant="outlined"
+              value={newSupplier}
+              onChange={(e) => setNewSupplier(e.target.value)}
+            />
+            <TextField
+              label="Purchase Date (YYYY-MM-DD)"
+              variant="outlined"
+              value={newPurchaseDate}
+              onChange={(e) => setNewPurchaseDate(e.target.value)}
+            />
+            <TextField
+              label="Location"
+              variant="outlined"
+              value={newLocation}
+              onChange={(e) => setNewLocation(e.target.value)}
+            />
+            <TextField
+              label="Last Breakdown Start (YYYY-MM-DDTHH:MM:SS)"
+              variant="outlined"
+              value={newLastBreakdownStart}
+              onChange={(e) => setNewLastBreakdownStart(e.target.value)}
+            />
             <FormControl>
               <InputLabel>Status</InputLabel>
               <Select
@@ -560,18 +690,81 @@ const QrCodeGenerator = () => {
         <DialogTitle>Update Machine</DialogTitle>
         <DialogContent>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
-            <TextField disabled label="Machine ID" variant="outlined" value={updateMachineId} onChange={(e) => setUpdateMachineId(e.target.value)} />
-            <TextField label="Category" variant="outlined" value={updateCategory} onChange={(e) => setUpdateCategory(e.target.value)} />
-            <TextField label="Type" variant="outlined" value={updateType} onChange={(e) => setUpdateType(e.target.value)} />
-            <TextField label="Brand" variant="outlined" value={updateBrand} onChange={(e) => setUpdateBrand(e.target.value)} />
-            <TextField label="Model Number" variant="outlined" value={updateModelNumber} onChange={(e) => setUpdateModelNumber(e.target.value)} />
-            <TextField label="Serial No" variant="outlined" value={updateSerialNo} onChange={(e) => setUpdateSerialNo(e.target.value)} />
-            <TextField label="Floor No" variant="outlined" value={updateFloorNo} onChange={(e) => setUpdateFloorNo(e.target.value)} type="number" />
-            <TextField label="Line No" variant="outlined" value={updateLineNo} onChange={(e) => setUpdateLineNo(e.target.value)} type="number" />
-            <TextField label="Supplier" variant="outlined" value={updateSupplier} onChange={(e) => setUpdateSupplier(e.target.value)} />
-            <TextField label="Purchase Date (YYYY-MM-DD)" variant="outlined" value={updatePurchaseDate} onChange={(e) => setUpdatePurchaseDate(e.target.value)} />
-            <TextField label="Location" variant="outlined" value={updateLocation} onChange={(e) => setUpdateLocation(e.target.value)} />
-            <TextField label="Last Breakdown Start (YYYY-MM-DDTHH:MM:SS)" variant="outlined" value={updateLastBreakdownStart} onChange={(e) => setUpdateLastBreakdownStart(e.target.value)} />
+            <TextField
+              disabled
+              label="Machine ID"
+              variant="outlined"
+              value={updateMachineId}
+              onChange={(e) => setUpdateMachineId(e.target.value)}
+            />
+            <TextField
+              label="Category"
+              variant="outlined"
+              value={updateCategory}
+              onChange={(e) => setUpdateCategory(e.target.value)}
+            />
+            <TextField
+              label="Type"
+              variant="outlined"
+              value={updateType}
+              onChange={(e) => setUpdateType(e.target.value)}
+            />
+            <TextField
+              label="Brand"
+              variant="outlined"
+              value={updateBrand}
+              onChange={(e) => setUpdateBrand(e.target.value)}
+            />
+            <TextField
+              label="Model Number"
+              variant="outlined"
+              value={updateModelNumber}
+              onChange={(e) => setUpdateModelNumber(e.target.value)}
+            />
+            <TextField
+              label="Serial No"
+              variant="outlined"
+              value={updateSerialNo}
+              onChange={(e) => setUpdateSerialNo(e.target.value)}
+            />
+            <TextField
+              label="Floor No"
+              variant="outlined"
+              value={updateFloorNo}
+              onChange={(e) => setUpdateFloorNo(e.target.value)}
+              type="number"
+            />
+            <TextField
+              label="Line No"
+              variant="outlined"
+              value={updateLineNo}
+              onChange={(e) => setUpdateLineNo(e.target.value)}
+              type="number"
+            />
+            <TextField
+              label="Supplier"
+              variant="outlined"
+              value={updateSupplier}
+              onChange={(e) => setUpdateSupplier(e.target.value)}
+            />
+            <TextField
+              label="Purchase Date (YYYY-MM-DD)"
+              variant="outlined"
+              value={updatePurchaseDate}
+              onChange={(e) => setUpdatePurchaseDate(e.target.value)}
+            />
+            <TextField
+              label="Location"
+              variant="outlined"
+              value={updateLocation}
+              onChange={(e) => setUpdateLocation(e.target.value)}
+            />
+            <TextField
+              label="Last Breakdown Start (YYYY-MM-DDTHH:MM:SS)"
+              variant="outlined"
+              value={updateLastBreakdownStart}
+              onChange={(e) => setUpdateLastBreakdownStart(e.target.value)}
+            />
             <FormControl>
               <InputLabel>Status</InputLabel>
               <Select

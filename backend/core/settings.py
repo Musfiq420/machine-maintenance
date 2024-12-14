@@ -134,3 +134,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
      "http://localhost:5173",  # or your frontend URL
  ]
+
+# settings.py
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://fast-tracker-bo3s.onrender.com',
+]
+
