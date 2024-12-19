@@ -1,212 +1,200 @@
-import { useState } from 'react';
-import '../../styles/registerForm/RegistrationForm.css';
+/* eslint-disable no-unused-vars */
+import React, { useState } from "react";
+import "../../styles/registerForm/RegistrationForm.css"; // Shared styling.
 
-const RegisterForm = () => {
-    const [formData, setFormData] = useState({
-        email: '',
-        password: '',
-        confirm_password: '',
-        name: '',
-        company: '',
-        department: '',
-        mobile: '',
-        designation: '',
-        employee_id: '',
-        date_of_joining: '',
-        assigned_line: '',
-        assigned_block: '',
-    });
-    const [successMessage, setSuccessMessage] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
+const TabbedForm = () => {
+  const [activeTab, setActiveTab] = useState("user");
 
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.id]: e.target.value,
-        });
-    };
+  // Shared Form Data
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    confirm_password: "",
+    name: "",
+    company: "",
+    department: "",
+    mobile: "",
+    designation: "",
+    employee_id: "",
+    date_of_joining: "",
+    assigned_line: "",
+    assigned_block: "",
+  });
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+  // Handle Tab Switching
+  const handleTabSwitch = (tab) => {
+    setActiveTab(tab);
+  };
 
-        try {
-            const response = await fetch('http://127.0.0.1:8000/api/user_management/register/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
+  // Handle Input Changes
+  const handleInputChange = (e) => {
+    const { id, value } = e.target;
+    setFormData({ ...formData, [id]: value });
+  };
 
-            if (response.ok) {
-                const data = await response.json();
-                setSuccessMessage('Registration successful!');
-                setErrorMessage('');
-                console.log('User registered:', data);
-            } else {
-                const errorData = await response.json();
-                setErrorMessage('Registration failed. ' + (errorData.detail || ''));
-                setSuccessMessage('');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            setErrorMessage('An error occurred during registration.');
-            setSuccessMessage('');
-        }
-    };
+  // Handle Form Submission
+  const handleSubmit = async (e, formType) => {
+    e.preventDefault();
 
-    return (
-        <div className="min-h-screen flex flex-col justify-between bg-gray-100">
-            {/* Form Wrapper */}
-            <div className="flex-grow flex items-center justify-center p-4">
-                <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-3xl overflow-auto">
-                    <h2 className="text-2xl font-bold text-center mb-6">Employee Registration</h2>
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        {/* User Details */}
-                        <div className="form-group">
-                            <label htmlFor="email" className="block text-sm font-medium">Email:</label>
-                            <input
-                                type="email"
-                                id="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded"
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="password" className="block text-sm font-medium">Password:</label>
-                            <input
-                                type="password"
-                                id="password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded"
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="confirm_password" className="block text-sm font-medium">Confirm Password:</label>
-                            <input
-                                type="password"
-                                id="confirm_password"
-                                value={formData.confirm_password}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded"
-                                required
-                            />
-                        </div>
+    const url =
+      formType === "user"
+        ? "http://127.0.0.1:8000/api/user_management/register_user/"
+        : "http://127.0.0.1:8000/api/user_management/register_employee/";
 
-                        {/* Employee Details */}
-                        <div className="form-group">
-                            <label htmlFor="name" className="block text-sm font-medium">Name:</label>
-                            <input
-                                type="text"
-                                id="name"
-                                value={formData.name}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded"
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="company" className="block text-sm font-medium">Company:</label>
-                            <input
-                                type="text"
-                                id="company"
-                                value={formData.company}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded"
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="department" className="block text-sm font-medium">Department:</label>
-                            <input
-                                type="text"
-                                id="department"
-                                value={formData.department}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded"
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="mobile" className="block text-sm font-medium">Mobile:</label>
-                            <input
-                                type="tel"
-                                id="mobile"
-                                value={formData.mobile}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded"
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="designation" className="block text-sm font-medium">Designation:</label>
-                            <input
-                                type="text"
-                                id="designation"
-                                value={formData.designation}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded"
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="employee_id" className="block text-sm font-medium">Employee ID:</label>
-                            <input
-                                type="text"
-                                id="employee_id"
-                                value={formData.employee_id}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded"
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="date_of_joining" className="block text-sm font-medium">Date of Joining:</label>
-                            <input
-                                type="date"
-                                id="date_of_joining"
-                                value={formData.date_of_joining}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded"
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="assigned_line" className="block text-sm font-medium">Assigned Line:</label>
-                            <input
-                                type="number"
-                                id="assigned_line"
-                                value={formData.assigned_line}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded"
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="assigned_block" className="block text-sm font-medium">Assigned Block:</label>
-                            <input
-                                type="number"
-                                id="assigned_block"
-                                value={formData.assigned_block}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded"
-                                required
-                            />
-                        </div>
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
-                        <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
-                            Register
-                        </button>
-                    </form>
-                    {successMessage && <p className="text-green-500 mt-4">{successMessage}</p>}
-                    {errorMessage && <p className="text-red-500 mt-4">{errorMessage}</p>}
-                </div>
+      if (response.ok) {
+        alert(
+          `${
+            formType === "user" ? "User" : "Employee"
+          } registered successfully!`
+        );
+      } else {
+        const errorData = await response.json();
+        alert(`Error: ${errorData.detail || "Registration failed."}`);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("An error occurred during submission.");
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100">
+      {/* Fixed Tabs */}
+      <div className="w-full bg-white shadow-md z-10 flex justify-center space-x-4 py-2">
+        <button
+          onClick={() => handleTabSwitch("user")}
+          className={`px-4 py-2 rounded ${
+            activeTab === "user" ? "bg-blue-600 text-white" : "bg-gray-200"
+          }`}
+        >
+          User Form
+        </button>
+        <button
+          onClick={() => handleTabSwitch("employee")}
+          className={`px-4 py-2 rounded ${
+            activeTab === "employee" ? "bg-blue-600 text-white" : "bg-gray-200"
+          }`}
+        >
+          Employee Form
+        </button>
+      </div>
+
+      {/* Forms */}
+      <div className="mt-20 flex justify-center items-center">
+        <form
+          onSubmit={(e) => handleSubmit(e, activeTab)}
+          className="bg-white p-6 rounded shadow-md w-full max-w-3xl"
+        >
+          <h2 className="text-xl font-bold mb-4">
+            {activeTab === "user"
+              ? "User Registration"
+              : "Employee Registration"}
+          </h2>
+          {/* Name Field (Full Width) */}
+          <div className="mb-4">
+            <label htmlFor="name" className="block text-sm font-medium">
+              Name:
+            </label>
+            <input
+              type="text"
+              id="name"
+              value={formData.name}
+              onChange={handleInputChange}
+              className="w-full p-2 border rounded"
+              required
+            />
+          </div>
+          {/* User-Specific Fields */}
+          {activeTab === "user" && (
+            <div className="grid grid-cols-2 gap-4">
+              <div className="mb-4">
+                <label htmlFor="email" className="block text-sm font-medium">
+                  Email:
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label htmlFor="password" className="block text-sm font-medium">
+                  Password:
+                </label>
+                <input
+                  type="password"
+                  id="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="confirm_password"
+                  className="block text-sm font-medium"
+                >
+                  Confirm Password:
+                </label>
+                <input
+                  type="password"
+                  id="confirm_password"
+                  value={formData.confirm_password}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
             </div>
-        </div>
-    );
+          )}
+          {/* Shared Fields (Two Columns) */}
+          <div className="grid grid-cols-2 gap-4">
+            {[
+              { id: "company", label: "Company", type: "text" },
+              { id: "department", label: "Department", type: "text" },
+              { id: "mobile", label: "Mobile", type: "tel" },
+              { id: "designation", label: "Designation", type: "text" },
+              { id: "employee_id", label: "Employee ID", type: "text" },
+              { id: "date_of_joining", label: "Date of Joining", type: "date" },
+              { id: "assigned_line", label: "Assigned Line", type: "number" },
+              { id: "assigned_block", label: "Assigned Block", type: "number" },
+            ].map(({ id, label, type }) => (
+              <div key={id} className="mb-4">
+                <label htmlFor={id} className="block text-sm font-medium">
+                  {label}:
+                </label>
+                <input
+                  type={type}
+                  id={id}
+                  value={formData[id]}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border rounded"
+                  required={id !== "mobile"} // Only 'mobile' is optional
+                />
+              </div>
+            ))}
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+          >
+            {activeTab === "user" ? "Register User" : "Register Employee"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
 };
 
-export default RegisterForm;
+export default TabbedForm;
