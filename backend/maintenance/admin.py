@@ -4,22 +4,22 @@ from .models import Mechanic, BreakdownLog, Machine
 
 class MachineAdmin(admin.ModelAdmin):
     # Fields to display in the list view
-    list_display = ('category', 'type', 'brand', 'model_number', 'serial_no', 'status', 'location', 'purchase_date', 'last_breakdown_start')
+    list_display = ('machine_id', 'category', 'type', 'brand', 'model_number', 'serial_no', 'status', 'location', 'purchase_date', 'last_breakdown_start')
     
     # Fields that will be used for filtering the machines in the list view
     list_filter = ('status', 'category', 'brand', 'location', 'floor_no', 'line_no')
     
     # Fields to search in the list view
-    search_fields = ('category', 'type', 'brand', 'model_number', 'serial_no', 'location')
+    search_fields = ('machine_id', 'category', 'type', 'brand', 'model_number', 'serial_no', 'location')
     
     # Fields that should be displayed in the detail view (edit form)
-    fields = ('category', 'type', 'brand', 'model_number', 'serial_no', 'supplier', 'purchase_date', 'location', 'floor_no', 'line_no', 'status', 'last_breakdown_start')
+    fields = ('machine_id', 'category', 'type', 'brand', 'model_number', 'serial_no', 'supplier', 'purchase_date', 'location', 'floor_no', 'line_no', 'status', 'last_breakdown_start')
     
     # Customize the ordering of machines in the list view
     ordering = ('-purchase_date',)  # Display the most recently purchased machines first
     
     # Fields that are readonly in the edit view (form view)
-    readonly_fields = ('serial_no',)  # If you don't want the serial number to be editable
+    readonly_fields = ('serial_no', 'machine_id')  # If you don't want machine_id to be editable
     
     # Enable the ability to add machines in the list view (useful for bulk actions)
     actions = ['mark_active', 'mark_inactive', 'mark_maintenance', 'mark_broken']
@@ -39,6 +39,7 @@ class MachineAdmin(admin.ModelAdmin):
     def mark_broken(self, request, queryset):
         queryset.update(status='broken')
     mark_broken.short_description = "Mark selected machines as Broken"
+
 
 class BreakdownLogAdmin(admin.ModelAdmin):
     # Display fields in the list view

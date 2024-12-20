@@ -8,6 +8,10 @@ import MainDashboard from "../../features/maintenance/pages/mainDashboard/MainDa
 import MachineDetailsDashboard from "../../features/maintenance/pages/machineDetailsDashboard/MachineDetailsDashboard";
 import About from "../../features/landingPage/pages/about/About";
 import QrCodeTable from "../../features/maintenance/pages/qrCodeTable/QrCodeTable";
+import SignInPage from "../../features/userManagement/pages/SignInPage";
+import ForgotPasswordPage from "../../features/userManagement/pages/ForgotPasswordPage";
+import AddMachineFormLayout from "../../features/maintenance/pages/AddMachineFormLayout";
+import AddMachineForm from "../../features/maintenance/components/AddMachineForm";
 
 export const router = createBrowserRouter([
     {
@@ -37,6 +41,22 @@ export const router = createBrowserRouter([
         {
           path: "/signup", // Dashboard route
           element: <SignUpLayout></SignUpLayout>, // Example new page
+        },
+        {
+          path: "/signin", // Dashboard route
+          element: <SignInPage></SignInPage>, // Example new page
+        },
+        {
+          path: "/forgot-password", // Dashboard route
+          element:<ForgotPasswordPage/> // Example new page
+        },
+        {
+          path: "/add-machine", // Dashboard route
+          element:<AddMachineFormLayout/> // Example new page
+        },
+        {
+          path: "/add-machine2", // Dashboard route
+          element:<AddMachineForm/> // Example new page
         },
       ],
     },
