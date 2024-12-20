@@ -2,7 +2,8 @@ import {
     createBrowserRouter,
   } from "react-router-dom";
 import Main from "../layout/Main";
-import SignUpLayout from "../../features/userManagement/pages/signUpLayout/signUpLayout";
+import SignUpLayout from "../../features/userManagement/pages/signUpLayout/SignUpLayout";
+import EmployeeList from "../../features/userManagement/components/registerForm/EmployeeList";
 import Home from "../../features/landingPage/pages/home/Home";
 import MainDashboard from "../../features/maintenance/pages/mainDashboard/MainDashboard";
 import MachineDetailsDashboard from "../../features/maintenance/pages/machineDetailsDashboard/MachineDetailsDashboard";
@@ -37,6 +38,10 @@ export const router = createBrowserRouter([
         {
           path: "/signup", // Dashboard route
           element: <SignUpLayout></SignUpLayout>, // Example new page
+        },
+        {
+          path: "/employeeList", // Dashboard route
+          element: <EmployeeList></EmployeeList>, // Example new page
         },
       ],
     },

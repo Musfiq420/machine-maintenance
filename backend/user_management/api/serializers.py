@@ -18,7 +18,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-              # User fields
             'name', 'company', 'department', 'mobile', 'designation',
             'employee_id', 'date_of_joining', 'assigned_line', 'assigned_block',
             'email', 'password', 'confirm_password'

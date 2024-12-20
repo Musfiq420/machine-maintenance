@@ -38,8 +38,8 @@ const TabbedForm = () => {
 
     const url =
       formType === "user"
-        ? "http://127.0.0.1:8000/api/user_management/register_user/"
-        : "http://127.0.0.1:8000/api/user_management/register_employee/";
+        ? "http://127.0.0.1:8000/api/user_management/register/"
+        : "http://127.0.0.1:8000/api/user_management/employees/";
 
     try {
       const response = await fetch(url, {
@@ -56,11 +56,9 @@ const TabbedForm = () => {
         );
       } else {
         const errorData = await response.json();
-        alert(`Error: ${errorData.detail || "Registration failed."}`);
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("An error occurred during submission.");
     }
   };
 
