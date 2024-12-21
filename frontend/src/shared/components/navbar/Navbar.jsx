@@ -25,7 +25,7 @@ const Navbar = () => {
                             tabIndex={0}
                             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
                             <li><Link to="/">Homepage</Link></li>
-                            <li><Link to="/dashboard">Dashboard</Link></li>
+                            <li><Link to="/dashboard/machine-details">Dashboard</Link></li>
                             <li><Link to="/about">About</Link></li>
                             <li><Link to="/signup">Sign Up</Link></li> {/* Add the Sign Up link */}
                             <li><Link to="/signin">Sign In</Link></li> {/* Add the Sign In link */}

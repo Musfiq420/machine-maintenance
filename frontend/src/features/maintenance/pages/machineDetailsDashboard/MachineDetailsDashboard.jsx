@@ -8,14 +8,20 @@ const MachineDetailsDashboard = () => {
     return (
         <div className="flex flex-col h-screen">
             <div className="flex flex-1">
-                <DashboardSidebar></DashboardSidebar>
-                <div className="flex-1 p-8 bg-gray-50">
-                    <DashboardHeader></DashboardHeader>
-                    <MachineDetails></MachineDetails>
-                    <TrendChart></TrendChart>
+                {/* Make the sidebar fixed */}
+                <div className="fixed top-0 left-0 h-full z-10">
+                    <DashboardSidebar />
+                </div>
+
+                {/* Main Content with margin-left to make space for the sidebar */}
+                <div className="flex-1 ml-64 overflow-auto">
+                    <DashboardHeader />
+                    <MachineDetails />
+                    <TrendChart />
                 </div>
             </div>
-            <Footer></Footer>
+            {/* Footer */}
+            <Footer />
         </div>
     );
 };

@@ -23,15 +23,15 @@ export const router = createBrowserRouter([
           element: <Home></Home>, // Sign-up layout
         },
         {
-          path: "/dashboard", // Default route
+          path: "/dashboard/machine-details", // Default route
           element: <MainDashboard></MainDashboard>, // Sign-up layout
         },
         {
-          path: "/machine-details", // Default route
+          path: "/dashboard/machine-monitoring", // Default route
           element: <MachineDetailsDashboard></MachineDetailsDashboard>, // Sign-up layout
         },
         {
-          path: "/qr-code-generator", // Default route
+          path: "/dashboard/qr-code-generator", // Default route
           element: <QrCodeTable/>,
         },
         {
