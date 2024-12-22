@@ -14,14 +14,21 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     date_of_joining = serializers.DateField()
     assigned_line = serializers.IntegerField()
     assigned_block = serializers.IntegerField()
+    user_email = serializers.SerializerMethodField()  # Add this field
 
     class Meta:
         model = User
         fields = [
             'name', 'company', 'department', 'mobile', 'designation',
             'employee_id', 'date_of_joining', 'assigned_line', 'assigned_block',
-            'email', 'password', 'confirm_password'
+            'email', 'password', 'confirm_password', 'user_email'  # Include the new field
         ]
+
+    def get_user_email(self, obj):
+        # Return the email of the associated user if it exists
+        if obj.user:
+            return obj.user.email
+        return None  # Or return "N/A" for employees without a user
 
     def validate(self, data):
         # Check if passwords match
@@ -50,7 +57,19 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
         return employee
 
+
 class EmployeeSerializer(serializers.ModelSerializer):
+    user_email = serializers.SerializerMethodField()
+
     class Meta:
         model = Employee
-        fields = '__all__'
+        fields = [
+            'id', 'name', 'company', 'department', 'mobile', 'designation',
+            'employee_id', 'date_of_joining', 'assigned_line', 'assigned_block', 'user_email'
+        ]
+
+    def get_user_email(self, obj):
+        # Return the email of the associated user if it exists
+        if obj.user:
+            return obj.user.email
+        return None  # Or return "N/A" for employees without a linked user
