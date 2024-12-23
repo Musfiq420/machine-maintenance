@@ -1,180 +1,198 @@
-import React, { useState, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faEnvelope, faPhone, faBuilding, faLock, faKey } from '@fortawesome/free-solid-svg-icons';
-import { Link } from 'react-router-dom'; // Import Link for navigation
+/* eslint-disable no-unused-vars */
+import React, { useState } from "react";
+import "../../styles/registerForm/RegistrationForm.css"; // Shared styling.
 
-const RegisterForm = () => {
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        mobile: '',
-        companyName: '',
-        password: '',
-        repassword: ''
-    });
+const TabbedForm = () => {
+  const [activeTab, setActiveTab] = useState("user");
 
-    const [isFormComplete, setIsFormComplete] = useState(false);
-    const [isShaking, setIsShaking] = useState(false);
+  // Shared Form Data
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    confirm_password: "",
+    name: "",
+    company: "",
+    department: "",
+    mobile: "",
+    designation: "",
+    employee_id: "",
+    date_of_joining: "",
+    assigned_line: "",
+    assigned_block: "",
+  });
 
-    // Check if form is complete
-    useEffect(() => {
-        const isComplete =
-            formData.name &&
-            formData.email &&
-            formData.mobile &&
-            formData.companyName &&
-            formData.password &&
-            formData.repassword;
+  // Handle Tab Switching
+  const handleTabSwitch = (tab) => {
+    setActiveTab(tab);
+  };
 
-        setIsFormComplete(isComplete);
-    }, [formData]);
+  // Handle Input Changes
+  const handleInputChange = (e) => {
+    const { id, value } = e.target;
+    setFormData({ ...formData, [id]: value });
+  };
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
+  // Handle Form Submission
+  const handleSubmit = async (e, formType) => {
+    e.preventDefault();
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const url =
+      formType === "user"
+        ? "http://127.0.0.1:8000/api/user_management/register/"
+        : "http://127.0.0.1:8000/api/user_management/employees/";
 
-        // If the form is not complete, trigger the shaking effect
-        if (!isFormComplete) {
-            setIsShaking(true);
-            setTimeout(() => {
-                setIsShaking(false); // Stop the shaking after animation
-            }, 600); // Shaking duration
-            return;
-        }
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
-        // Submit form data
-        console.log(formData);
-    };
+      if (response.ok) {
+        alert(
+          `${
+            formType === "user" ? "User" : "Employee"
+          } registered successfully!`
+        );
+      } else {
+        const errorData = await response.json();
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
-    return (
-        <div className="container mx-auto mt-12 px-4 pb-40">
-            {/* Registration Form Box with Border */}
-            <div className="max-w-lg mx-auto border-2 border-gray-300 rounded-lg shadow-xl hover:shadow-2xl transition-all duration-300 ease-in-out p-8 bg-transparent">
-                {/* Title */}
-                <h2 className="text-center text-3xl font-extrabold text-white mb-6 relative before:content-[''] before:block before:w-16 before:h-1 before:bg-blue-500 before:mx-auto before:mt-4 hover:text-blue-400 transition-colors duration-300 ease-in-out">
-                    Registration Form
-                </h2>
+  return (
+    <div className="min-h-screen bg-gray-100">
+      {/* Fixed Tabs */}
+      <div className="w-full bg-white shadow-md z-10 flex justify-center space-x-4 py-2">
+        <button
+          onClick={() => handleTabSwitch("user")}
+          className={`px-4 py-2 rounded ${
+            activeTab === "user" ? "bg-blue-600 text-white" : "bg-gray-200"
+          }`}
+        >
+          User Form
+        </button>
+        <button
+          onClick={() => handleTabSwitch("employee")}
+          className={`px-4 py-2 rounded ${
+            activeTab === "employee" ? "bg-blue-600 text-white" : "bg-gray-200"
+          }`}
+        >
+          Employee Form
+        </button>
+      </div>
 
-                {/* Form */}
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* Name Input */}
-                    <div className="form-control relative">
-                        <input
-                            type="text"
-                            id="formName"
-                            placeholder="Enter your name"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            className="input input-bordered w-full pl-10 py-2 bg-transparent border-gray-300 focus:ring-2 focus:ring-blue-500"
-                            required
-                        />
-                        <FontAwesomeIcon icon={faUser} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-xl text-gray-500" />
-                    </div>
-
-                    {/* Email Input */}
-                    <div className="form-control relative">
-                        <input
-                            type="email"
-                            id="formEmail"
-                            placeholder="Enter your email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            className="input input-bordered w-full pl-10 py-2 bg-transparent border-gray-300 focus:ring-2 focus:ring-blue-500"
-                            required
-                        />
-                        <FontAwesomeIcon icon={faEnvelope} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-xl text-gray-500" />
-                    </div>
-
-                    {/* Mobile Number Input */}
-                    <div className="form-control relative">
-                        <input
-                            type="tel"
-                            id="formMobile"
-                            placeholder="Enter your mobile number"
-                            name="mobile"
-                            value={formData.mobile}
-                            onChange={handleChange}
-                            className="input input-bordered w-full pl-10 py-2 bg-transparent border-gray-300 focus:ring-2 focus:ring-blue-500"
-                            required
-                        />
-                        <FontAwesomeIcon icon={faPhone} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-xl text-gray-500" />
-                    </div>
-
-                    {/* Company Name Input */}
-                    <div className="form-control relative">
-                        <input
-                            type="text"
-                            id="formCompany"
-                            placeholder="Enter your company name"
-                            name="companyName"
-                            value={formData.companyName}
-                            onChange={handleChange}
-                            className="input input-bordered w-full pl-10 py-2 bg-transparent border-gray-300 focus:ring-2 focus:ring-blue-500"
-                            required
-                        />
-                        <FontAwesomeIcon icon={faBuilding} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-xl text-gray-500" />
-                    </div>
-
-                    {/* Password Input */}
-                    <div className="form-control relative">
-                        <input
-                            type="password"
-                            id="formPassword"
-                            placeholder="Enter your password"
-                            name="password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            className="input input-bordered w-full pl-10 py-2 bg-transparent border-gray-300 focus:ring-2 focus:ring-blue-500"
-                            required
-                        />
-                        <FontAwesomeIcon icon={faLock} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-xl text-gray-500" />
-                    </div>
-
-                    {/* Re-password Input */}
-                    <div className="form-control relative">
-                        <input
-                            type="password"
-                            id="formRePassword"
-                            placeholder="Re-enter your password"
-                            name="repassword"
-                            value={formData.repassword}
-                            onChange={handleChange}
-                            className="input input-bordered w-full pl-10 py-2 bg-transparent border-gray-300 focus:ring-2 focus:ring-blue-500"
-                            required
-                        />
-                        <FontAwesomeIcon icon={faKey} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-xl text-gray-500" />
-                    </div>
-
-                    {/* Submit Button */}
-                    <button
-                        type="submit"
-                        className={`btn btn-primary w-full mt-6 py-2 rounded-md bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-all duration-300 ${
-                            isShaking ? 'animate-shake' : ''
-                        }`}
-                        disabled={!isFormComplete}
-                    >
-                        Register
-                    </button>
-                </form>
-
-                {/* Already have an account? Prompt */}
-                <div className="mt-4 text-center text-white">
-                    <p className="text-sm">
-                        Already have an account?{' '}
-                        <Link to="/signin" className="text-blue-400 hover:underline">
-                            Sign In
-                        </Link>
-                    </p>
-                </div>
+      {/* Forms */}
+      <div className="mt-20 flex justify-center items-center">
+        <form
+          onSubmit={(e) => handleSubmit(e, activeTab)}
+          className="bg-white p-6 rounded shadow-md w-full max-w-3xl"
+        >
+          <h2 className="text-xl font-bold mb-4">
+            {activeTab === "user"
+              ? "User Registration"
+              : "Employee Registration"}
+          </h2>
+          {/* Name Field (Full Width) */}
+          <div className="mb-4">
+            <label htmlFor="name" className="block text-sm font-medium">
+              Name:
+            </label>
+            <input
+              type="text"
+              id="name"
+              value={formData.name}
+              onChange={handleInputChange}
+              className="w-full p-2 border rounded"
+              required
+            />
+          </div>
+          {/* User-Specific Fields */}
+          {activeTab === "user" && (
+            <div className="grid grid-cols-2 gap-4">
+              <div className="mb-4">
+                <label htmlFor="email" className="block text-sm font-medium">
+                  Email:
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label htmlFor="password" className="block text-sm font-medium">
+                  Password:
+                </label>
+                <input
+                  type="password"
+                  id="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="confirm_password"
+                  className="block text-sm font-medium"
+                >
+                  Confirm Password:
+                </label>
+                <input
+                  type="password"
+                  id="confirm_password"
+                  value={formData.confirm_password}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
             </div>
-        </div>
-    );
+          )}
+          {/* Shared Fields (Two Columns) */}
+          <div className="grid grid-cols-2 gap-4">
+            {[
+              { id: "company", label: "Company", type: "text" },
+              { id: "department", label: "Department", type: "text" },
+              { id: "mobile", label: "Mobile", type: "tel" },
+              { id: "designation", label: "Designation", type: "text" },
+              { id: "employee_id", label: "Employee ID", type: "text" },
+              { id: "date_of_joining", label: "Date of Joining", type: "date" },
+              { id: "assigned_line", label: "Assigned Line", type: "number" },
+              { id: "assigned_block", label: "Assigned Block", type: "number" },
+            ].map(({ id, label, type }) => (
+              <div key={id} className="mb-4">
+                <label htmlFor={id} className="block text-sm font-medium">
+                  {label}:
+                </label>
+                <input
+                  type={type}
+                  id={id}
+                  value={formData[id]}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border rounded"
+                  required={id !== "mobile"} // Only 'mobile' is optional
+                />
+              </div>
+            ))}
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+          >
+            {activeTab === "user" ? "Register User" : "Register Employee"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
 };
 
-export default RegisterForm;
+export default TabbedForm;
