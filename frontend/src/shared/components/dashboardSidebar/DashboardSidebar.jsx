@@ -31,6 +31,7 @@ const DashboardSidebar = () => {
   const isActiveSubRoute = (routes) => {
     return routes.some((route) => location.pathname === route);
   };
+  const [isUserManagementOpen, setUserOpen] = useState(false)
 
   return (
     <>
@@ -304,6 +305,23 @@ const DashboardSidebar = () => {
             )}
           </li>
 
+          <li>
+          <button
+            onClick={() => setUserOpen(!isUserManagementOpen)}
+            className="flex justify-between w-full px-4 py-2 text-left hover:bg-green-100">
+            User Management
+            <span>{isUserManagementOpen ? '-' : '+'}</span>
+          </button>
+          {isUserManagementOpen && (
+            <ul className="ml-6 space-y-1">
+              <li>
+                <Link to="/employeeList" className="block px-4 py-2 hover:bg-green-100">
+                  Employee List
+                </Link>
+              </li>
+            </ul>
+          )}
+        </li>
           {/* Logout (Optional) */}
           <li className="absolute bottom-4 w-full">
             <Link

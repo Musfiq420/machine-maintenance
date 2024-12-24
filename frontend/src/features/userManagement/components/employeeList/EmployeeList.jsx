@@ -44,23 +44,28 @@ const EmployeeList = () => {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4 text-center">Employee List</h1>
+    <div className="p-6 bg-green-100 h-full">
+      <h1 className="text-2xl font-bold mb-4 text-center text-green-700">
+        Employee List
+      </h1>
       <div className="overflow-x-auto">
-        <table className="table w-full table-striped table-hover">
+        <table className="table w-full border border-green-300 rounded-md shadow-md">
           <thead>
-            <tr>
-              <th className="bg-primary text-white p-3">Name</th>
-              <th className="bg-primary text-white p-3">Company</th>
-              <th className="bg-primary text-white p-3">Department</th>
-              <th className="bg-primary text-white p-3">Designation</th>
-              <th className="bg-primary text-white p-3">Mobile</th>
-              <th className="bg-primary text-white p-3">User Email</th>
+            <tr className="bg-green-600 text-white">
+              <th className="p-3">Name</th>
+              <th className="p-3">Company</th>
+              <th className="p-3">Department</th>
+              <th className="p-3">Designation</th>
+              <th className="p-3">Mobile</th>
+              <th className="p-3">User Email</th>
             </tr>
           </thead>
           <tbody>
             {currentEmployees.map((employee) => (
-              <tr key={employee.id} className="hover:bg-gray-100">
+              <tr
+                key={employee.id}
+                className="hover:bg-green-200 border-b border-green-300"
+              >
                 <td className="p-3">{employee.name || "N/A"}</td>
                 <td className="p-3">{employee.company || "N/A"}</td>
                 <td className="p-3">{employee.department || "N/A"}</td>
@@ -68,7 +73,7 @@ const EmployeeList = () => {
                 <td className="p-3">{employee.mobile || "N/A"}</td>
                 <td className="p-3">
                   {employee.user_email ? (
-                    <span className="text-green-500 font-semibold">
+                    <span className="text-green-700 font-semibold">
                       {employee.user_email}
                     </span>
                   ) : (
@@ -91,8 +96,8 @@ const EmployeeList = () => {
               onClick={() => paginate(index + 1)}
               className={`mx-1 px-3 py-1 rounded ${
                 currentPage === index + 1
-                  ? "bg-primary text-white"
-                  : "bg-gray-200"
+                  ? "bg-green-600 text-white"
+                  : "bg-green-200 hover:bg-green-300"
               }`}
             >
               {index + 1}
