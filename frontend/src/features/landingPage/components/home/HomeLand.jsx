@@ -25,7 +25,7 @@ const HomeLand = () => {
                 
                 <div className="relative z-10 text-center p-8 max-w-3xl mx-auto">
                     <h1 className="text-5xl md:text-6xl font-extrabold mb-4 leading-tight">
-                        Accelerate Your Garment Production
+                        Accelerate Your Garment Production with <span className='text-lime-400'>Fast Tracker</span>
                     </h1>
                     <p className="text-xl md:text-2xl mb-8">
                         Transform your supply chain from threading to dispatch with powerful real-time insights and analytics.

@@ -53,9 +53,8 @@ const DashboardSidebar = () => {
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-full w-64 bg-green-50 text-gray-700 transform ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-300 ease-in-out z-20 md:translate-x-0 md:static md:shadow-none shadow-lg`}
+        className={`fixed top-0 left-0 h-full w-64 bg-green-50 text-gray-700 transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          } transition-transform duration-300 ease-in-out z-20 md:translate-x-0 md:static md:shadow-none shadow-lg`}
       >
         <div className="hidden md:flex items-center px-6 py-4">
           <div className="w-8 h-8 bg-green-500 flex items-center justify-center rounded">
@@ -68,42 +67,96 @@ const DashboardSidebar = () => {
           <li>
             <Link
               to="/"
-              className={`flex items-center px-4 py-2 rounded hover:bg-green-100 ${
-                isActiveRoute("/") ? "bg-green-200" : ""
-              }`}
+              className={`flex items-center px-4 py-2 rounded hover:bg-green-100 ${isActiveRoute("/") ? "bg-green-200" : ""
+                }`}
             >
               <FaHome className="mr-3" />
               Home
             </Link>
           </li>
 
-          {/* Dashboard */}
+          {/* Dashboard
           <li>
             <Link
               to="/dashboard"
-              className={`flex items-center px-4 py-2 rounded hover:bg-green-100 ${
-                isActiveRoute("/dashboard") ? "bg-green-200" : ""
-              }`}
+              className={`flex items-center px-4 py-2 rounded hover:bg-green-100 ${isActiveRoute("/dashboard") ? "bg-green-200" : ""
+                }`}
             >
               <FaTachometerAlt className="mr-3" />
               Dashboard
             </Link>
+          </li> */}
+
+          {/* Dashboard Details */}
+          <li>
+            <button
+              onClick={() => setMachineOpen(!isMachineOpen)}
+              className={`flex items-center justify-between w-full px-4 py-2 rounded hover:bg-green-100 ${isActiveSubRoute([
+                "/machine-details",
+                "/qr-code-generator",
+              ])
+                  ? "bg-green-200"
+                  : ""
+                }`}
+              aria-expanded={isMachineOpen}
+              aria-controls="machine-submenu"
+            >
+              <div className="flex items-center">
+                <FaTachometerAlt className="mr-3" />
+                Dashboard
+              </div>
+              <span>{isMachineOpen ? "-" : "+"}</span>
+            </button>
+            {isMachineOpen && (
+              <ul id="machine-submenu" className="ml-6 mt-2 space-y-1">
+                                <li>
+                  <Link
+                    to="/dashboard/machine-details"
+                    className={`flex items-center px-4 py-2 rounded hover:bg-green-100 ${isActiveRoute("/qr-code-generator") ? "bg-green-200" : ""
+                      }`}
+                  >
+                    <FaChartLine className="mr-3" />
+                    Machine Details
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/dashboard/machine-monitoring"
+                    className={`flex items-center px-4 py-2 rounded hover:bg-green-100 ${isActiveRoute("/machine-details") ? "bg-green-200" : ""
+                      }`}
+                  >
+                    <FaCogs className="mr-3" />
+                    Machine Monitoring
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/dashboard/qr-code-generator"
+                    className={`flex items-center px-4 py-2 rounded hover:bg-green-100 ${isActiveRoute("/qr-code-generator") ? "bg-green-200" : ""
+                      }`}
+                  >
+                    <FaQrcode className="mr-3" />
+                    Machine QR Code Generator
+                  </Link>
+                </li>
+
+              </ul>
+            )}
           </li>
 
           {/* Sewing */}
           <li>
             <button
               onClick={() => setSewingOpen(!isSewingOpen)}
-              className={`flex items-center justify-between w-full px-4 py-2 rounded hover:bg-green-100 ${
-                isActiveSubRoute([
-                  "/sewing/production",
-                  "/sewing/trend-analysis",
-                  "/sewing/realtime",
-                  "/sewing/capacity-analysis",
-                ])
+              className={`flex items-center justify-between w-full px-4 py-2 rounded hover:bg-green-100 ${isActiveSubRoute([
+                "/sewing/production",
+                "/sewing/trend-analysis",
+                "/sewing/realtime",
+                "/sewing/capacity-analysis",
+              ])
                   ? "bg-green-200"
                   : ""
-              }`}
+                }`}
               aria-expanded={isSewingOpen}
               aria-controls="sewing-submenu"
             >
@@ -118,9 +171,8 @@ const DashboardSidebar = () => {
                 <li>
                   <Link
                     to="/sewing/production"
-                    className={`flex items-center px-4 py-2 rounded hover:bg-green-100 ${
-                      isActiveRoute("/sewing/production") ? "bg-green-200" : ""
-                    }`}
+                    className={`flex items-center px-4 py-2 rounded hover:bg-green-100 ${isActiveRoute("/sewing/production") ? "bg-green-200" : ""
+                      }`}
                   >
                     <FaChartLine className="mr-3" />
                     Production
@@ -129,9 +181,8 @@ const DashboardSidebar = () => {
                 <li>
                   <Link
                     to="/sewing/trend-analysis"
-                    className={`flex items-center px-4 py-2 rounded hover:bg-green-100 ${
-                      isActiveRoute("/sewing/trend-analysis") ? "bg-green-200" : ""
-                    }`}
+                    className={`flex items-center px-4 py-2 rounded hover:bg-green-100 ${isActiveRoute("/sewing/trend-analysis") ? "bg-green-200" : ""
+                      }`}
                   >
                     <FaChartLine className="mr-3" />
                     Trend Analysis
@@ -140,9 +191,8 @@ const DashboardSidebar = () => {
                 <li>
                   <Link
                     to="/sewing/realtime"
-                    className={`flex items-center px-4 py-2 rounded hover:bg-green-100 ${
-                      isActiveRoute("/sewing/realtime") ? "bg-green-200" : ""
-                    }`}
+                    className={`flex items-center px-4 py-2 rounded hover:bg-green-100 ${isActiveRoute("/sewing/realtime") ? "bg-green-200" : ""
+                      }`}
                   >
                     <FaChartLine className="mr-3" />
                     Realtime
@@ -151,9 +201,8 @@ const DashboardSidebar = () => {
                 <li>
                   <Link
                     to="/sewing/capacity-analysis"
-                    className={`flex items-center px-4 py-2 rounded hover:bg-green-100 ${
-                      isActiveRoute("/sewing/capacity-analysis") ? "bg-green-200" : ""
-                    }`}
+                    className={`flex items-center px-4 py-2 rounded hover:bg-green-100 ${isActiveRoute("/sewing/capacity-analysis") ? "bg-green-200" : ""
+                      }`}
                   >
                     <FaChartLine className="mr-3" />
                     Capacity Analysis
@@ -163,18 +212,17 @@ const DashboardSidebar = () => {
             )}
           </li>
 
-          {/* Machine Details */}
+          {/* Machine Details
           <li>
             <button
               onClick={() => setMachineOpen(!isMachineOpen)}
-              className={`flex items-center justify-between w-full px-4 py-2 rounded hover:bg-green-100 ${
-                isActiveSubRoute([
-                  "/machine-details",
-                  "/qr-code-generator",
-                ])
+              className={`flex items-center justify-between w-full px-4 py-2 rounded hover:bg-green-100 ${isActiveSubRoute([
+                "/machine-details",
+                "/qr-code-generator",
+              ])
                   ? "bg-green-200"
                   : ""
-              }`}
+                }`}
               aria-expanded={isMachineOpen}
               aria-controls="machine-submenu"
             >
@@ -189,9 +237,8 @@ const DashboardSidebar = () => {
                 <li>
                   <Link
                     to="/machine-details"
-                    className={`flex items-center px-4 py-2 rounded hover:bg-green-100 ${
-                      isActiveRoute("/machine-details") ? "bg-green-200" : ""
-                    }`}
+                    className={`flex items-center px-4 py-2 rounded hover:bg-green-100 ${isActiveRoute("/machine-details") ? "bg-green-200" : ""
+                      }`}
                   >
                     <FaCogs className="mr-3" />
                     Machine Monitoring
@@ -200,9 +247,8 @@ const DashboardSidebar = () => {
                 <li>
                   <Link
                     to="/qr-code-generator"
-                    className={`flex items-center px-4 py-2 rounded hover:bg-green-100 ${
-                      isActiveRoute("/qr-code-generator") ? "bg-green-200" : ""
-                    }`}
+                    className={`flex items-center px-4 py-2 rounded hover:bg-green-100 ${isActiveRoute("/qr-code-generator") ? "bg-green-200" : ""
+                      }`}
                   >
                     <FaQrcode className="mr-3" />
                     Machine QR Code Generator
@@ -210,20 +256,19 @@ const DashboardSidebar = () => {
                 </li>
               </ul>
             )}
-          </li>
+          </li> */}
 
           {/* Planning */}
           <li>
             <button
               onClick={() => setPlanningOpen(!isPlanningOpen)}
-              className={`flex items-center justify-between w-full px-4 py-2 rounded hover:bg-green-100 ${
-                isActiveSubRoute([
-                  "/planning/scheduling",
-                  "/planning/kanban-board",
-                ])
+              className={`flex items-center justify-between w-full px-4 py-2 rounded hover:bg-green-100 ${isActiveSubRoute([
+                "/planning/scheduling",
+                "/planning/kanban-board",
+              ])
                   ? "bg-green-200"
                   : ""
-              }`}
+                }`}
               aria-expanded={isPlanningOpen}
               aria-controls="planning-submenu"
             >
@@ -238,9 +283,8 @@ const DashboardSidebar = () => {
                 <li>
                   <Link
                     to="/planning/scheduling"
-                    className={`flex items-center px-4 py-2 rounded hover:bg-green-100 ${
-                      isActiveRoute("/planning/scheduling") ? "bg-green-200" : ""
-                    }`}
+                    className={`flex items-center px-4 py-2 rounded hover:bg-green-100 ${isActiveRoute("/planning/scheduling") ? "bg-green-200" : ""
+                      }`}
                   >
                     <FaChartLine className="mr-3" />
                     Scheduling
@@ -249,9 +293,8 @@ const DashboardSidebar = () => {
                 <li>
                   <Link
                     to="/planning/kanban-board"
-                    className={`flex items-center px-4 py-2 rounded hover:bg-green-100 ${
-                      isActiveRoute("/planning/kanban-board") ? "bg-green-200" : ""
-                    }`}
+                    className={`flex items-center px-4 py-2 rounded hover:bg-green-100 ${isActiveRoute("/planning/kanban-board") ? "bg-green-200" : ""
+                      }`}
                   >
                     <FaChartLine className="mr-3" />
                     Kanban Board
