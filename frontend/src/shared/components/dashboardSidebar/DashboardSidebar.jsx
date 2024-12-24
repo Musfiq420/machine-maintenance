@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom"; // Importing Link
 
 const DashboardSidebar = () => {
   const [isSewingOpen, setSewingOpen] = useState(false);
   const [isMachineOpen, setMachineOpen] = useState(false);
   const [isPlanningOpen, setPlanningOpen] = useState(false);
+  const [isUserManagementOpen, setUserOpen] = useState(false)
 
   return (
     <div className="bg-green-50 text-gray-700 w-64 h-full">
@@ -97,6 +98,23 @@ const DashboardSidebar = () => {
               <li>
                 <Link to="/planning/kanban-board" className="block px-4 py-2 hover:bg-green-100">
                   Kanban Board
+                </Link>
+              </li>
+            </ul>
+          )}
+        </li>
+        <li>
+          <button
+            onClick={() => setUserOpen(!isUserManagementOpen)}
+            className="flex justify-between w-full px-4 py-2 text-left hover:bg-green-100">
+            User Management
+            <span>{isUserManagementOpen ? '-' : '+'}</span>
+          </button>
+          {isUserManagementOpen && (
+            <ul className="ml-6 space-y-1">
+              <li>
+                <Link to="/employeeList" className="block px-4 py-2 hover:bg-green-100">
+                  Employee List
                 </Link>
               </li>
             </ul>
