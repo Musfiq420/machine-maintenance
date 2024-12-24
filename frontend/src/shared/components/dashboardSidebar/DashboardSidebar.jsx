@@ -104,7 +104,7 @@ const DashboardSidebar = () => {
             >
               <div className="flex items-center">
                 <FaTachometerAlt className="mr-3" />
-                Dashboard
+                Maintenance
               </div>
               <span>{isMachineOpen ? "-" : "+"}</span>
             </button>
