@@ -28,6 +28,7 @@ const Navbar = () => {
                             <li><Link to="/dashboard">Dashboard</Link></li>
                             <li><Link to="/about">About</Link></li>
                             <li><Link to="/signup">Sign Up</Link></li> {/* Add the Sign Up link */}
+                            <li><Link to="/login">Login</Link></li> {/* Add the Sign Up link */}
                         </ul>
                     </div>
                 </div>
