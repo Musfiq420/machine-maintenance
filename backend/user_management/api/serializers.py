@@ -1,10 +1,11 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
+
 from ..models import Employee
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     # Add extra fields for password and confirm password
-    confirm_password = serializers.CharField(write_only=True)
+    confirm_password = serializers.CharField(required = True)
     name = serializers.CharField()
     company = serializers.CharField()
     department = serializers.CharField()
@@ -34,7 +35,10 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         # Check if passwords match
         if data['password'] != data['confirm_password']:
             raise serializers.ValidationError({"password": "Passwords do not match."})
+        if User.objects.filter(email=data['email']).exists():
+            raise serializers.ValidationError({'email': "Email already exists"})
         return data
+
 
     def create(self, validated_data):
         # Remove confirm_password from validated_data
@@ -73,3 +77,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
         if obj.user:
             return obj.user.email
         return None  # Or return "N/A" for employees without a linked user
+
+class UserLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+    password = serializers.CharField(required=True)
