@@ -60,7 +60,7 @@ class UserLoginApiView(APIView):
                     'token': token.key,
                     'user_id': user.id,
                     'message': "Login successful. Redirecting to home.",
-                    'redirect_url': "/home/"  # Or the home route on your frontend
+                    'redirect_url': "/"  # Or the home route on your frontend
                 }, status=status.HTTP_200_OK)
             return Response({'error': "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

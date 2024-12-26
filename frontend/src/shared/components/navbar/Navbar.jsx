@@ -28,7 +28,7 @@ const Navbar = () => {
                             <li><Link to="/dashboard/machine-details">Dashboard</Link></li>
                             <li><Link to="/about">About</Link></li>
                             <li><Link to="/signup">Sign Up</Link></li> {/* Add the Sign Up link */}
-                            <li><Link to="/signin">Sign In</Link></li> {/* Add the Sign In link */}
+                            <li><Link to="/login">Login</Link></li> {/* Add the Sign Up link */}
                         </ul>
                     </div>
                 </div>

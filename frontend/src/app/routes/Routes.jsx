@@ -8,6 +8,7 @@ import Home from "../../features/landingPage/pages/home/Home";
 import MainDashboard from "../../features/maintenance/pages/mainDashboard/MainDashboard";
 import MachineDetailsDashboard from "../../features/maintenance/pages/machineDetailsDashboard/MachineDetailsDashboard";
 import About from "../../features/landingPage/pages/about/About";
+import LoginLayout from "../../features/userManagement/pages/loginLayout/LoginLayout";
 import QrCodeTable from "../../features/maintenance/pages/qrCodeTable/QrCodeTable";
 import SignInPage from "../../features/userManagement/pages/SignInPage";
 import ForgotPasswordPage from "../../features/userManagement/pages/ForgotPasswordPage";
@@ -58,6 +59,10 @@ export const router = createBrowserRouter([
         {
           path: "/add-machine2", // Dashboard route
           element:<AddMachineForm/> // Example new page
+        },
+        {
+          path: "/login", // Dashboard route
+          element: <LoginLayout></LoginLayout>, // Example new page
         },
         {
           path: "/employeeList", // Dashboard route
