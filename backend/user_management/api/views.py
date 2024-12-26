@@ -13,11 +13,18 @@ class UserRegistrationView(generics.CreateAPIView):
     serializer_class = UserRegistrationSerializer
 
     def create(self, request, *args, **kwargs):
-        response = super().create(request, *args, **kwargs)
-        # Add a redirect URL to the response
-        response.data['message'] = "Registration successful. Please log in."
-        response.data['redirect_url'] = "/login/"  # Or the login route on your frontend
-        return response
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        
+        return Response(
+            {
+                "message": "Registration successful. Please log in.",
+                "redirect_url": "/login",
+                "username": serializer.validated_data.get("email")
+            },
+            status=201
+        )
 
 
 class EmployeeViewSet(viewsets.ModelViewSet):

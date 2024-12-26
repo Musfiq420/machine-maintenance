@@ -1,8 +1,9 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
-import "../../styles/registerForm/RegistrationForm.css"; // Shared styling.
+import { useNavigate } from "react-router-dom";
 
-const TabbedForm = () => {
+const RegisterForm = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("user");
 
   // Shared Form Data
@@ -35,31 +36,45 @@ const TabbedForm = () => {
   // Handle Form Submission
   const handleSubmit = async (e, formType) => {
     e.preventDefault();
-
+  
     const url =
       formType === "user"
         ? "http://127.0.0.1:8000/api/user_management/register/"
         : "http://127.0.0.1:8000/api/user_management/employees/";
-
+  
     try {
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-
+  
       if (response.ok) {
-        alert(
-          `${
-            formType === "user" ? "User" : "Employee"
-          } registered successfully!`
-        );
-      } else {
+        const data = await response.json();
+        if (data.redirect_url) {
+          alert(data.message); // Show success message
+          navigate(data.redirect_url); // Redirect to the login page
+        } else {
+          alert("Registration successful, but no redirect URL provided.");
+        }
+      } else if (response.status === 400) {
+        // Handle validation errors
         const errorData = await response.json();
+        const errorMessage = Object.values(errorData)
+          .flat()
+          .join("\n"); // Concatenate all error messages
+        alert(`Validation Error: ${errorMessage}`);
+      } else {
+        // Handle unexpected errors
+        const text = await response.text();
+        console.error("Server Error:", text);
+        alert("An unexpected server error occurred.");
       }
     } catch (error) {
       console.error("Error:", error);
+      alert("An unexpected error occurred. Please try again.");
     }
+
   };
 
   return (
@@ -195,4 +210,4 @@ const TabbedForm = () => {
   );
 };
 
-export default TabbedForm;
+export default RegisterForm;
