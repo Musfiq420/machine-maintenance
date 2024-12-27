@@ -6,7 +6,7 @@ const SignUpLayout = () => {
     return (
         <div>
             <Navbar></Navbar>
-            <div className="mt-8"> {/* Add margin-top */}
+            <div className="mt-10"> {/* Add margin-top */}
                 <RegisterForm />
             </div>
             <Footer></Footer>
