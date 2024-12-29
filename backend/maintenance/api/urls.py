@@ -9,5 +9,4 @@ router.register(r'machines', MachineViewSet, basename='machine')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('', include(router.urls)),
 ]

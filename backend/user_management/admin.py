@@ -2,23 +2,21 @@ from django.contrib import admin
 from .models import Employee
 
 class EmployeeAdmin(admin.ModelAdmin):
-    # Display fields in the list view
-    list_display = ('name', 'designation', 'assigned_line', 'assigned_block')
-    
-    # Add search functionality
-    search_fields = ('name', 'designation')
-    
-    # Add filter options
-    list_filter = ('assigned_line', 'assigned_block')
-    
-    # Add ordering for the list view
-    ordering = ('name',)
+    list_display = (
+        'name', 
+        'get_user_email', 
+        'company', 
+        'department', 
+        'mobile', 
+        'designation', 
+        'employee_id', 
+        'date_of_joining'
+    )
 
-    # Add fields to display in the detail view
-    fields = ('name', 'designation', 'assigned_line', 'assigned_block')
+    def get_user_email(self, obj):
+        if obj.user:
+            return obj.user.email or obj.user.username  # Prefer email, fallback to username
+        return "No User"  # Default for employees without a user
+    get_user_email.short_description = 'User Email/Username'  # Column header in admin
 
-    # Make the assigned_line and assigned_block fields read-only
-    readonly_fields = ('assigned_line', 'assigned_block')
-
-# Register the Employee model with its custom EmployeeAdmin
 admin.site.register(Employee, EmployeeAdmin)
