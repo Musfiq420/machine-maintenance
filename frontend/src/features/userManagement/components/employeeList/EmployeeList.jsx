@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 
 const EmployeeList = () => {
+  let navigate = useNavigate();
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -10,18 +12,24 @@ const EmployeeList = () => {
     const fetchEmployees = async () => {
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/api/user_management/employees/"
+          "http://127.0.0.1:8000/api/user_management/employee-list/",
+          {
+            headers: {
+              Authorization: `Token ${localStorage.getItem("token")}`, // Ensure the token is being sent
+            },
+          }
         );
         if (response.ok) {
           const data = await response.json();
-          setEmployees(data);
+          // console.log("Fetched employees:", data); // Log the fetched data
+          setEmployees(data); // Set the state
         } else {
           console.error("Error fetching employees:", response.statusText);
         }
       } catch (error) {
         console.error("Error fetching employees:", error);
-      } finally {
-        setLoading(false);
+      }finally{
+        setLoading(false)
       }
     };
 
@@ -84,6 +92,9 @@ const EmployeeList = () => {
             ))}
           </tbody>
         </table>
+        <button onClick={() => {
+          navigate("/signup")
+        }} className="btn mt-5 bg-green-600 text-white">Add Employee</button>
       </div>
 
       {/* Pagination */}

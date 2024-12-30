@@ -28,9 +28,11 @@ class UserRegistrationView(generics.CreateAPIView):
 
 
 class EmployeeViewSet(viewsets.ModelViewSet):
-    queryset = Employee.objects.all()
-    serializer_class = EmployeeSerializer
-    permission_classes = [IsAuthenticated]  # Ensure only authenticated users can access
+    serializer_class = EmployeeSerializer # Ensure only authenticated users can access
+
+    def get_queryset(self):
+        # Filter employees based on the logged-in user
+        return Employee.objects.filter(user=self.request.user)  # Ensure only authenticated users can access
 
 
 class UserListView(APIView):
@@ -44,7 +46,6 @@ class UserListView(APIView):
 
 
 class EmployeeListView(APIView):
-    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         employees = Employee.objects.all()
@@ -67,15 +68,13 @@ class UserLoginApiView(APIView):
                     'token': token.key,
                     'user_id': user.id,
                     'message': "Login successful. Redirecting to home.",
-                    'redirect_url': "/"  # Or the home route on your frontend
+                    'redirect_url': "/dashboard/machine-details"  # Or the home route on your frontend
                 }, status=status.HTTP_200_OK)
             return Response({'error': "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserLogoutView(APIView):
-    permission_classes = [IsAuthenticated]
-
     def post(self, request):
         request.user.auth_token.delete()
         logout(request)
