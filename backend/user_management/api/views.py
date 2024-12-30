@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 
 from ..models import Employee
-from .serializers import (EmployeeSerializer,UserRegistrationSerializer,UserLoginSerializer)
+from .serializers import (UserRegistrationSerializer,UserLoginSerializer)
 
 from rest_framework import generics
 from rest_framework.response import Response
@@ -16,41 +16,12 @@ from .serializers import UserRegistrationSerializer
 
 class UserRegistrationView(generics.CreateAPIView):
     serializer_class = UserRegistrationSerializer
-
-    def create(self, request, *args, **kwargs):
-        # Create serializer instance with incoming request data
-        serializer = self.get_serializer(data=request.data)
-        
-        # Validate the data
+    def create(self, request):
+        serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({"message": "Registration successful. Please log in."}, status=status.HTTP_201_CREATED)
+            return Response({"message": "User registered successfully! Please login.", 'redirect_url': "/login/" }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class EmployeeViewSet(viewsets.ModelViewSet):
-    queryset = Employee.objects.all()
-    serializer_class = EmployeeSerializer
-    permission_classes = [IsAuthenticated]  # Ensure only authenticated users can access
-
-
-class UserListView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        users = User.objects.all()
-        # Use a simpler serializer for listing users
-        data = [{"id": user.id, "email": user.email, "username": user.username} for user in users]
-        return Response(data, status=status.HTTP_200_OK)
-
-
-class EmployeeListView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        employees = Employee.objects.all()
-        serializer = EmployeeSerializer(employees, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class UserLoginApiView(APIView):
@@ -81,3 +52,24 @@ class UserLogoutView(APIView):
         request.user.auth_token.delete()
         logout(request)
         return Response({'success': "Logout successful"}, status=status.HTTP_200_OK)
+
+
+
+class UserListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        users = User.objects.all()
+        # Use a simpler serializer for listing users
+        data = [{"id": user.id, "email": user.email, "username": user.username} for user in users]
+        return Response(data, status=status.HTTP_200_OK)
+
+
+
+class EmployeeListAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        employees = Employee.objects.all()
+        serializer = UserRegistrationSerializer(employees, many=True)
+        return Response(serializer.data)

@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'maintenance',
     'user_management',
     'inventory',
+    'rest_framework.authtoken',
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 
