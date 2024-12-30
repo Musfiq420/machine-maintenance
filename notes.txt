@@ -26,3 +26,74 @@ pip install django-cors-headers           # For Cross-Origin Resource Sharing (C
     "email": "misbahul.amin.ai@gmail.com",
     "password": "securepassword123"
 }
+{
+    "email": "panaceatech",
+    "password": "panaceatech"
+}
+
+
+# Test Access:
+{
+    "user": {
+        "email": "johndoe1@example.com",
+        "password": "SecurePassword123!",
+        "confirm_password": "SecurePassword123!"
+    },
+    "name": "John Doe",
+    "company": "Acme Corporation",
+    "department": "Engineering",
+    "mobile": "1234567890",
+    "designation": "admin",
+    "employee_id": "EMP123456",
+    "date_of_joining": "2023-01-15",
+    "assigned_line": 2,
+    "assigned_block": 4
+},
+{
+    "user": {
+        "email": "johndoe2@example.com",
+        "password": "SecurePassword123!",
+        "confirm_password": "SecurePassword123!"
+    },
+    "name": "John Doe",
+    "company": "Acme Corporation",
+    "department": "Engineering",
+    "mobile": "1234567890",
+    "designation": "hr",
+    "employee_id": "EMP123456",
+    "date_of_joining": "2023-01-15",
+    "assigned_line": 2,
+    "assigned_block": 4
+},
+{
+    "user": {
+        "email": "johndoe3@example.com",
+        "password": "SecurePassword123!",
+        "confirm_password": "SecurePassword123!"
+    },
+    "name": "John Doe",
+    "company": "Acme Corporation",
+    "department": "Engineering",
+    "mobile": "1234567890",
+    "designation": "supervisor",
+    "employee_id": "EMP123456",
+    "date_of_joining": "2023-01-15",
+    "assigned_line": 2,
+    "assigned_block": 4
+},
+{
+    "user": {
+        "email": "johndoe4@example.com",
+        "password": "SecurePassword123!",
+        "confirm_password": "SecurePassword123!"
+    },
+    "name": "John Doe",
+    "company": "Acme Corporation",
+    "department": "Engineering",
+    "mobile": "1234567890",
+    "designation": "mechanic",
+    "employee_id": "EMP123456",
+    "date_of_joining": "2023-01-15",
+    "assigned_line": 2,
+    "assigned_block": 4
+}

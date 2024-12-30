@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 DESIGNATION_CHOICES = (
         ('admin', 'Admin'),
-        ('manager', 'Manager'),
+        ('mechanic', 'Mechanic'),
         ('supervisor', 'Supervisor'),
         ('hr', 'HR'),
     )

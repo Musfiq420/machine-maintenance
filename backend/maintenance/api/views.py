@@ -7,6 +7,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from ..filters import MachineFilter
 from rest_framework import filters
 from rest_framework.pagination import PageNumberPagination
+from permissions.base_permissions import IsAdmin, IsHR, IsMechanic, IsSupervisor, IsAdminOrSupervisorOrMechanic, IsAdminOrMechanic
+
 
 class MachinePagination(PageNumberPagination):
     page_size = 10  # Number of items per page
@@ -23,14 +25,29 @@ class MachineViewSet(ModelViewSet):
     ordering = ['machine_id']  # Default ordering (optional)
     pagination_class = MachinePagination
 
-    # Optionally, you can set a default filter, for example:
-    # filterset_fields = ['status', 'floor_no', 'category']
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            # print(f"{self.action.capitalize()} called.")
+            return [IsAdminOrSupervisorOrMechanic()]
+        
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            # print(f"{self.action} called.")
+            return [IsAdminOrMechanic()]  # Adjust as needed
+        
+        return super().get_permissions()
 
+    
 class MechanicViewSet(ModelViewSet):
     queryset = Mechanic.objects.all()
     serializer_class = MechanicSerializer
+
     
 class BreakdownLogViewSet(ModelViewSet):
     queryset = BreakdownLog.objects.all()
     serializer_class = BreakdownLogSerializer
+
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve', 'create', 'update', 'partial_update', 'destroy']:
+            return [IsAdmin()]  # Adjust as needed   
+        return super().get_permissions()
 
