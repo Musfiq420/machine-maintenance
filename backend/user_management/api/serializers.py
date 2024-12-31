@@ -3,80 +3,47 @@ from rest_framework import serializers
 
 from ..models import Employee
 
-class UserRegistrationSerializer(serializers.ModelSerializer):
-    # Add extra fields for password and confirm password
-    confirm_password = serializers.CharField(required = True)
-    name = serializers.CharField()
-    company = serializers.CharField()
-    department = serializers.CharField()
-    mobile = serializers.CharField()
-    designation = serializers.CharField()
-    employee_id = serializers.CharField()
-    date_of_joining = serializers.DateField()
-    assigned_line = serializers.IntegerField()
-    assigned_block = serializers.IntegerField()
-    user_email = serializers.SerializerMethodField()  # Add this field
-
+class UserSerializer(serializers.ModelSerializer):
+    confirm_password = serializers.CharField(required=True, write_only=True)
     class Meta:
         model = User
-        fields = [
-            'name', 'company', 'department', 'mobile', 'designation',
-            'employee_id', 'date_of_joining', 'assigned_line', 'assigned_block',
-            'email', 'password', 'confirm_password', 'user_email'  # Include the new field
-        ]
-
-    def get_user_email(self, obj):
-        # Return the email of the associated user if it exists
-        if obj.user:
-            return obj.user.email
-        return None  # Or return "N/A" for employees without a user
+        fields = ['id', 'email', 'password', 'confirm_password']
+        extra_kwargs = {'password': {'write_only': True}}
 
     def validate(self, data):
-        # Check if passwords match
+        # Ensure passwords match
         if data['password'] != data['confirm_password']:
             raise serializers.ValidationError({"password": "Passwords do not match."})
+        # Ensure email is unique
         if User.objects.filter(email=data['email']).exists():
             raise serializers.ValidationError({'email': "Email already exists"})
         return data
 
-
     def create(self, validated_data):
-        # Remove confirm_password from validated_data
         validated_data.pop('confirm_password')
-
-        # Create the user
         user = User.objects.create_user(
-            username=validated_data['email'],  # Use email as the username
+            username=validated_data['email'],
             email=validated_data['email'],
             password=validated_data['password']
         )
+        return user
 
-        # Create the employee
-        employee_data = {
-            field: validated_data[field]
-            for field in ['name', 'company', 'department', 'mobile', 'designation',
-                          'employee_id', 'date_of_joining', 'assigned_line', 'assigned_block']
-        }
-        employee = Employee.objects.create(user=user, **employee_data)
-
-        return employee
-
-
-class EmployeeSerializer(serializers.ModelSerializer):
-    user_email = serializers.SerializerMethodField()
-
+class UserRegistrationSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
     class Meta:
         model = Employee
         fields = [
-            'id', 'name', 'company', 'department', 'mobile', 'designation',
-            'employee_id', 'date_of_joining', 'assigned_line', 'assigned_block', 'user_email'
+            'user','name', 'company', 'department', 'mobile', 'designation',
+            'employee_id', 'date_of_joining', 'assigned_line', 'assigned_block'
         ]
 
-    def get_user_email(self, obj):
-        # Return the email of the associated user if it exists
-        if obj.user:
-            return obj.user.email
-        return None  # Or return "N/A" for employees without a linked user
+    def create(self, validated_data):
+        user_data = validated_data.pop('user')
+        user = UserSerializer.create(UserSerializer(), validated_data=user_data)
+        employee = Employee.objects.create(user=user, **validated_data)
+        return employee
+
+
 
 class UserLoginSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)

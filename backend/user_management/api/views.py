@@ -7,50 +7,24 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 
 from ..models import Employee
-from .serializers import (EmployeeSerializer,UserRegistrationSerializer,UserLoginSerializer)
+from .serializers import (UserRegistrationSerializer,UserLoginSerializer)
+from django.urls import reverse
+from django.shortcuts import redirect
+from rest_framework import generics
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import UserRegistrationSerializer
+from permissions.base_permissions import IsAdmin, IsHR, IsMechanic, IsSupervisor, IsAdminOrSupervisorOrMechanic, IsAdminOrMechanic, IsAdminOrHR
 
 class UserRegistrationView(generics.CreateAPIView):
+    permission_classes = [IsAdminOrHR]
     serializer_class = UserRegistrationSerializer
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        
-        return Response(
-            {
-                "message": "Registration successful. Please log in.",
-                "redirect_url": "/login",
-                "username": serializer.validated_data.get("email")
-            },
-            status=201
-        )
-
-
-class EmployeeViewSet(viewsets.ModelViewSet):
-    serializer_class = EmployeeSerializer # Ensure only authenticated users can access
-
-    def get_queryset(self):
-        # Filter employees based on the logged-in user
-        return Employee.objects.filter(user=self.request.user)  # Ensure only authenticated users can access
-
-
-class UserListView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        users = User.objects.all()
-        # Use a simpler serializer for listing users
-        data = [{"id": user.id, "email": user.email, "username": user.username} for user in users]
-        return Response(data, status=status.HTTP_200_OK)
-
-
-class EmployeeListView(APIView):
-
-    def get(self, request):
-        employees = Employee.objects.all()
-        serializer = EmployeeSerializer(employees, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def create(self, request):
+        serializer = UserRegistrationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "User registered successfully! Please login.", 'redirect_url': "/login/" }, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserLoginApiView(APIView):
@@ -68,14 +42,38 @@ class UserLoginApiView(APIView):
                     'token': token.key,
                     'user_id': user.id,
                     'message': "Login successful. Redirecting to home.",
-                    'redirect_url': "/dashboard/machine-details"  # Or the home route on your frontend
+                    'redirect_url': "/home/"  # Or the home route on your frontend
                 }, status=status.HTTP_200_OK)
             return Response({'error': "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+
+class UserListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        users = User.objects.all()
+        # Use a simpler serializer for listing users
+        data = [{"id": user.id, "email": user.email, "username": user.username} for user in users]
+        return Response(data, status=status.HTTP_200_OK)
+
+
+
+class EmployeeListAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        employees = Employee.objects.all()
+        serializer = UserRegistrationSerializer(employees, many=True)
+        return Response(serializer.data)
+    
 class UserLogoutView(APIView):
-    def post(self, request):
-        request.user.auth_token.delete()
-        logout(request)
-        return Response({'success': "Logout successful"}, status=status.HTTP_200_OK)
+    def get(self, request):
+        if hasattr(request.user, 'auth_token'):
+            request.user.auth_token.delete()
+        login_url = reverse('login')  # This will reverse the 'login' URL name
+        response = Response({'success': "Logout successful"}, status=status.HTTP_200_OK)
+        response['Location'] = login_url  # The Location header now points to the login URL
+        response.status_code = 302  # HTTP Status code for redirection
+        return response
