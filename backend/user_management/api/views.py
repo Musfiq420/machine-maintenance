@@ -71,13 +71,9 @@ class EmployeeListAPIView(APIView):
     
 class UserLogoutView(APIView):
     def get(self, request):
-        if hasattr(request.user, 'auth_token'):
-            request.user.auth_token.delete()
-        login_url = reverse('login')  # This will reverse the 'login' URL name
-        response = Response({'success': "Logout successful"}, status=status.HTTP_200_OK)
-        response['Location'] = login_url  # The Location header now points to the login URL
-        response.status_code = 302  # HTTP Status code for redirection
-        return response
+        request.user.auth_token.delete()
+        logout(request)
+        return Response({'success': "Logout successful"}, status=status.HTTP_200_OK)
 
 class EmployeeNameAPIView(APIView):
     # permission_classes = [IsAuthenticated]
