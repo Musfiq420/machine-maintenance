@@ -23,18 +23,18 @@ class MachineViewSet(ModelViewSet):
     filterset_class = MachineFilter
     ordering_fields = '__all__'  # Allows ordering on all fields
     ordering = ['machine_id']  # Default ordering (optional)
-    # pagination_class = MachinePagination
+    pagination_class = MachinePagination
 
-    # def get_permissions(self):
-    #     if self.action in ['list', 'retrieve']:
-    #         # print(f"{self.action.capitalize()} called.")
-    #         return [IsAdminOrSupervisorOrMechanic()]
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            # print(f"{self.action.capitalize()} called.")
+            return [IsAdminOrSupervisorOrMechanic()]
         
-    #     if self.action in ['create', 'update', 'partial_update', 'destroy']:
-    #         # print(f"{self.action} called.")
-    #         return [IsAdminOrMechanic()]  # Adjust as needed
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            # print(f"{self.action} called.")
+            return [IsAdminOrMechanic()]  # Adjust as needed
         
-    #     return super().get_permissions()
+        return super().get_permissions()
 
     
 class MechanicViewSet(ModelViewSet):

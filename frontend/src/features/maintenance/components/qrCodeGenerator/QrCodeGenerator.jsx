@@ -87,12 +87,20 @@ const QrCodeGenerator = () => {
   };
 
   const Machine_QR_Data_API = getApiUrl('Machine_QR_Data_API');
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    fetch(Machine_QR_Data_API)
+    fetch(Machine_QR_Data_API,{
+      method: 'GET',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${token}`, // Ensure this header matches what your server expects
+      },
+  })
       .then((response) => response.json())
       .then((data) => {
-        setData(data);
+        console.log(data)
+        setData(data.results);
         setLoading(false);
       })
       .catch((err) => {
