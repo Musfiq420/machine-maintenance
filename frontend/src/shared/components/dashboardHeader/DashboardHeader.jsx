@@ -1,3 +1,5 @@
+import EmployeeName from "../user";
+
 const DashboardHeader = () => {
     return (
         <div>
@@ -31,8 +33,7 @@ const DashboardHeader = () => {
                         </svg>
                         {/* Profile Information */}
                         <div className="text-sm">
-                            <p className="font-medium text-gray-800">Md. Musfiqur Rahman</p>
-                            <p className="text-gray-500">Executive, IE and Workstudy</p>
+                            <EmployeeName />                            {/* <p className="font-medium text-gray-800">Md. Musfiqur Rahman</p> */}
                         </div>
                     </div>
                 </div>

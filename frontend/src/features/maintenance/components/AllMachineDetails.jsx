@@ -19,17 +19,28 @@ const AllMachineDetails = () => {
 
   // API URL
   const MACHINE_QR_DATA_API = getApiUrl('Machine_QR_Data_API');
+  const token = localStorage.getItem("token");
+  console.log(token)
 
   // Fetch machine data from API
   useEffect(() => {
     const fetchMachines = async () => {
       try {
         setLoading(true);
-        const response = await fetch(MACHINE_QR_DATA_API);
+        // const response = await fetch();
+        const response = await fetch(MACHINE_QR_DATA_API, {
+          method: 'GET',
+          headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Token ${token}`, // Ensure this header matches what your server expects
+          },
+      });
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-        const data = await response.json();
+        const res = await response.json();
+        const data = res.results;
+        console.log(data)
         if (Array.isArray(data)) {
           setMachines(data);
           // Extract unique floor numbers

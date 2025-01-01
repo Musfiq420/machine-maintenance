@@ -14,6 +14,7 @@ const CompleteStatus = () => {
 
   // API URL
   const Machine_QR_Data_API = getApiUrl('Machine_QR_Data_API'); // Ensure this function returns the correct API URL
+  // const Machine_QR_Data_API = 'http://127.0.0.1:8000/api/maintenance/machines/'; // Ensure this function returns the correct API URL
 
   // Fetch machine data from API
   useEffect(() => {
@@ -21,6 +22,7 @@ const CompleteStatus = () => {
       try {
         setLoading(true);
         const response = await fetch(Machine_QR_Data_API);
+        console.log(response)
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
