@@ -4,7 +4,7 @@ import React from "react";
 export default function LandingHero() {
   return (
     <>
-      <div className="bg-primary-dark relative p-5 mb-[30%] gap-4 text-center flex-col justify-center  flex h-screen ">
+      <div className="bg-primary-dark relative p-5 mb-[40%] gap-4 text-center flex-col justify-center  flex h-screen ">
         <div className="w-fit mx-auto rounded-full pr-2 bg-[#ffffff20] flex gap-4 text-sm md:text-md items-center ">
           <div className="w-8 flex items-center justify-center bg-primary-light rounded-full h-8 ">
             <Settings className="text-white" />
