@@ -20,13 +20,13 @@ export const router = createBrowserRouter([
     path: "/",
     element: <Main></Main>,
     children: [
+      // {
+      //   path: "/", // Default route
+      //   element: <Home></Home>, // Sign-up layout
+      // },
       {
         path: "/", // Default route
-        element: <Home></Home>, // Sign-up layout
-      },
-      {
-        path: "/landing", // Default route
-        element: <LandingPage />, // Sign-up layout
+        element: <LandingPage />, // Landing page
       },
       {
         path: "/dashboard/machine-details", // Default route
