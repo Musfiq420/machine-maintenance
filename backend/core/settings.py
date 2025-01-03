@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'maintenance',
     'user_management',
     'inventory',
+    'company',
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 
