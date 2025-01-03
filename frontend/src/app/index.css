@@ -1,3 +1,118 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: "Satoshi";
+  src: url("./fonts/Satoshi/Satoshi-Light.ttf");
+  font-weight: 300;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("./fonts/Satoshi/Satoshi-LightItalic.ttf");
+  font-weight: 300;
+  font-display: swap;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("./fonts/Satoshi/Satoshi-Regular.ttf");
+  font-weight: 400;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("./fonts/Satoshi/Satoshi-Italic.ttf");
+  font-weight: 400;
+  font-display: swap;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("./fonts/Satoshi/Satoshi-Medium.ttf");
+  font-weight: 500;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("./fonts/Satoshi/Satoshi-MediumItalic.ttf");
+  font-weight: 500;
+  font-display: swap;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("./fonts/Satoshi/Satoshi-Bold.ttf");
+  font-weight: 700;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("./fonts/Satoshi/Satoshi-BoldItalic.ttf");
+  font-weight: 700;
+  font-display: swap;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("./fonts/Satoshi/Satoshi-Black.ttf");
+  font-weight: 900;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("./fonts/Satoshi/Satoshi-BlackItalic.ttf");
+  font-weight: 900;
+  font-display: swap;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("./fonts/Satoshi/Satoshi-Variable.ttf");
+  font-weight: 300 900;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Satoshi";
+  src: url("./fonts/Satoshi/Satoshi-VariableItalic.ttf");
+  font-weight: 300 900;
+  font-display: swap;
+  font-style: italic;
+}
+
+body {
+  font-family: "Satoshi";
+}
+
+.gradientText {
+  background: linear-gradient(
+    to right,
+    #fff 20%,
+    #47b5ff 30%,
+    #47b5ff 70%,
+    #fff 80%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  background-size: 500% auto;
+  animation: textShine 6s linear infinite;
+}
+
+@keyframes textShine {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
