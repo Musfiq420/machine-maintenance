@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Mechanic, BreakdownLog, Machine
+from .models import Mechanic, BreakdownLog, Machine, Type, Brand, Category, Supplier, Location
 
 
 class MachineAdmin(admin.ModelAdmin):
@@ -7,7 +7,7 @@ class MachineAdmin(admin.ModelAdmin):
     list_display = ('machine_id', 'category', 'type', 'brand', 'model_number', 'serial_no', 'status', 'location', 'purchase_date', 'last_breakdown_start')
     
     # Fields that will be used for filtering the machines in the list view
-    list_filter = ('status', 'category', 'brand', 'location', 'floor_no', 'line_no')
+    list_filter = ('status', 'category', 'brand', 'location')
     
     # Fields to search in the list view
     search_fields = ('machine_id', 'category', 'type', 'brand', 'model_number', 'serial_no', 'location')
@@ -69,6 +69,11 @@ class BreakdownLogAdmin(admin.ModelAdmin):
 
 # Register the BreakdownLog model with its custom BreakdownLogAdmin
 admin.site.register(BreakdownLog, BreakdownLogAdmin)
+admin.site.register(Type)
+admin.site.register(Brand)
+admin.site.register(Category)
+admin.site.register(Supplier)
+admin.site.register(Location)
 
 # Register the admin class with the Machine model
 admin.site.register(Machine, MachineAdmin)
