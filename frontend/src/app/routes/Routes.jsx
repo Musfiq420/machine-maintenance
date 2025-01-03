@@ -1,19 +1,19 @@
 import { createBrowserRouter } from "react-router-dom";
 import Main from "../layout/Main";
-import SignUpLayout from "../../features/userManagement/pages/signUpLayout/SignUpLayout";
-import EmployeeListLayout from "../../features/userManagement/pages/employeeListLayout/EmployeeListLayout";
-import Home from "../../features/landingPage/pages/home/Home";
-import MainDashboard from "../../features/maintenance/pages/mainDashboard/MainDashboard";
-import MachineDetailsDashboard from "../../features/maintenance/pages/machineDetailsDashboard/MachineDetailsDashboard";
-import About from "../../features/landingPage/pages/about/About";
-import LoginLayout from "../../features/userManagement/pages/loginLayout/LoginLayout";
+import SignUpLayout from "../../features/userManagement/pages/SignUpLayout";
+import EmployeeListLayout from "../../features/userManagement/pages/EmployeeListLayout";
+import Home from "../../features/landingPage/pages/Home";
+import MainDashboard from "../../features/maintenance/pages/MainDashboard";
+import MachineDetailsDashboard from "../../features/maintenance/pages/MachineDetailsDashboard";
+import LoginLayout from "../../features/userManagement/pages/LoginLayout";
 import LogoutButton from "../../features/userManagement/components/logoutButton/LogoutButton";
-import QrCodeTable from "../../features/maintenance/pages/qrCodeTable/QrCodeTable";
+import QrCodeTable from "../../features/maintenance/pages/QrCodeTable";
 import SignInPage from "../../features/userManagement/pages/SignInPage";
 import ForgotPasswordPage from "../../features/userManagement/pages/ForgotPasswordPage";
 import AddMachineFormLayout from "../../features/maintenance/pages/AddMachineFormLayout";
 import AddMachineForm from "../../features/maintenance/components/AddMachineForm";
-import LandingPage from "../../features/landingPage/pages/new-home/landingPage";
+import LandingPage from "../../features/landingPage/pages/landingPage";
+import About from "../../features/landingPage/pages/About";
 
 export const router = createBrowserRouter([
   {
