@@ -5,7 +5,7 @@ from .models import Company
 # Register your models here.
 class CompanyAdmin(admin.ModelAdmin):
     list_display = (
-        'id',
         'name',
+        'id',
     )
 admin.site.register(Company, CompanyAdmin)

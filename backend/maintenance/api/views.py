@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from ..models import BreakdownLog, Machine, Mechanic
-from .serializers import BreakdownLogSerializer, MechanicSerializer, MachineSerializer
+from ..models import BreakdownLog, Machine, Mechanic, Type, Brand, Category, Location, Supplier
+from .serializers import BreakdownLogSerializer, MechanicSerializer, MachineSerializer, TypeSerializers, BrandSerializers, CategorySerializers, SupplierSerializers, LocationSerializers
 from rest_framework.exceptions import ValidationError
 
 
@@ -24,3 +24,22 @@ class BreakdownLogViewSet(ModelViewSet):
     queryset = BreakdownLog.objects.all()
     serializer_class = BreakdownLogSerializer
 
+class TypeViewSet(ModelViewSet):
+    queryset = Type.objects.all()
+    serializer_class = TypeSerializers
+
+class BrandViewSet(ModelViewSet):
+    queryset = Brand.objects.all()
+    serializer_class = BrandSerializers
+
+class SupplierViewSet(ModelViewSet):
+    queryset = Supplier.objects.all()
+    serializer_class = SupplierSerializers
+
+class LocationViewSet(ModelViewSet):
+    queryset = Location.objects.all()
+    serializer_class = LocationSerializers
+
+class CategoryViewSet(ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializers

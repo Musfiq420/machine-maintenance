@@ -66,14 +66,33 @@ class BreakdownLogAdmin(admin.ModelAdmin):
             'fields': ('lost_time', 'comments')
         })
     )
+class TypeAdmin(admin.ModelAdmin):
+    list_display = ('name', 'company')
+    prepopulated_fields = {'slug': ('name',)}
+
+class BrandAdmin(admin.ModelAdmin):
+    list_display = ('name', 'company')
+    prepopulated_fields = {'slug': ('name',)}
+
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'company')
+    prepopulated_fields = {'slug': ('name',)}    
+
+class SupplierAdmin(admin.ModelAdmin):
+    list_display = ('name', 'company')
+    prepopulated_fields = {'slug': ('name',)}
+
+class LocationAdmin(admin.ModelAdmin):
+    list_display = ('floor_no', 'desk', 'line_no')
+    prepopulated_fields = {'slug': ('floor_no','line_no',)}
 
 # Register the BreakdownLog model with its custom BreakdownLogAdmin
 admin.site.register(BreakdownLog, BreakdownLogAdmin)
-admin.site.register(Type)
-admin.site.register(Brand)
-admin.site.register(Category)
-admin.site.register(Supplier)
-admin.site.register(Location)
+admin.site.register(Type, TypeAdmin)
+admin.site.register(Brand, BrandAdmin)
+admin.site.register(Category, CategoryAdmin)
+admin.site.register(Supplier, SupplierAdmin)
+admin.site.register(Location, LocationAdmin)
 
 # Register the admin class with the Machine model
 admin.site.register(Machine, MachineAdmin)
