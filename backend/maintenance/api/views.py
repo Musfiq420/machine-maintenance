@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from ..models import BreakdownLog, Machine, Mechanic
-from .serializers import BreakdownLogSerializer, MechanicSerializer, MachineSerializer
+from ..models import BreakdownLog, Machine, Mechanic, Type, Brand, Category, Location, Supplier
+from .serializers import BreakdownLogSerializer, MechanicSerializer, MachineSerializer, TypeSerializers, BrandSerializers, CategorySerializers, SupplierSerializers, LocationSerializers
 from rest_framework.exceptions import ValidationError
 from django_filters.rest_framework import DjangoFilterBackend
 from ..filters import MachineFilter
@@ -50,4 +50,24 @@ class BreakdownLogViewSet(ModelViewSet):
         if self.action in ['list', 'retrieve', 'create', 'update', 'partial_update', 'destroy']:
             return [IsAdmin()]  # Adjust as needed   
         return super().get_permissions()
+
+class TypeViewSet(ModelViewSet):
+    queryset = Type.objects.all()
+    serializer_class = TypeSerializers
+
+class BrandViewSet(ModelViewSet):
+    queryset = Brand.objects.all()
+    serializer_class = BrandSerializers
+
+class SupplierViewSet(ModelViewSet):
+    queryset = Supplier.objects.all()
+    serializer_class = SupplierSerializers
+
+class LocationViewSet(ModelViewSet):
+    queryset = Location.objects.all()
+    serializer_class = LocationSerializers
+
+class CategoryViewSet(ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializers
 

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from maintenance.models import BreakdownLog
-from ..models import Mechanic, Machine
+from ..models import Mechanic, Machine, Type, Brand, Category, Location, Supplier
 
 class MachineSerializer(serializers.ModelSerializer):
     class Meta:
@@ -25,3 +25,28 @@ class BreakdownLogSerializer(serializers.ModelSerializer):
         model = BreakdownLog
         fields = '__all__'
 
+
+class BrandSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Brand
+        fields = '__all__'
+
+class TypeSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Type
+        fields = '__all__'
+
+class CategorySerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = '__all__'
+
+class LocationSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Location
+        fields = '__all__'
+
+class SupplierSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Supplier
+        fields = '__all__'
