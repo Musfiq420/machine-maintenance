@@ -1,26 +1,36 @@
 from django.db import models
 from django.contrib.auth.models import User
-from company.models import Company
+from company.models import Company, Location
 
-DESIGNATION_CHOICES = (
-        ('admin', 'Admin'),
-        ('mechanic', 'Mechanic'),
-        ('supervisor', 'Supervisor'),
-        ('hr', 'HR'),
+class Department(models.Model):
+    name = models.CharField(max_length = 50)
+    code = models.CharField(max_length=20, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.name
+    
+class Designation(models.Model):
+    title = models.CharField(max_length = 100)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    description = models.TextField(null=True, blank=True)
+    department = models.ForeignKey(
+        Department, on_delete=models.CASCADE, null=True, blank=True
     )
-
+    level = models.IntegerField(null=True, blank=True)
+    def __str__(self):
+        return self.title
 
 class Employee(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='employee', null=True, blank=True)
     name = models.CharField(max_length=50)
     company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, blank=True)
-    department = models.CharField(max_length=50, null=True, blank=True)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, blank=True)
     mobile = models.CharField(max_length=11, null=True, blank=True)
-    designation = models.CharField(max_length=50, choices=DESIGNATION_CHOICES)
+    designation = models.ForeignKey(Designation, on_delete=models.CASCADE, null=True, blank=True)
     employee_id = models.CharField(max_length=20, null=True, blank=True)
     date_of_joining = models.DateField(null=True, blank=True)
-    assigned_line = models.IntegerField()
-    assigned_block = models.IntegerField()
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return f"{self.name} - {self.designation}"

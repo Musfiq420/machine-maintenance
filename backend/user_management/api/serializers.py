@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from ..models import Employee
+from ..models import Employee, Department, Designation
 
 class UserSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(required=True, write_only=True)
@@ -48,3 +48,14 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 class UserLoginSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
     password = serializers.CharField(required=True)
+
+
+class DepartmentSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Department
+        fields = '__all__'
+
+class DesignationSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Designation
+        fields = '__all__'

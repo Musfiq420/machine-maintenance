@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django import forms
-from .models import  BreakdownLog, Machine, Type, Brand, Category, Supplier, Location
+from .models import  BreakdownLog, Machine, Type, Brand, Category, Supplier
 from django.shortcuts import redirect
 
 class MachineAdminForm(forms.ModelForm):
@@ -94,9 +94,7 @@ class SupplierAdmin(admin.ModelAdmin):
     list_display = ('name', 'company')
     # prepopulated_fields = {'slug': ('name',)}
 
-class LocationAdmin(admin.ModelAdmin):
-    list_display = ('floor_no', 'desk', 'line_no')
-    # prepopulated_fields = {'slug': ('floor_no','line_no',)}
+
 
 # Register the BreakdownLog model with its custom BreakdownLogAdmin
 admin.site.register(BreakdownLog, BreakdownLogAdmin)
@@ -104,7 +102,7 @@ admin.site.register(Type, TypeAdmin)
 admin.site.register(Brand, BrandAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Supplier, SupplierAdmin)
-admin.site.register(Location, LocationAdmin)
+
 
 # Register the admin class with the Machine model
 admin.site.register(Machine, MachineAdmin)
