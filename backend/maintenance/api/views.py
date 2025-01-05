@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from ..models import BreakdownLog, Machine, Mechanic, Type, Brand, Category, Location, Supplier
-from .serializers import BreakdownLogSerializer, MechanicSerializer, MachineSerializer, TypeSerializers, BrandSerializers, CategorySerializers, SupplierSerializers, LocationSerializers
+from ..models import BreakdownLog, Machine, Type, Brand, Category, Location, Supplier
+from .serializers import BreakdownLogSerializer, MachineSerializer, TypeSerializers, BrandSerializers, CategorySerializers, SupplierSerializers
 from rest_framework.exceptions import ValidationError
 from django_filters.rest_framework import DjangoFilterBackend
 from ..filters import MachineFilter
@@ -25,21 +25,17 @@ class MachineViewSet(ModelViewSet):
     ordering = ['machine_id']  # Default ordering (optional)
     pagination_class = MachinePagination
 
-    def get_permissions(self):
-        if self.action in ['list', 'retrieve']:
-            # print(f"{self.action.capitalize()} called.")
-            return [IsAdminOrSupervisorOrMechanic()]
+    # def get_permissions(self):
+    #     if self.action in ['list', 'retrieve']:
+    #         # print(f"{self.action.capitalize()} called.")
+    #         return [IsAdminOrSupervisorOrMechanic()]
         
-        if self.action in ['create', 'update', 'partial_update', 'destroy']:
-            # print(f"{self.action} called.")
-            return [IsAdminOrMechanic()]  # Adjust as needed
+    #     if self.action in ['create', 'update', 'partial_update', 'destroy']:
+    #         # print(f"{self.action} called.")
+    #         return [IsAdminOrMechanic()]  # Adjust as needed
         
-        return super().get_permissions()
+    #     return super().get_permissions()
 
-    
-class MechanicViewSet(ModelViewSet):
-    queryset = Mechanic.objects.all()
-    serializer_class = MechanicSerializer
 
     
 class BreakdownLogViewSet(ModelViewSet):
@@ -63,9 +59,7 @@ class SupplierViewSet(ModelViewSet):
     queryset = Supplier.objects.all()
     serializer_class = SupplierSerializers
 
-class LocationViewSet(ModelViewSet):
-    queryset = Location.objects.all()
-    serializer_class = LocationSerializers
+
 
 class CategoryViewSet(ModelViewSet):
     queryset = Category.objects.all()
