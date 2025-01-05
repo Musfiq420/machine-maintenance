@@ -1,14 +1,12 @@
 from django.contrib import admin
-from .models import Employee
+from .models import Employee, Department, Designation
 
 class EmployeeAdmin(admin.ModelAdmin):
     list_display = (
         'name', 
         'get_user_email', 
         'company', 
-        'department', 
         'mobile', 
-        'designation', 
         'employee_id', 
         'date_of_joining'
     )
@@ -19,4 +17,12 @@ class EmployeeAdmin(admin.ModelAdmin):
         return "No User"  # Default for employees without a user
     get_user_email.short_description = 'User Email/Username'  # Column header in admin
 
+class DepartmentAdmin(admin.ModelAdmin):
+    list_display = ('name', 'company')
+
+class DesignationAdmin(admin.ModelAdmin):
+    list_display = ('title', 'company')
+
 admin.site.register(Employee, EmployeeAdmin)
+admin.site.register(Department, DepartmentAdmin)
+admin.site.register(Designation, DesignationAdmin)
