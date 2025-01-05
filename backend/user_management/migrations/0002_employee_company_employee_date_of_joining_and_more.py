@@ -13,45 +13,45 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='employee',
-            name='company',
-            field=models.CharField(blank=True, max_length=50, null=True),
-        ),
-        migrations.AddField(
-            model_name='employee',
-            name='date_of_joining',
-            field=models.DateField(blank=True, null=True),
-        ),
-        migrations.AddField(
-            model_name='employee',
-            name='department',
-            field=models.CharField(blank=True, max_length=50, null=True),
-        ),
-        migrations.AddField(
-            model_name='employee',
-            name='employee_id',
-            field=models.CharField(blank=True, max_length=20, null=True),
-        ),
-        migrations.AddField(
-            model_name='employee',
-            name='mobile',
-            field=models.CharField(blank=True, max_length=11, null=True),
-        ),
-        migrations.AddField(
-            model_name='employee',
-            name='user',
-            field=models.OneToOneField(default=1, on_delete=django.db.models.deletion.CASCADE, related_name='employee', to=settings.AUTH_USER_MODEL),
-            preserve_default=False,
-        ),
-        migrations.AlterField(
-            model_name='employee',
-            name='designation',
-            field=models.CharField(choices=[('admin', 'Admin'), ('manager', 'Manager'), ('supervisor', 'Supervisor'), ('hr', 'HR')], max_length=50),
-        ),
-        migrations.AlterField(
-            model_name='employee',
-            name='name',
-            field=models.CharField(max_length=50),
-        ),
+        # migrations.AddField(
+        #     model_name='employee',
+        #     name='company',
+        #     field=models.CharField(blank=True, max_length=50, null=True),
+        # ),
+        # migrations.AddField(
+        #     model_name='employee',
+        #     name='date_of_joining',
+        #     field=models.DateField(blank=True, null=True),
+        # ),
+        # migrations.AddField(
+        #     model_name='employee',
+        #     name='department',
+        #     field=models.CharField(blank=True, max_length=50, null=True),
+        # ),
+        # migrations.AddField(
+        #     model_name='employee',
+        #     name='employee_id',
+        #     field=models.CharField(blank=True, max_length=20, null=True),
+        # ),
+        # migrations.AddField(
+        #     model_name='employee',
+        #     name='mobile',
+        #     field=models.CharField(blank=True, max_length=11, null=True),
+        # ),
+        # migrations.AddField(
+        #     model_name='employee',
+        #     name='user',
+        #     field=models.OneToOneField(default=1, on_delete=django.db.models.deletion.CASCADE, related_name='employee', to=settings.AUTH_USER_MODEL),
+        #     preserve_default=False,
+        # ),
+        # migrations.AlterField(
+        #     model_name='employee',
+        #     name='designation',
+        #     field=models.CharField(choices=[('admin', 'Admin'), ('manager', 'Manager'), ('supervisor', 'Supervisor'), ('hr', 'HR')], max_length=50),
+        # ),
+        # migrations.AlterField(
+        #     model_name='employee',
+        #     name='name',
+        #     field=models.CharField(max_length=50),
+        # ),
     ]

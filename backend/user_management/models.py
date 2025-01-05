@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from company.models import Company
 
 DESIGNATION_CHOICES = (
         ('admin', 'Admin'),
@@ -10,9 +11,9 @@ DESIGNATION_CHOICES = (
 
 
 class Employee(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='employee')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='employee', null=True, blank=True)
     name = models.CharField(max_length=50)
-    company = models.CharField(max_length=50, null=True, blank=True)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, blank=True)
     department = models.CharField(max_length=50, null=True, blank=True)
     mobile = models.CharField(max_length=11, null=True, blank=True)
     designation = models.CharField(max_length=50, choices=DESIGNATION_CHOICES)
