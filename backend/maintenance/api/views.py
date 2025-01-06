@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from ..models import BreakdownLog, Machine, Type, Brand, Category, Location, Supplier
-from .serializers import BreakdownLogSerializer, MachineSerializer, TypeSerializers, BrandSerializers, CategorySerializers, SupplierSerializers
+from ..models import BreakdownLog, Machine, Type, Brand, Category, Location, Supplier, ProblemCategory
+from .serializers import BreakdownLogSerializer, MachineSerializer, TypeSerializers, BrandSerializers, CategorySerializers, SupplierSerializers, ProblemCategorySerializers
 from rest_framework.exceptions import ValidationError
 from django_filters.rest_framework import DjangoFilterBackend
 from ..filters import MachineFilter
@@ -22,7 +22,7 @@ class MachineViewSet(ModelViewSet):
     filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
     filterset_class = MachineFilter
     ordering_fields = '__all__'  # Allows ordering on all fields
-    ordering = ['purchase_date']  # Default ordering (optional)
+    ordering = ['id']  # Default ordering (optional)
     pagination_class = MachinePagination
     search_fields = ['machine_id', 'brand__name', 'category__name', 'type__name', 'model_number', 'serial_no', 'location__room']
 
@@ -52,10 +52,10 @@ class BreakdownLogViewSet(ModelViewSet):
     queryset = BreakdownLog.objects.all()
     serializer_class = BreakdownLogSerializer
 
-    def get_permissions(self):
-        if self.action in ['list', 'retrieve', 'create', 'update', 'partial_update', 'destroy']:
-            return [IsAdmin()]  # Adjust as needed   
-        return super().get_permissions()
+    # def get_permissions(self):
+    #     if self.action in ['list', 'retrieve', 'create', 'update', 'partial_update', 'destroy']:
+    #         return [IsAdmin()]  # Adjust as needed   
+    #     return super().get_permissions()
 
 class TypeViewSet(ModelViewSet):
     queryset = Type.objects.all()
@@ -74,4 +74,8 @@ class SupplierViewSet(ModelViewSet):
 class CategoryViewSet(ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializers
+
+class ProblemCategoryViewSet(ModelViewSet):
+    queryset = ProblemCategory.objects.all()
+    serializer_class = ProblemCategorySerializers
 
