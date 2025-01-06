@@ -19,7 +19,7 @@ from permissions.base_permissions import IsAdmin, IsHR, IsMechanic, IsSupervisor
 
 
 class UserRegistrationView(generics.CreateAPIView):
-    permission_classes = [IsAdminOrHR]
+    # permission_classes = [IsAdminOrHR]
     serializer_class = UserRegistrationSerializer
     def create(self, request):
         serializer = UserRegistrationSerializer(data=request.data)
@@ -52,7 +52,7 @@ class UserLoginApiView(APIView):
 
 
 class UserListView(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request):
         users = User.objects.all()
@@ -63,7 +63,7 @@ class UserListView(APIView):
 
 
 class EmployeeListAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request):
         employees = Employee.objects.all()

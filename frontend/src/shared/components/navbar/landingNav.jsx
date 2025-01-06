@@ -15,7 +15,7 @@ export default function LandingNav() {
     },
     {
       title: "Dashboard",
-      link: "/dashboard",
+      link: "/dashboard/machine-details",
     },
     {
       title: "Contact",
