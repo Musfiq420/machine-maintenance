@@ -52,13 +52,32 @@ class Machine(models.Model):
     def __str__(self):
         return f"{self.category} ({self.model_number})"
 
+class ProblemCategory(models.Model):
+    SEVERITY_CHOICES = [
+        ('minor', 'Minor'),
+        ('major', 'Major'),
+        ('critical', 'Critical'),
+    ]
+    
+    CATEGORY_TYPE_CHOICES = [
+        ('machine', 'Machine Issue'),
+        ('operator', 'Operator Error'),
+        ('material', 'Material Defect'),
+        ('environment', 'Environmental Issue'),
+    ]
+
+    name = models.CharField(max_length=255, unique=True)
+    description = models.TextField(blank=True, null=True)
+    severity = models.CharField(max_length=10, choices=SEVERITY_CHOICES, default='minor')
+    category_type = models.CharField(max_length=20, choices=CATEGORY_TYPE_CHOICES, default='machine')
 
 
 class BreakdownLog(models.Model):
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name="machine_breakdowns")
     mechanic = models.ForeignKey(Employee, on_delete=models.SET_NULL, null=True, related_name="mechanic_breakdowns")
     operator = models.ForeignKey(Employee, on_delete=models.SET_NULL, null=True, related_name="operator_breakdowns")
-    problem_category = models.CharField(max_length=255)
+    problem_category = models.ForeignKey(ProblemCategory, on_delete=models.CASCADE,blank=True, null=True, related_name="breakdowns")
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, blank=True, null=True)
     breakdown_start = models.DateTimeField()
     lost_time = models.DurationField()
     comments = models.TextField(blank=True, null=True)
