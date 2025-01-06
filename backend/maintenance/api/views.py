@@ -8,7 +8,7 @@ from ..filters import MachineFilter
 from rest_framework import filters
 from rest_framework.pagination import PageNumberPagination
 from permissions.base_permissions import IsAdmin, IsHR, IsMechanic, IsSupervisor, IsAdminOrSupervisorOrMechanic, IsAdminOrMechanic
-
+from rest_framework.exceptions import NotFound
 
 class MachinePagination(PageNumberPagination):
     page_size = 10  # Number of items per page
@@ -22,9 +22,19 @@ class MachineViewSet(ModelViewSet):
     filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
     filterset_class = MachineFilter
     ordering_fields = '__all__'  # Allows ordering on all fields
-    ordering = ['machine_id']  # Default ordering (optional)
+    ordering = ['purchase_date']  # Default ordering (optional)
     pagination_class = MachinePagination
+    search_fields = ['machine_id', 'brand__name', 'category__name', 'type__name', 'model_number', 'serial_no', 'location__room']
 
+    def get_ordering(self):
+        ordering = self.request.query_params.get('ordering', None)
+        if ordering:
+            # Validate if the ordering field is allowed
+            allowed_fields = ['purchase_date', 'brand_name', 'categoryname', 'type_name']
+            if ordering not in allowed_fields:
+                raise NotFound(f"Ordering by '{ordering}' is not allowed.")
+            return [ordering]
+        return super().get_ordering()
     # def get_permissions(self):
     #     if self.action in ['list', 'retrieve']:
     #         # print(f"{self.action.capitalize()} called.")
