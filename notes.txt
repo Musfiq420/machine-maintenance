@@ -27,6 +27,10 @@ pip install django-cors-headers           # For Cross-Origin Resource Sharing (C
     "password": "securepassword123"
 }
 {
+    "email": "misbahul.amin.ai@gmail.com",
+    "password": "Towaha459"
+}
+{
     "email": "panaceatech",
     "password": "panaceatech"
 }
