@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { UserContext } from "../../../../context/userProvider";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const { login, user } = useContext(UserContext);
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -13,42 +15,16 @@ const Login = () => {
       return;
     }
 
-    try {
-      const response = await fetch("http://127.0.0.1:8000/api/user_management/login/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // Save the token and user ID to local storage
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user_id", data.user_id);
-
-        // Redirect to the provided redirect URL
-        if (data.redirect_url) {
-          window.location.href = data.redirect_url;
-        } else {
-          window.location.href = ""; // Fallback home route
-        }
-      } else {
-        // Display error message
-        setErrorMessage(data.error || "Login failed. Please try again.");
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      setErrorMessage("An error occurred while logging in. Please try again.");
-    }
+    console.log("test");
+    login(email, password);
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Login</h2>
+        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+          Login
+        </h2>
         <form onSubmit={handleLogin}>
           <div className="mb-4">
             <label
