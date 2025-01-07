@@ -7,6 +7,7 @@ export const UserContext = createContext({
   userLoading: false,
   login: () => {},
   logout: () => {},
+  getToken: () => {},
 });
 
 export default function UserProvider({ children }) {
@@ -95,7 +96,7 @@ export default function UserProvider({ children }) {
 
   return (
     <UserContext.Provider
-      value={{ user, login, logout, userRole, userLoading }}
+      value={{ user, login, logout, userRole, userLoading, getToken }}
     >
       {children}
     </UserContext.Provider>

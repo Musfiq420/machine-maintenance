@@ -97,6 +97,7 @@ export default function LandingNav() {
         </div>
       </div>
       <motion.div
+        initial={{ scaleY: 0 }}
         animate={{ scaleY: open ? 1 : 0 }}
         className="absolute lg:hidden flex flex-col items-center justify-center gap-4 font-semibold text-lg text-black  z-10 bg-primary-light inset-5 rounded-sm"
       >
