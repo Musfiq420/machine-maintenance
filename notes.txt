@@ -2,102 +2,95 @@ pip install djangorestframework-simplejwt  # For JWT-based authentication
 pip install django-cors-headers           # For Cross-Origin Resource Sharing (CORS) headers
 
 
-# Register
-{
-    "user": {
-        "email": "johndoe@example.com",
-        "password": "SecurePassword123!",
-        "confirm_password": "SecurePassword123!"
-    },
-    "name": "John Doe",
-    "company": "Acme Corporation",
-    "department": "Engineering",
-    "mobile": "1234567890",
-    "designation": "admin",
-    "employee_id": "EMP123456",
-    "date_of_joining": "2023-01-15",
-    "assigned_line": 2,
-    "assigned_block": 4
-}
-
 
 # Login
+
+# Admin
 {
-    "email": "misbahul.amin.ai@gmail.com",
-    "password": "securepassword123"
-}
-{
-    "email": "misbahul.amin.ai@gmail.com",
-    "password": "Towaha459"
-}
-{
-    "email": "panaceatech",
+     "email": "nazia.hossain@example.com",
     "password": "panaceatech"
+
+}
+# Hr
+{
+    "email": "jamil.rahman@example.com",
+    "password": "PassMe123!"
 }
 
 
-# Test Access:
-{
-    "user": {
-        "email": "johndoe1@example.com",
-        "password": "SecurePassword123!",
-        "confirm_password": "SecurePassword123!"
-    },
-    "name": "John Doe",
-    "company": "Acme Corporation",
-    "department": "Engineering",
-    "mobile": "1234567890",
-    "designation": "admin",
-    "employee_id": "EMP123456",
-    "date_of_joining": "2023-01-15",
-    "assigned_line": 2,
-    "assigned_block": 4
-},
-{
-    "user": {
-        "email": "johndoe2@example.com",
-        "password": "SecurePassword123!",
-        "confirm_password": "SecurePassword123!"
-    },
-    "name": "John Doe",
-    "company": "Acme Corporation",
-    "department": "Engineering",
-    "mobile": "1234567890",
-    "designation": "hr",
-    "employee_id": "EMP123456",
-    "date_of_joining": "2023-01-15",
-    "assigned_line": 2,
-    "assigned_block": 4
-},
-{
-    "user": {
-        "email": "johndoe3@example.com",
-        "password": "SecurePassword123!",
-        "confirm_password": "SecurePassword123!"
-    },
-    "name": "John Doe",
-    "company": "Acme Corporation",
-    "department": "Engineering",
-    "mobile": "1234567890",
-    "designation": "supervisor",
-    "employee_id": "EMP123456",
-    "date_of_joining": "2023-01-15",
-    "assigned_line": 2,
-    "assigned_block": 4
-},
-{
-    "user": {
-        "email": "johndoe4@example.com",
-        "password": "SecurePassword123!",
-        "confirm_password": "SecurePassword123!"
-    },
-    "name": "John Doe",
-    "company": "Acme Corporation",
-    "department": "Engineering",
-    "mobile": "1234567890",
-    "designation": "mechanic",
-    "employee_id": "EMP123456",
-    "date_of_joining": "2023-01-15",
-    "assigned_line": 2,
-    "assigned_block": 4
-}
+----------------------------------------------- user management.py serializers--------------------------------------------
+# from django.contrib.auth.models import User
+# from rest_framework import serializers
+
+# from ..models import Employee, Department, Designation
+
+# class UserSerializer(serializers.ModelSerializer):
+#     confirm_password = serializers.CharField(required=True, write_only=True)
+#     class Meta:
+#         model = User
+#         fields = ['id', 'email', 'password', 'confirm_password']
+#         extra_kwargs = {'password': {'write_only': True}}
+
+#     def validate(self, data):
+#         # Ensure passwords match
+#         if data['password'] != data['confirm_password']:
+#             raise serializers.ValidationError({"password": "Passwords do not match."})
+#         # Ensure email is unique
+#         if User.objects.filter(email=data['email']).exists():
+#             raise serializers.ValidationError({'email': "Email already exists"})
+#         return data
+
+#     def create(self, validated_data):
+#         validated_data.pop('confirm_password')
+#         user = User.objects.create_user(
+#             username=validated_data['email'],
+#             email=validated_data['email'],
+#             password=validated_data['password']
+#         )
+#         return user
+
+# class UserRegistrationSerializer(serializers.ModelSerializer):
+#     user = UserSerializer()
+#     class Meta:
+#         model = Employee
+#         fields = [
+#             'user','name', 'company', 'department', 'mobile', 'designation',
+#             'employee_id', 'date_of_joining', 'assigned_line', 'assigned_block'
+#         ]
+
+#     def create(self, validated_data):
+#         user_data = validated_data.pop('user')
+#         user = UserSerializer.create(UserSerializer(), validated_data=user_data)
+#         employee = Employee.objects.create(user=user, **validated_data)
+#         return employee
+    
+# class AddEmployeeSerializer(serializers.ModelSerializer):
+#     user = None
+#     class Meta:
+#         model = Employee
+#         fields = [
+#             'name', 'company', 'department', 'mobile', 'designation',
+#             'employee_id', 'date_of_joining', 'assigned_line', 'assigned_block'
+#         ]
+#     def create(self, validated_data):
+#         employee = Employee.objects.create(user=self.user, **validated_data)
+#         return employee
+
+
+
+# class UserLoginSerializer(serializers.Serializer):
+#     email = serializers.EmailField(required=True)
+#     password = serializers.CharField(required=True)
+
+
+# class DepartmentSerializers(serializers.ModelSerializer):
+#     class Meta:
+#         model = Department
+#         fields = '__all__'
+
+# class DesignationSerializers(serializers.ModelSerializer):
+#     class Meta:
+#         model = Designation
+#         fields = '__all__'
+
+##---
