@@ -9,6 +9,8 @@ from rest_framework import filters
 from rest_framework.pagination import PageNumberPagination
 from permissions.base_permissions import IsAdmin, IsHR, IsMechanic, IsSupervisor, IsAdminOrSupervisorOrMechanic, IsAdminOrMechanic
 from rest_framework.exceptions import NotFound
+from django.db.models import Sum
+from rest_framework.decorators import action
 
 class MachinePagination(PageNumberPagination):
     page_size = 10  # Number of items per page
@@ -52,6 +54,62 @@ class BreakdownLogViewSet(ModelViewSet):
     queryset = BreakdownLog.objects.all()
     serializer_class = BreakdownLogSerializer
 
+    @action(detail=False, methods=["get"], url_path="total-lost-time-per-machine")
+    def total_lost_time_per_machine(self, request):
+        # Aggregate lost time for each machine
+        lost_time_per_machine = (
+            self.get_queryset()
+            .values("machine__id", "machine__model_number")
+            .annotate(total_lost_time=Sum("lost_time"))
+            .order_by("machine__model_number")  # Optional: Sort by model number
+        )
+
+        # Convert total_lost_time to HH:MM:SS format
+        for item in lost_time_per_machine:
+            total_lost_time = item["total_lost_time"]
+            if total_lost_time is not None:
+                # Directly convert timedelta to string
+                item["total_lost_time"] = str(total_lost_time)
+            else:
+                item["total_lost_time"] = "0:00:00"
+
+        return Response(lost_time_per_machine)
+    
+
+    @action(detail=False, methods=["get"], url_path="total-lost-time-per-location")
+    def total_lost_time(self, request):
+        # Parse query parameters
+        rooms = request.query_params.get("location_room", "")  # Example: "A,B"
+        line_nos = request.query_params.get("location_line_no", "")  # Example: "1,2"
+
+        # Split the parameters into lists
+        room_list = rooms.split(",") if rooms else []
+        line_no_list = line_nos.split(",") if line_nos else []
+
+        # Filter the queryset based on the parameters
+        queryset = self.get_queryset()
+        if room_list:
+            queryset = queryset.filter(location__room__in=room_list)
+        if line_no_list:
+            queryset = queryset.filter(location__line_no__in=line_no_list)
+
+        # Calculate the total lost time
+        total_lost_time = queryset.aggregate(Sum("lost_time"))["lost_time__sum"]
+
+        # Format the total lost time
+        if total_lost_time:
+            formatted_total_lost_time = str(total_lost_time)
+        else:
+            formatted_total_lost_time = "0:00:00"
+
+        # Build the response
+        response_data = {
+            "rooms": room_list,
+            "line_nos": line_no_list,
+            "total_lost_time": formatted_total_lost_time,
+        }
+
+        return Response(response_data)
     # def get_permissions(self):
     #     if self.action in ['list', 'retrieve', 'create', 'update', 'partial_update', 'destroy']:
     #         return [IsAdmin()]  # Adjust as needed   
