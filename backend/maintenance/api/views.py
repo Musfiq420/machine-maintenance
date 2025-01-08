@@ -86,27 +86,61 @@ class BreakdownLogViewSet(ModelViewSet):
         room_list = rooms.split(",") if rooms else []
         line_no_list = line_nos.split(",") if line_nos else []
 
-        # Filter the queryset based on the parameters
-        queryset = self.get_queryset()
+        # Filter the BreakdownLog queryset based on the parameters
+        breakdown_queryset = self.get_queryset()
         if room_list:
-            queryset = queryset.filter(location__room__in=room_list)
+            breakdown_queryset = breakdown_queryset.filter(location__room__in=room_list)
         if line_no_list:
-            queryset = queryset.filter(location__line_no__in=line_no_list)
+            breakdown_queryset = breakdown_queryset.filter(location__line_no__in=line_no_list)
 
         # Calculate the total lost time
-        total_lost_time = queryset.aggregate(Sum("lost_time"))["lost_time__sum"]
+        total_lost_time = breakdown_queryset.aggregate(Sum("lost_time"))["lost_time__sum"]
 
         # Format the total lost time
-        if total_lost_time:
-            formatted_total_lost_time = str(total_lost_time)
-        else:
-            formatted_total_lost_time = "0:00:00"
+        formatted_total_lost_time = str(total_lost_time) if total_lost_time else "0:00:00"
+
+        # Filter the Machine queryset based on the parameters
+        machine_queryset = Machine.objects.all()
+        if room_list:
+            machine_queryset = machine_queryset.filter(location__room__in=room_list)
+        if line_no_list:
+            machine_queryset = machine_queryset.filter(location__line_no__in=line_no_list)
+
+        # Calculate machine stats
+        total_machine_count = machine_queryset.count()
+        total_active_machines = machine_queryset.filter(status="active").count()
+        total_repairing_machines = machine_queryset.filter(status="maintenance").count()
+        total_idle_machines = machine_queryset.filter(status="inactive").count()
+
+        # Serialize the machines
+        machine_data = [
+            {
+                "id": machine.id,
+                "machine_id": machine.machine_id,
+                "model_number": machine.model_number,
+                "serial_no": machine.serial_no,
+                "purchase_date": machine.purchase_date,
+                "last_breakdown_start": machine.last_breakdown_start,
+                "status": machine.status,
+                "category": machine.category.id if machine.category else None,
+                "type": machine.type.id if machine.type else None,
+                "brand": machine.brand.id if machine.brand else None,
+                "location": machine.location.id if machine.location else None,
+                "supplier": machine.supplier.id if machine.supplier else None,
+            }
+            for machine in machine_queryset
+        ]
 
         # Build the response
         response_data = {
             "rooms": room_list,
             "line_nos": line_no_list,
             "total_lost_time": formatted_total_lost_time,
+            "total_machine_count": total_machine_count,
+            "total_active_machines": total_active_machines,
+            "total_repairing_machines": total_repairing_machines,
+            "total_idle_machines": total_idle_machines,
+            "machines": machine_data,
         }
 
         return Response(response_data)
