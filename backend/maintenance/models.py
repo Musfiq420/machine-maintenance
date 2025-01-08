@@ -70,13 +70,14 @@ class ProblemCategory(models.Model):
     description = models.TextField(blank=True, null=True)
     severity = models.CharField(max_length=10, choices=SEVERITY_CHOICES, default='minor')
     category_type = models.CharField(max_length=20, choices=CATEGORY_TYPE_CHOICES, default='machine')
+    
 
 
 class BreakdownLog(models.Model):
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name="machine_breakdowns")
     mechanic = models.ForeignKey(Employee, on_delete=models.SET_NULL, null=True, related_name="mechanic_breakdowns")
     operator = models.ForeignKey(Employee, on_delete=models.SET_NULL, null=True, related_name="operator_breakdowns")
-    problem_category = models.ForeignKey(ProblemCategory, on_delete=models.CASCADE,blank=True, null=True, related_name="breakdowns")
+    problem_category = models.ForeignKey(ProblemCategory, on_delete=models.CASCADE,blank=True, null=True, related_name="breakdown_logs")
     location = models.ForeignKey(Location, on_delete=models.CASCADE, blank=True, null=True)
     breakdown_start = models.DateTimeField()
     lost_time = models.DurationField()
