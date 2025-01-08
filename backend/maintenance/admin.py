@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django import forms
-from .models import  BreakdownLog, Machine, Type, Brand, Category, Supplier
+from .models import  BreakdownLog, Machine, Type, Brand, Category, Supplier, ProblemCategory
 from django.shortcuts import redirect
 
 class MachineAdminForm(forms.ModelForm):
@@ -94,6 +94,10 @@ class SupplierAdmin(admin.ModelAdmin):
     list_display = ('name', 'company')
     # prepopulated_fields = {'slug': ('name',)}
 
+class ProblemCategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'description', 'severity', 'category_type')
+    # prepopulated_fields = {'slug': ('name',)}
+
 
 
 # Register the BreakdownLog model with its custom BreakdownLogAdmin
@@ -106,6 +110,7 @@ admin.site.register(Supplier, SupplierAdmin)
 
 # Register the admin class with the Machine model
 admin.site.register(Machine, MachineAdmin)
+admin.site.register(ProblemCategory, ProblemCategoryAdmin)
 
 # admin.site.register(Mechanic)
 # admin.site.register(Machine)
