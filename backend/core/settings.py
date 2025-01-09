@@ -94,24 +94,24 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
-
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'panaceatech',       # Database name you created on RDS
-#         'USER': 'panaceatech',   # The username you set for RDS
-#         'PASSWORD': 'panaceatech',  # The password you set for RDS
-#         'HOST': 'garments-tracker-db-01.cnmyoyiw8zrt.ap-southeast-2.rds.amazonaws.com',  # RDS endpoint
-#         'PORT': '5432',  # Default PostgreSQL port
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'panaceatech',       # Database name you created on RDS
+        'USER': 'panaceatech',   # The username you set for RDS
+        'PASSWORD': 'panaceatech',  # The password you set for RDS
+        'HOST': 'garments-tracker-db-01.cnmyoyiw8zrt.ap-southeast-2.rds.amazonaws.com',  # RDS endpoint
+        'PORT': '5432',  # Default PostgreSQL port
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
