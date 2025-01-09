@@ -101,6 +101,7 @@ class BreakdownLogViewSet(ModelViewSet):
 
         # Filter the Machine queryset based on the parameters
         machine_queryset = Machine.objects.all()
+        print(machine_queryset)
         if room_list:
             machine_queryset = machine_queryset.filter(location__room__in=room_list)
         if line_no_list:
