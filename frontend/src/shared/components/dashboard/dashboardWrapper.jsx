@@ -3,6 +3,7 @@ import { UserContext } from "../../../context/userProvider";
 import DashboardSidebar from "./DashboardSidebar";
 import DashboardHeader from "./DashboardHeader";
 import Footer from "../footer/Footer";
+import ErrorPage from "../ui/errorPage";
 
 export default function DashboardWrapper({ children }) {
   const { user } = useContext(UserContext);
@@ -28,7 +29,7 @@ export default function DashboardWrapper({ children }) {
           <Footer />
         </div>
       ) : (
-        <></>
+        <ErrorPage />
       )}
     </>
   );
