@@ -14,6 +14,7 @@ import AddMachineFormLayout from "../../features/maintenance/pages/AddMachineFor
 import AddMachineForm from "../../features/maintenance/components/AddMachineForm";
 import LandingPage from "../../features/landingPage/pages/landingPage";
 import About from "../../features/landingPage/pages/About";
+import ErrorPage from "../../shared/components/ui/errorPage";
 
 export const router = createBrowserRouter([
   {
@@ -29,15 +30,15 @@ export const router = createBrowserRouter([
         element: <LandingPage />, // Landing page
       },
       {
-        path: "/dashboard/machine-details", // Default route
+        path: "/dashboard/machine-monitoring", // Default route
         element: <MainDashboard></MainDashboard>, // Sign-up layout
       },
       {
-        path: "/dashboard/machine-monitoring", // Default route
+        path: "/dashboard/machine-monitoring/:id", // Default route
         element: <MachineDetailsDashboard></MachineDetailsDashboard>, // Sign-up layout
       },
       {
-        path: "/dashboard/qr-code-generator", // Default route
+        path: "/dashboard/machine-details", // Default route
         element: <QrCodeTable />,
       },
       {
@@ -75,6 +76,10 @@ export const router = createBrowserRouter([
       {
         path: "/employeeList", // Dashboard route
         element: <EmployeeListLayout></EmployeeListLayout>, // Example new page
+      },
+      {
+        path: "*", // 404 Page Route
+        element: <ErrorPage></ErrorPage>, // 404 page
       },
     ],
   },

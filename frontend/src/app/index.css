@@ -4,77 +4,77 @@
 
 @font-face {
   font-family: "Satoshi";
-  src: url("./fonts/Satoshi/Satoshi-Light.ttf");
+  src: url("/fonts/Satoshi/Satoshi-Light.ttf");
   font-weight: 300;
   font-display: swap;
   font-style: normal;
 }
 @font-face {
   font-family: "Satoshi";
-  src: url("./fonts/Satoshi/Satoshi-LightItalic.ttf");
+  src: url("/fonts/Satoshi/Satoshi-LightItalic.ttf");
   font-weight: 300;
   font-display: swap;
   font-style: italic;
 }
 @font-face {
   font-family: "Satoshi";
-  src: url("./fonts/Satoshi/Satoshi-Regular.ttf");
+  src: url("/fonts/Satoshi/Satoshi-Regular.ttf");
   font-weight: 400;
   font-display: swap;
   font-style: normal;
 }
 @font-face {
   font-family: "Satoshi";
-  src: url("./fonts/Satoshi/Satoshi-Italic.ttf");
+  src: url("/fonts/Satoshi/Satoshi-Italic.ttf");
   font-weight: 400;
   font-display: swap;
   font-style: italic;
 }
 @font-face {
   font-family: "Satoshi";
-  src: url("./fonts/Satoshi/Satoshi-Medium.ttf");
+  src: url("/fonts/Satoshi/Satoshi-Medium.ttf");
   font-weight: 500;
   font-display: swap;
   font-style: normal;
 }
 @font-face {
   font-family: "Satoshi";
-  src: url("./fonts/Satoshi/Satoshi-MediumItalic.ttf");
+  src: url("/fonts/Satoshi/Satoshi-MediumItalic.ttf");
   font-weight: 500;
   font-display: swap;
   font-style: italic;
 }
 @font-face {
   font-family: "Satoshi";
-  src: url("./fonts/Satoshi/Satoshi-Bold.ttf");
+  src: url("/fonts/Satoshi/Satoshi-Bold.ttf");
   font-weight: 700;
   font-display: swap;
   font-style: normal;
 }
 @font-face {
   font-family: "Satoshi";
-  src: url("./fonts/Satoshi/Satoshi-BoldItalic.ttf");
+  src: url("/fonts/Satoshi/Satoshi-BoldItalic.ttf");
   font-weight: 700;
   font-display: swap;
   font-style: italic;
 }
 @font-face {
   font-family: "Satoshi";
-  src: url("./fonts/Satoshi/Satoshi-Black.ttf");
+  src: url("/fonts/Satoshi/Satoshi-Black.ttf");
   font-weight: 900;
   font-display: swap;
   font-style: normal;
 }
 @font-face {
   font-family: "Satoshi";
-  src: url("./fonts/Satoshi/Satoshi-BlackItalic.ttf");
+  src: url("/fonts/Satoshi/Satoshi-BlackItalic.ttf");
   font-weight: 900;
   font-display: swap;
   font-style: italic;
 }
 @font-face {
   font-family: "Satoshi";
-  src: url("./fonts/Satoshi/Satoshi-Variable.ttf");
+  src: url("/fonts/Satoshi/Satoshi-Variable.ttf");
   font-weight: 300 900;
   font-display: swap;
   font-style: normal;
@@ -82,7 +82,7 @@
 
 @font-face {
   font-family: "Satoshi";
-  src: url("./fonts/Satoshi/Satoshi-VariableItalic.ttf");
+  src: url("/fonts/Satoshi/Satoshi-VariableItalic.ttf");
   font-weight: 300 900;
   font-display: swap;
   font-style: italic;

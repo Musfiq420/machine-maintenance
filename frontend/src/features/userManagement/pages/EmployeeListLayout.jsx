@@ -1,6 +1,6 @@
 import Footer from "../../../shared/components/footer/Footer";
 import EmployeeList from "../components/employeeList/EmployeeList";
-import DashboardSidebar from "../../../shared/components/dashboardSidebar/DashboardSidebar";
+import DashboardSidebar from "../../../shared/components/dashboard/DashboardSidebar";
 
 const EmployeeListLayout = () => {
   return (

@@ -8,7 +8,7 @@ import ErrorPage from "../../../shared/components/ui/errorPage";
 const SignUpLayout = () => {
   const { user } = useContext(UserContext);
   return (
-    <div>
+    <div className="bg-primary-accent">
       {user ? (
         <>
           <Navbar></Navbar>

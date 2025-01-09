@@ -5,6 +5,7 @@ import { UserContext } from "../../../context/userProvider";
 
 const DashboardHeader = () => {
   const { user } = useContext(UserContext);
+  console.log(user);
   return (
     <div>
       <header className="flex justify-between items-center py-4 px-6 bg-white shadow">
@@ -25,9 +26,12 @@ const DashboardHeader = () => {
             {/* Email Icon */}
             <MailRounded className="text-primary-dark text-lg" />
             {/* Profile Information */}
-            <div className="text-sm">
-              {user.name}
-              {/* <p className="font-medium text-gray-800">Md. Musfiqur Rahman</p> */}
+            <div className="flex text-xs text-black flex-col gap-1">
+              <div className="font-bold">{user.name}</div>
+              <div className="">
+                {user.designation} | {user.department}
+              </div>
+              <div className="">{user.company}</div>
             </div>
           </div>
         </div>

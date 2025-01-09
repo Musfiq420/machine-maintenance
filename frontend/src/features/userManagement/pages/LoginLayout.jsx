@@ -19,13 +19,11 @@ const LoginLayout = () => {
       {!userLoading ? (
         <>
           <Navbar></Navbar>
-          {!user && (
-            <div className="mt-8">
-              {" "}
-              {/* Add margin-top */}
-              <Login />
-            </div>
-          )}
+          <div className="mt-8">
+            {" "}
+            {/* Add margin-top */}
+            <Login />
+          </div>
           <Footer></Footer>
         </>
       ) : (
