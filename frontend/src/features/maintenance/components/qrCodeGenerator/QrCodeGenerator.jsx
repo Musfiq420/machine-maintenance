@@ -1,5 +1,5 @@
-import React, { useMemo, useState, useEffect } from 'react';
-import { MaterialReactTable } from 'material-react-table';
+import React, { useMemo, useState, useEffect, useContext } from "react";
+import { MaterialReactTable } from "material-react-table";
 import {
   Box,
   Dialog,
@@ -14,14 +14,16 @@ import {
   FormControl,
   Alert,
   CircularProgress, // Imported CircularProgress
-} from '@mui/material';
-import QRCode from 'react-qr-code';
-import { getApiUrl } from '../../../../shared/components/getApiUrl';
+} from "@mui/material";
+import QRCode from "react-qr-code";
+import { getApiUrl } from "../../../../shared/components/getApiUrl";
 
-import { jsPDF } from 'jspdf';
-import qrcode from 'qrcode'; // For generating QR code data URLs
+import { jsPDF } from "jspdf";
+import qrcode from "qrcode"; // For generating QR code data URLs
+import { UserContext } from "../../../../context/userProvider";
 
 const QrCodeGenerator = () => {
+  const { getToken } = useContext(UserContext);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -41,65 +43,65 @@ const QrCodeGenerator = () => {
   const [machineToDelete, setMachineToDelete] = useState(null);
 
   // Add Machine Form States
-  const [newMachineId, setNewMachineId] = useState('');
-  const [newCategory, setNewCategory] = useState('');
-  const [newType, setNewType] = useState('');
-  const [newBrand, setNewBrand] = useState('');
-  const [newModelNumber, setNewModelNumber] = useState('');
-  const [newSerialNo, setNewSerialNo] = useState('');
-  const [newFloorNo, setNewFloorNo] = useState('');
-  const [newLineNo, setNewLineNo] = useState('');
-  const [newSupplier, setNewSupplier] = useState('');
-  const [newPurchaseDate, setNewPurchaseDate] = useState('');
-  const [newLocation, setNewLocation] = useState('');
-  const [newLastBreakdownStart, setNewLastBreakdownStart] = useState('');
-  const [newStatus, setNewStatus] = useState('active');
+  const [newMachineId, setNewMachineId] = useState("");
+  const [newCategory, setNewCategory] = useState("");
+  const [newType, setNewType] = useState("");
+  const [newBrand, setNewBrand] = useState("");
+  const [newModelNumber, setNewModelNumber] = useState("");
+  const [newSerialNo, setNewSerialNo] = useState("");
+  const [newFloorNo, setNewFloorNo] = useState("");
+  const [newLineNo, setNewLineNo] = useState("");
+  const [newSupplier, setNewSupplier] = useState("");
+  const [newPurchaseDate, setNewPurchaseDate] = useState("");
+  const [newLocation, setNewLocation] = useState("");
+  const [newLastBreakdownStart, setNewLastBreakdownStart] = useState("");
+  const [newStatus, setNewStatus] = useState("active");
 
   // Update Form States
-  const [updateMachineId, setUpdateMachineId] = useState('');
-  const [updateCategory, setUpdateCategory] = useState('');
-  const [updateType, setUpdateType] = useState('');
-  const [updateBrand, setUpdateBrand] = useState('');
-  const [updateModelNumber, setUpdateModelNumber] = useState('');
-  const [updateSerialNo, setUpdateSerialNo] = useState('');
-  const [updateFloorNo, setUpdateFloorNo] = useState('');
-  const [updateLineNo, setUpdateLineNo] = useState('');
-  const [updateSupplier, setUpdateSupplier] = useState('');
-  const [updatePurchaseDate, setUpdatePurchaseDate] = useState('');
-  const [updateLocation, setUpdateLocation] = useState('');
-  const [updateLastBreakdownStart, setUpdateLastBreakdownStart] = useState('');
-  const [updateStatus, setUpdateStatus] = useState('active');
+  const [updateMachineId, setUpdateMachineId] = useState("");
+  const [updateCategory, setUpdateCategory] = useState("");
+  const [updateType, setUpdateType] = useState("");
+  const [updateBrand, setUpdateBrand] = useState("");
+  const [updateModelNumber, setUpdateModelNumber] = useState("");
+  const [updateSerialNo, setUpdateSerialNo] = useState("");
+  const [updateFloorNo, setUpdateFloorNo] = useState("");
+  const [updateLineNo, setUpdateLineNo] = useState("");
+  const [updateSupplier, setUpdateSupplier] = useState("");
+  const [updatePurchaseDate, setUpdatePurchaseDate] = useState("");
+  const [updateLocation, setUpdateLocation] = useState("");
+  const [updateLastBreakdownStart, setUpdateLastBreakdownStart] = useState("");
+  const [updateStatus, setUpdateStatus] = useState("active");
 
-  const [formError, setFormError] = useState('');
+  const [formError, setFormError] = useState("");
 
   const STATUS_CHOICES = [
-    { value: 'active', label: 'Active' },
-    { value: 'inactive', label: 'Inactive' },
-    { value: 'maintenance', label: 'Under Maintenance' },
-    { value: 'broken', label: 'Broken' },
+    { value: "active", label: "Active" },
+    { value: "inactive", label: "Inactive" },
+    { value: "maintenance", label: "Under Maintenance" },
+    { value: "broken", label: "Broken" },
   ];
 
   const statusColors = {
-    active: '#28a745',
-    inactive: '#6c757d',
-    maintenance: '#ffc107',
-    broken: '#dc3545',
+    active: "#28a745",
+    inactive: "#6c757d",
+    maintenance: "#ffc107",
+    broken: "#dc3545",
   };
 
-  const Machine_QR_Data_API = getApiUrl('Machine_QR_Data_API');
-  const token = localStorage.getItem("token");
+  const Machine_QR_Data_API = getApiUrl("Machine_QR_Data_API");
+  const token = getToken();
 
   useEffect(() => {
-    fetch(Machine_QR_Data_API,{
-      method: 'GET',
+    fetch(import.meta.env.VITE_MACHINE_DATA_API, {
+      method: "GET",
       headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Token ${token}`, // Ensure this header matches what your server expects
+        "Content-Type": "application/json",
+        Authorization: `${token}`, // Ensure this header matches what your server expects
       },
-  })
+    })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data)
+        console.log(data);
         setData(data.results);
         setLoading(false);
       })
@@ -122,41 +124,41 @@ const QrCodeGenerator = () => {
   const handleOpenAddModal = () => setOpenAddModal(true);
   const handleCloseAddModal = () => {
     setOpenAddModal(false);
-    setFormError('');
+    setFormError("");
     resetAddFields();
   };
 
   const resetAddFields = () => {
-    setNewMachineId('');
-    setNewCategory('');
-    setNewType('');
-    setNewBrand('');
-    setNewModelNumber('');
-    setNewSerialNo('');
-    setNewFloorNo('');
-    setNewLineNo('');
-    setNewSupplier('');
-    setNewPurchaseDate('');
-    setNewLocation('');
-    setNewLastBreakdownStart('');
-    setNewStatus('active');
+    setNewMachineId("");
+    setNewCategory("");
+    setNewType("");
+    setNewBrand("");
+    setNewModelNumber("");
+    setNewSerialNo("");
+    setNewFloorNo("");
+    setNewLineNo("");
+    setNewSupplier("");
+    setNewPurchaseDate("");
+    setNewLocation("");
+    setNewLastBreakdownStart("");
+    setNewStatus("active");
   };
 
   const handleOpenUpdateModal = (machine) => {
     // Pre-fill update fields
     setUpdateMachineId(machine.machine_id);
-    setUpdateCategory(machine.category || '');
-    setUpdateType(machine.type || '');
-    setUpdateBrand(machine.brand || '');
-    setUpdateModelNumber(machine.model_number || '');
-    setUpdateSerialNo(machine.serial_no || '');
-    setUpdateFloorNo(machine.floor_no || '');
-    setUpdateLineNo(machine.line_no || '');
-    setUpdateSupplier(machine.supplier || '');
-    setUpdatePurchaseDate(machine.purchase_date || '');
-    setUpdateLocation(machine.location || '');
-    setUpdateLastBreakdownStart(machine.last_breakdown_start || '');
-    setUpdateStatus(machine.status || 'active');
+    setUpdateCategory(machine.category || "");
+    setUpdateType(machine.type || "");
+    setUpdateBrand(machine.brand || "");
+    setUpdateModelNumber(machine.model_number || "");
+    setUpdateSerialNo(machine.serial_no || "");
+    setUpdateFloorNo(machine.floor_no || "");
+    setUpdateLineNo(machine.line_no || "");
+    setUpdateSupplier(machine.supplier || "");
+    setUpdatePurchaseDate(machine.purchase_date || "");
+    setUpdateLocation(machine.location || "");
+    setUpdateLastBreakdownStart(machine.last_breakdown_start || "");
+    setUpdateStatus(machine.status || "active");
 
     setSelectedMachine(machine);
     setOpenUpdateModal(true);
@@ -168,7 +170,7 @@ const QrCodeGenerator = () => {
   };
 
   const handleSaveMachine = () => {
-    setFormError('');
+    setFormError("");
     const floorNoInt = newFloorNo ? parseInt(newFloorNo, 10) : null;
     const lineNoInt = newLineNo ? parseInt(newLineNo, 10) : null;
 
@@ -189,17 +191,19 @@ const QrCodeGenerator = () => {
     };
 
     fetch(Machine_QR_Data_API, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     })
       .then((res) => {
         if (!res.ok) {
           return res.json().then((errData) => {
             if (res.status === 400 && errData && errData.machine_id) {
-              throw new Error(`Machine with ID "${newMachineId}" already exists.`);
+              throw new Error(
+                `Machine with ID "${newMachineId}" already exists.`
+              );
             }
-            throw new Error('Failed to create machine');
+            throw new Error("Failed to create machine");
           });
         }
         return res.json();
@@ -238,13 +242,13 @@ const QrCodeGenerator = () => {
     };
 
     fetch(`${Machine_QR_Data_API}${updateMachineId}/`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     })
       .then((res) => {
         if (!res.ok) {
-          throw new Error('Failed to update machine');
+          throw new Error("Failed to update machine");
         }
         return res.json();
       })
@@ -274,11 +278,11 @@ const QrCodeGenerator = () => {
     if (!machineToDelete) return;
     const { machine_id } = machineToDelete;
     fetch(`${Machine_QR_Data_API}${machine_id}/`, {
-      method: 'DELETE',
+      method: "DELETE",
     })
       .then((res) => {
         if (!res.ok) {
-          throw new Error('Failed to delete machine');
+          throw new Error("Failed to delete machine");
         }
         return fetch(Machine_QR_Data_API);
       })
@@ -296,39 +300,43 @@ const QrCodeGenerator = () => {
   const columns = useMemo(
     () => [
       {
-        id: 'no',
-        header: 'No',
+        id: "no",
+        header: "No",
         size: 50,
         Cell: ({ row }) => row.index + 1,
       },
-      { accessorKey: 'machine_id', header: 'Machine ID', size: 100 },
-      { accessorKey: 'category', header: 'Category', size: 100 },
-      { accessorKey: 'type', header: 'Type', size: 100 },
-      { accessorKey: 'brand', header: 'Brand', size: 100 },
-      { accessorKey: 'model_number', header: 'Model Number', size: 150 },
-      { accessorKey: 'serial_no', header: 'Serial No.', size: 150 },
-      { accessorKey: 'floor_no', header: 'Floor No.', size: 80 },
-      { accessorKey: 'line_no', header: 'Line No.', size: 80 },
-      { accessorKey: 'supplier', header: 'Supplier', size: 150 },
-      { accessorKey: 'purchase_date', header: 'Purchase Date', size: 120 },
-      { accessorKey: 'location', header: 'Location', size: 150 },
-      { accessorKey: 'last_breakdown_start', header: 'Last Breakdown Start', size: 180 },
+      { accessorKey: "machine_id", header: "Machine ID", size: 100 },
+      { accessorKey: "category", header: "Category", size: 100 },
+      { accessorKey: "type", header: "Type", size: 100 },
+      { accessorKey: "brand", header: "Brand", size: 100 },
+      { accessorKey: "model_number", header: "Model Number", size: 150 },
+      { accessorKey: "serial_no", header: "Serial No.", size: 150 },
+      { accessorKey: "floor_no", header: "Floor No.", size: 80 },
+      { accessorKey: "line_no", header: "Line No.", size: 80 },
+      { accessorKey: "supplier", header: "Supplier", size: 150 },
+      { accessorKey: "purchase_date", header: "Purchase Date", size: 120 },
+      { accessorKey: "location", header: "Location", size: 150 },
       {
-        accessorKey: 'status',
-        header: 'Status',
+        accessorKey: "last_breakdown_start",
+        header: "Last Breakdown Start",
+        size: 180,
+      },
+      {
+        accessorKey: "status",
+        header: "Status",
         size: 100,
         Cell: ({ cell }) => {
           const val = cell.getValue();
-          const bgColor = statusColors[val] || '#17a2b8';
+          const bgColor = statusColors[val] || "#17a2b8";
           return (
             <Box
               sx={{
                 backgroundColor: bgColor,
-                color: '#fff',
-                textAlign: 'center',
-                borderRadius: '4px',
-                padding: '4px',
-                fontSize: '0.9rem',
+                color: "#fff",
+                textAlign: "center",
+                borderRadius: "4px",
+                padding: "4px",
+                fontSize: "0.9rem",
               }}
             >
               {val}
@@ -337,8 +345,8 @@ const QrCodeGenerator = () => {
         },
       },
       {
-        accessorKey: 'qrCode',
-        header: 'QR Code',
+        accessorKey: "qrCode",
+        header: "QR Code",
         Cell: ({ row }) => {
           const { machine_id } = row.original;
           const qrValue = JSON.stringify({ machine_id });
@@ -346,11 +354,11 @@ const QrCodeGenerator = () => {
           return (
             <Box
               sx={{
-                cursor: 'pointer',
-                display: 'inline-block',
-                border: '1px solid #ccc',
-                padding: '2px',
-                borderRadius: '4px',
+                cursor: "pointer",
+                display: "inline-block",
+                border: "1px solid #ccc",
+                padding: "2px",
+                borderRadius: "4px",
               }}
               onClick={() => handleOpenModal(row.original)}
             >
@@ -361,17 +369,25 @@ const QrCodeGenerator = () => {
         size: 100,
       },
       {
-        id: 'actions',
-        header: 'Actions',
+        id: "actions",
+        header: "Actions",
         size: 150,
         Cell: ({ row }) => {
           const machine = row.original;
           return (
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <Button variant="contained" color="error" onClick={() => handleOpenDeleteConfirm(machine)}>
+            <Box sx={{ display: "flex", gap: 1 }}>
+              <Button
+                variant="contained"
+                color="error"
+                onClick={() => handleOpenDeleteConfirm(machine)}
+              >
                 Delete
               </Button>
-              <Button variant="contained" color="info" onClick={() => handleOpenUpdateModal(machine)}>
+              <Button
+                variant="contained"
+                color="info"
+                onClick={() => handleOpenUpdateModal(machine)}
+              >
                 Update
               </Button>
             </Box>
@@ -385,11 +401,11 @@ const QrCodeGenerator = () => {
   const handlePrintAllQrs = async () => {
     const finalData = data;
     if (finalData.length === 0) {
-      alert('No machines found.');
+      alert("No machines found.");
       return;
     }
 
-    const doc = new jsPDF('p', 'mm', 'a4');
+    const doc = new jsPDF("p", "mm", "a4");
     const pageWidth = doc.internal.pageSize.getWidth();
     const margin = 10;
     const qrSize = 30;
@@ -400,14 +416,14 @@ const QrCodeGenerator = () => {
     let y = margin + 10;
 
     doc.setFontSize(14);
-    doc.text('All Machine QRs', pageWidth / 2, margin, { align: 'center' });
+    doc.text("All Machine QRs", pageWidth / 2, margin, { align: "center" });
 
     for (let i = 0; i < finalData.length; i++) {
       const machine = finalData[i];
       const val = machine.machine_id;
       const qrDataURL = await qrcode.toDataURL(val, { width: 200 });
 
-      doc.addImage(qrDataURL, 'PNG', x, y, qrSize, qrSize);
+      doc.addImage(qrDataURL, "PNG", x, y, qrSize, qrSize);
       doc.setFontSize(10);
       doc.text(`ID: ${machine.machine_id}`, x, y + qrSize + 4);
 
@@ -420,13 +436,13 @@ const QrCodeGenerator = () => {
 
       if ((i + 1) % perPage === 0 && i + 1 < finalData.length) {
         doc.addPage();
-        doc.text('All Machine QRs', pageWidth / 2, margin, { align: 'center' });
+        doc.text("All Machine QRs", pageWidth / 2, margin, { align: "center" });
         x = margin;
         y = margin + 10;
       }
     }
 
-    doc.save('all_qrs.pdf');
+    doc.save("all_qrs.pdf");
   };
 
   const handlePrintQr = async () => {
@@ -436,12 +452,14 @@ const QrCodeGenerator = () => {
 
     const doc = new jsPDF();
     doc.setFontSize(14);
-    doc.text('Machine QR Code', doc.internal.pageSize.getWidth() / 2, 20, { align: 'center' });
+    doc.text("Machine QR Code", doc.internal.pageSize.getWidth() / 2, 20, {
+      align: "center",
+    });
 
     const val = machine_id;
     const qrDataURL = await qrcode.toDataURL(val, { width: 200 });
 
-    doc.addImage(qrDataURL, 'PNG', 80, 40, 50, 50);
+    doc.addImage(qrDataURL, "PNG", 80, 40, 50, 50);
     doc.setFontSize(12);
     doc.text(`Machine ID: ${machine_id}`, 80, 100);
 
@@ -453,11 +471,11 @@ const QrCodeGenerator = () => {
     return (
       <Box
         sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh', // Full viewport height
-          backgroundColor: '#f5f5f5', // Optional: Light background color
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh", // Full viewport height
+          backgroundColor: "#f5f5f5", // Optional: Light background color
         }}
       >
         <CircularProgress size={60} thickness={4} />
@@ -468,7 +486,14 @@ const QrCodeGenerator = () => {
   if (error) return <div>Error loading data: {error.message}</div>;
 
   return (
-    <Box sx={{ width: '100%', height: '100%', position: 'relative', padding: '8px' }}>
+    <Box
+      sx={{
+        width: "100%",
+        height: "100%",
+        position: "relative",
+        padding: "8px",
+      }}
+    >
       {/* Optional: Loading Overlay if you prefer overlay instead of full screen spinner */}
       {/* Uncomment the following block if you want an overlay spinner */}
 
@@ -499,37 +524,50 @@ const QrCodeGenerator = () => {
         enableStickyHeader
         muiTableContainerProps={{
           sx: {
-            maxHeight: 'calc(100vh - 200px)',
-            overflow: 'auto',
+            maxHeight: "calc(100vh - 200px)",
+            overflow: "auto",
           },
         }}
         renderBottomToolbarCustomActions={() => (
-          <Button variant="contained" color="secondary" onClick={handlePrintAllQrs}>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={handlePrintAllQrs}
+          >
             Print QR
           </Button>
         )}
         renderTopToolbarCustomActions={() => (
-          <Button variant="contained" color="primary" onClick={handleOpenAddModal}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleOpenAddModal}
+          >
             Add Machine
           </Button>
         )}
         muiTableBodyCellProps={{
           sx: {
-            padding: '4px 8px',
-            fontSize: '0.9rem',
+            padding: "4px 8px",
+            fontSize: "0.9rem",
           },
         }}
         muiTableHeadCellProps={{
           sx: {
-            padding: '4px 8px',
-            fontWeight: 'bold',
-            fontSize: '0.9rem',
+            padding: "4px 8px",
+            fontWeight: "bold",
+            fontSize: "0.9rem",
           },
         }}
       />
 
       {/* Modal for QR code details */}
-      <Dialog open={openModal} onClose={handleCloseModal} maxWidth="sm" fullWidth>
+      <Dialog
+        open={openModal}
+        onClose={handleCloseModal}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>Machine Details</DialogTitle>
         <DialogContent>
           {selectedMachine && (
@@ -568,13 +606,14 @@ const QrCodeGenerator = () => {
                 <strong>Location:</strong> {selectedMachine.location}
               </p>
               <p>
-                <strong>Last Breakdown Start:</strong> {selectedMachine.last_breakdown_start}
+                <strong>Last Breakdown Start:</strong>{" "}
+                {selectedMachine.last_breakdown_start}
               </p>
               <p>
                 <strong>Status:</strong> {selectedMachine.status}
               </p>
 
-              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+              <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
                 <QRCode value={selectedMachine.machine_id} size={128} />
               </Box>
             </>
@@ -582,22 +621,39 @@ const QrCodeGenerator = () => {
         </DialogContent>
         <DialogActions>
           {selectedMachine && (
-            <Button variant="contained" color="secondary" onClick={handlePrintQr}>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={handlePrintQr}
+            >
               Print
             </Button>
           )}
-          <Button onClick={handleCloseModal} variant="contained" color="primary">
+          <Button
+            onClick={handleCloseModal}
+            variant="contained"
+            color="primary"
+          >
             Close
           </Button>
         </DialogActions>
       </Dialog>
 
       {/* Modal for Adding a Machine */}
-      <Dialog open={openAddModal} onClose={handleCloseAddModal} maxWidth="sm" fullWidth>
+      <Dialog
+        open={openAddModal}
+        onClose={handleCloseAddModal}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>Add Machine</DialogTitle>
         <DialogContent>
-          {formError && <Alert severity="error" sx={{ mb: 2 }}>{formError}</Alert>}
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
+          {formError && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {formError}
+            </Alert>
+          )}
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
             <TextField
               label="Machine ID"
               variant="outlined"
@@ -681,23 +737,38 @@ const QrCodeGenerator = () => {
                 onChange={(e) => setNewStatus(e.target.value)}
               >
                 {STATUS_CHOICES.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
                 ))}
               </Select>
             </FormControl>
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseAddModal} variant="text">Cancel</Button>
-          <Button onClick={handleSaveMachine} variant="contained" color="primary">Save</Button>
+          <Button onClick={handleCloseAddModal} variant="text">
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSaveMachine}
+            variant="contained"
+            color="primary"
+          >
+            Save
+          </Button>
         </DialogActions>
       </Dialog>
 
       {/* Modal for Update Machine */}
-      <Dialog open={openUpdateModal} onClose={handleCloseUpdateModal} maxWidth="sm" fullWidth>
+      <Dialog
+        open={openUpdateModal}
+        onClose={handleCloseUpdateModal}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>Update Machine</DialogTitle>
         <DialogContent>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
             <TextField
               disabled
               label="Machine ID"
@@ -781,15 +852,25 @@ const QrCodeGenerator = () => {
                 onChange={(e) => setUpdateStatus(e.target.value)}
               >
                 {STATUS_CHOICES.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
                 ))}
               </Select>
             </FormControl>
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseUpdateModal} variant="text">Cancel</Button>
-          <Button onClick={handleUpdateMachine} variant="contained" color="primary">Update</Button>
+          <Button onClick={handleCloseUpdateModal} variant="text">
+            Cancel
+          </Button>
+          <Button
+            onClick={handleUpdateMachine}
+            variant="contained"
+            color="primary"
+          >
+            Update
+          </Button>
         </DialogActions>
       </Dialog>
 
@@ -800,8 +881,16 @@ const QrCodeGenerator = () => {
           Are you sure you want to delete this machine?
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDeleteConfirm} variant="text">Cancel</Button>
-          <Button onClick={handleDeleteMachine} variant="contained" color="error">Delete</Button>
+          <Button onClick={handleCloseDeleteConfirm} variant="text">
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDeleteMachine}
+            variant="contained"
+            color="error"
+          >
+            Delete
+          </Button>
         </DialogActions>
       </Dialog>
     </Box>

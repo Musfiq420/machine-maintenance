@@ -1,10 +1,12 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import FormInputFields from "../../../../shared/components/ui/formInputFields";
 
 const RegisterForm = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("user");
+  const [errorFields, setErrorFields] = useState([]);
 
   // Shared Form Data
   const [formData, setFormData] = useState({
@@ -22,33 +24,35 @@ const RegisterForm = () => {
     assigned_block: "",
   });
 
-  // Handle Tab Switching
-  const handleTabSwitch = (tab) => {
-    setActiveTab(tab);
-  };
-
   // Handle Input Changes
-  const handleInputChange = (e) => {
-    const { id, value } = e.target;
+  const handleInputChange = (e, value) => {
+    const { id } = e.target;
     setFormData({ ...formData, [id]: value });
   };
 
   // Handle Form Submission
-  const handleSubmit = async (e, formType) => {
-    e.preventDefault();
-  
+  const handleSubmit = async () => {
+    const currErrorFields = Object.keys(formData).filter(
+      (key) => formData[key] === ""
+    );
+    setErrorFields(currErrorFields);
+    if (errorFields.length) {
+      return;
+    }
+    console.log("error", errorFields);
+
     const url =
-      formType === "user"
+      activeTab === "user"
         ? "http://127.0.0.1:8000/api/user_management/register/"
         : "http://127.0.0.1:8000/api/user_management/employees/";
-  
+
     try {
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-  
+
       if (response.ok) {
         const data = await response.json();
         if (data.redirect_url) {
@@ -60,9 +64,7 @@ const RegisterForm = () => {
       } else if (response.status === 400) {
         // Handle validation errors
         const errorData = await response.json();
-        const errorMessage = Object.values(errorData)
-          .flat()
-          .join("\n"); // Concatenate all error messages
+        const errorMessage = Object.values(errorData).flat().join("\n"); // Concatenate all error messages
         alert(`Validation Error: ${errorMessage}`);
       } else {
         // Handle unexpected errors
@@ -74,25 +76,44 @@ const RegisterForm = () => {
       console.error("Error:", error);
       alert("An unexpected error occurred. Please try again.");
     }
-
   };
 
+  const userFields = [
+    { id: "email", label: "Email" },
+    { id: "password", label: "Password" },
+    { id: "confirm_password", label: "Confirm Password" },
+  ];
+  const commmonFields = [
+    { id: "company", label: "Company", type: "text" },
+    { id: "department", label: "Department", type: "text" },
+    { id: "mobile", label: "Mobile", type: "number" },
+    { id: "designation", label: "Designation", type: "text" },
+    { id: "employee_id", label: "Employee ID", type: "text" },
+    { id: "date_of_joining", label: "Date of Joining", type: "date" },
+    { id: "assigned_line", label: "Assigned Line", type: "text" },
+    { id: "assigned_block", label: "Assigned Block", type: "text" },
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="mb-20 bg-primary-accent">
       {/* Fixed Tabs */}
-      <div className="w-full bg-white shadow-md z-10 flex justify-center space-x-4 py-2">
+      <div className="w-fit py-3 px-10 text-black  rounded-full mx-auto mt-12 bg-primary-dark shadow-md z-10 flex justify-center space-x-4 ">
         <button
-          onClick={() => handleTabSwitch("user")}
-          className={`px-4 py-2 rounded ${
-            activeTab === "user" ? "bg-blue-600 text-white" : "bg-gray-200"
+          onClick={() => setActiveTab("user")}
+          className={`px-4 py-2 rounded-full ${
+            activeTab === "user"
+              ? "bg-primary-accent text-black"
+              : " text-white"
           }`}
         >
           User Form
         </button>
         <button
-          onClick={() => handleTabSwitch("employee")}
-          className={`px-4 py-2 rounded ${
-            activeTab === "employee" ? "bg-blue-600 text-white" : "bg-gray-200"
+          onClick={() => setActiveTab("employee")}
+          className={`px-4 py-2 rounded-full ${
+            activeTab === "employee"
+              ? "bg-primary-accent text-black"
+              : "text-white"
           }`}
         >
           Employee Form
@@ -101,110 +122,54 @@ const RegisterForm = () => {
 
       {/* Forms */}
       <div className="mt-20 flex justify-center items-center">
-        <form
-          onSubmit={(e) => handleSubmit(e, activeTab)}
-          className="bg-white p-6 rounded shadow-md w-full max-w-3xl"
-        >
-          <h2 className="text-xl font-bold mb-4">
+        <div className="bg-white p-6 rounded shadow-md w-full max-w-3xl">
+          <h2 className="text-xl text-center text-black  font-bold mb-4">
             {activeTab === "user"
               ? "User Registration"
               : "Employee Registration"}
           </h2>
           {/* Name Field (Full Width) */}
-          <div className="mb-4">
-            <label htmlFor="name" className="block text-sm font-medium">
-              Name:
-            </label>
-            <input
-              type="text"
-              id="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              className="w-full p-2 border rounded"
-              required
-            />
-          </div>
+          <FormInputFields
+            errorField={errorFields}
+            input={formData["name"]}
+            setInput={handleInputChange}
+            name={"Name"}
+            id={"name"}
+          />
           {/* User-Specific Fields */}
           {activeTab === "user" && (
             <div className="grid grid-cols-2 gap-4">
-              <div className="mb-4">
-                <label htmlFor="email" className="block text-sm font-medium">
-                  Email:
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border rounded"
-                  required
+              {userFields.map(({ id, label }) => (
+                <FormInputFields
+                  errorField={errorFields}
+                  input={formData[id]}
+                  setInput={handleInputChange}
+                  name={label}
+                  id={id}
                 />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="password" className="block text-sm font-medium">
-                  Password:
-                </label>
-                <input
-                  type="password"
-                  id="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border rounded"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="confirm_password"
-                  className="block text-sm font-medium"
-                >
-                  Confirm Password:
-                </label>
-                <input
-                  type="password"
-                  id="confirm_password"
-                  value={formData.confirm_password}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border rounded"
-                  required
-                />
-              </div>
+              ))}
             </div>
           )}
           {/* Shared Fields (Two Columns) */}
           <div className="grid grid-cols-2 gap-4">
-            {[
-              { id: "company", label: "Company", type: "text" },
-              { id: "department", label: "Department", type: "text" },
-              { id: "mobile", label: "Mobile", type: "tel" },
-              { id: "designation", label: "Designation", type: "text" },
-              { id: "employee_id", label: "Employee ID", type: "text" },
-              { id: "date_of_joining", label: "Date of Joining", type: "date" },
-              { id: "assigned_line", label: "Assigned Line", type: "number" },
-              { id: "assigned_block", label: "Assigned Block", type: "number" },
-            ].map(({ id, label, type }) => (
-              <div key={id} className="mb-4">
-                <label htmlFor={id} className="block text-sm font-medium">
-                  {label}:
-                </label>
-                <input
-                  type={type}
-                  id={id}
-                  value={formData[id]}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border rounded"
-                  required={id !== "mobile"} // Only 'mobile' is optional
-                />
-              </div>
+            {commmonFields.map(({ id, label, type }) => (
+              <FormInputFields
+                errorField={errorFields}
+                input={formData[id]}
+                name={label}
+                id={id}
+                setInput={handleInputChange}
+                type={type}
+              />
             ))}
           </div>
           <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+            onClick={handleSubmit}
+            className="w-full bg-primary-dark text-white py-2 rounded hover:bg-primary"
           >
             {activeTab === "user" ? "Register User" : "Register Employee"}
           </button>
-        </form>
+        </div>
       </div>
     </div>
   );
