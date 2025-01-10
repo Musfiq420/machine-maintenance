@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import { UserContext } from "../../../context/userProvider";
 import DashboardSidebar from "./DashboardSidebar";
-import DashboardHeader from "./DashboardHeader";
 import Footer from "../footer/Footer";
 import ErrorPage from "../ui/errorPage";
 
@@ -18,11 +17,8 @@ export default function DashboardWrapper({ children }) {
             </div>
 
             {/* Main Content with margin-left to make space for the sidebar */}
-            <div className="flex-1 lg:ml-64 overflow-auto">
-              <div className="flex-1 p-8 bg-gray-50">
-                <DashboardHeader />
-                {children}
-              </div>
+            <div className="flex-1 lg:ml-64 min-h-screen bg-white overflow-auto">
+              <div className="flex-1 p-8 bg-gray-50">{children}</div>
             </div>
           </div>
           {/* Footer */}

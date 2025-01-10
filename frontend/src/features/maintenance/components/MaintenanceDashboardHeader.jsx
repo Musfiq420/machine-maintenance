@@ -1,9 +1,8 @@
 import { MailRounded } from "@mui/icons-material";
-import EmployeeName from "../user";
 import { useContext } from "react";
 import { UserContext } from "../../../context/userProvider";
 
-const DashboardHeader = () => {
+const MaintenanceDashboardHeader = () => {
   const { user } = useContext(UserContext);
   console.log(user);
   return (
@@ -40,4 +39,4 @@ const DashboardHeader = () => {
   );
 };
 
-export default DashboardHeader;
+export default MaintenanceDashboardHeader;

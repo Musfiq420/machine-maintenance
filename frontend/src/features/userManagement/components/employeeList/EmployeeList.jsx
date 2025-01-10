@@ -1,35 +1,42 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { UserContext } from "../../../../context/userProvider";
+import DashboardLoading from "../../../../shared/components/dashboard/dashboardLoading";
 
 const EmployeeList = () => {
-  let navigate = useNavigate();
+  const navigate = useNavigate();
+  const { getToken } = useContext(UserContext);
+
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const employeesPerPage = 5; // Number of employees per page
+  const employeesPerPage = 10; // Number of employees per page
 
   useEffect(() => {
     const fetchEmployees = async () => {
+      const token = getToken();
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/api/user_management/employee-list/",
+          `${
+            import.meta.env.VITE_URL_PREFIX
+          }/api/user_management/employee-list/`,
           {
             headers: {
-              Authorization: `Token ${localStorage.getItem("token")}`, // Ensure the token is being sent
+              Authorization: token, // Ensure the token is being sent
             },
           }
         );
         if (response.ok) {
           const data = await response.json();
-          // console.log("Fetched employees:", data); // Log the fetched data
+          console.log(data);
           setEmployees(data); // Set the state
         } else {
           console.error("Error fetching employees:", response.statusText);
         }
       } catch (error) {
         console.error("Error fetching employees:", error);
-      }finally{
-        setLoading(false)
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -37,7 +44,7 @@ const EmployeeList = () => {
   }, []);
 
   if (loading) {
-    return <div className="text-center p-4 text-xl">Loading...</div>;
+    return <DashboardLoading title={"Employee"} />;
   }
 
   // Get current employees for the page
@@ -52,14 +59,14 @@ const EmployeeList = () => {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
-    <div className="p-6 bg-green-100 h-full">
-      <h1 className="text-2xl font-bold mb-4 text-center text-green-700">
+    <div className="p-6 bg-primary-accent h-full">
+      <h1 className="text-2xl font-bold mb-4 text-center text-primary-dark">
         Employee List
       </h1>
       <div className="overflow-x-auto">
-        <table className="table w-full border border-green-300 rounded-md shadow-md">
+        <table className="table w-full border border-primary-accent rounded-md shadow-md">
           <thead>
-            <tr className="bg-green-600 text-white">
+            <tr className="bg-primary-dark text-white">
               <th className="p-3">Name</th>
               <th className="p-3">Company</th>
               <th className="p-3">Department</th>
@@ -72,7 +79,7 @@ const EmployeeList = () => {
             {currentEmployees.map((employee) => (
               <tr
                 key={employee.id}
-                className="hover:bg-green-200 border-b border-green-300"
+                className="hover:bg-green-200 border-b cursor-pointer bg-white text-black border-primary-accent"
               >
                 <td className="p-3">{employee.name || "N/A"}</td>
                 <td className="p-3">{employee.company || "N/A"}</td>
@@ -80,9 +87,9 @@ const EmployeeList = () => {
                 <td className="p-3">{employee.designation || "N/A"}</td>
                 <td className="p-3">{employee.mobile || "N/A"}</td>
                 <td className="p-3">
-                  {employee.user_email ? (
+                  {employee.user ? (
                     <span className="text-green-700 font-semibold">
-                      {employee.user_email}
+                      {employee.user.email}
                     </span>
                   ) : (
                     <span className="text-red-500 font-semibold">N/A</span>
@@ -92,9 +99,14 @@ const EmployeeList = () => {
             ))}
           </tbody>
         </table>
-        <button onClick={() => {
-          navigate("/signup")
-        }} className="btn mt-5 bg-green-600 text-white">Add Employee</button>
+        <button
+          onClick={() => {
+            navigate("/signup");
+          }}
+          className="btn mt-5 bg-primary-dark text-white"
+        >
+          Add Employee
+        </button>
       </div>
 
       {/* Pagination */}
@@ -107,8 +119,8 @@ const EmployeeList = () => {
               onClick={() => paginate(index + 1)}
               className={`mx-1 px-3 py-1 rounded ${
                 currentPage === index + 1
-                  ? "bg-green-600 text-white"
-                  : "bg-green-200 hover:bg-green-300"
+                  ? "bg-primary-dark text-white"
+                  : "bg-green-200 hover:bg-primary-dark hover:text-white text-black"
               }`}
             >
               {index + 1}

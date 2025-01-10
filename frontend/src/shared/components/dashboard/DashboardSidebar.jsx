@@ -12,6 +12,8 @@ import {
   FaTimes,
   FaTable,
   FaClipboardList,
+  FaUsers,
+  FaUserAlt,
 } from "react-icons/fa"; // Importing icons from React Icons
 import { UserContext } from "../../../context/userProvider";
 import { FaGear, FaGears } from "react-icons/fa6";
@@ -67,6 +69,13 @@ const DashboardSidebar = () => {
       name: "Kanban Board",
       link: "/dashboard/planning/kanban-board",
       icon: <FaClipboardList />,
+    },
+  ];
+  const userLinks = [
+    {
+      name: "Employee List",
+      link: "/dashboard/employees",
+      icon: <FaUsers />,
     },
   ];
 
@@ -149,28 +158,14 @@ const DashboardSidebar = () => {
             linkList={planningLinks}
             menuName={"Planning"}
           />
+          {/* User List */}
+          <DashboardMenu
+            currPath={location.pathname}
+            icon={<FaUserAlt />}
+            linkList={userLinks}
+            menuName={"User Management"}
+          />
 
-          <li>
-            <button
-              onClick={() => setUserOpen(!isUserManagementOpen)}
-              className="flex justify-between w-full px-4 py-2 text-left hover:bg-primary-dark hover:text-white"
-            >
-              User Management
-              <span>{isUserManagementOpen ? "-" : "+"}</span>
-            </button>
-            {isUserManagementOpen && (
-              <ul className="ml-6 space-y-1">
-                <li>
-                  <Link
-                    to="/employeeList"
-                    className="block px-4 py-2 hover:bg-primary-dark hover:text-white"
-                  >
-                    Employee List
-                  </Link>
-                </li>
-              </ul>
-            )}
-          </li>
           {/* Logout (Optional) */}
           <li className="absolute bottom-4 w-full">
             <button
