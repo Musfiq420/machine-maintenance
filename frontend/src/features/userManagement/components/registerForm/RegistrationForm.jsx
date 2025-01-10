@@ -14,7 +14,7 @@ const RegisterForm = () => {
     password: "",
     confirm_password: "",
     name: "",
-    company: "",
+    company: [],
     department: "",
     mobile: "",
     designation: "",
@@ -25,8 +25,15 @@ const RegisterForm = () => {
   });
 
   // Handle Input Changes
-  const handleInputChange = (e, value) => {
-    const { id } = e.target;
+  const handleInputChange = (id, value) => {
+    console.log(id);
+    if (Array.isArray(value)) {
+      setFormData({
+        ...formData,
+        [id]: value,
+      });
+      return;
+    }
     setFormData({ ...formData, [id]: value });
   };
 
@@ -84,7 +91,19 @@ const RegisterForm = () => {
     { id: "confirm_password", label: "Confirm Password" },
   ];
   const commmonFields = [
-    { id: "company", label: "Company", type: "text" },
+    {
+      id: "company",
+      label: "Company",
+      type: "select",
+      options: [
+        "Company 1",
+        "Company 2",
+        "Company 3",
+        "Company 4",
+        "Company 5",
+        "Company 6",
+      ],
+    },
     { id: "department", label: "Department", type: "text" },
     { id: "mobile", label: "Mobile", type: "number" },
     { id: "designation", label: "Designation", type: "text" },
@@ -152,7 +171,7 @@ const RegisterForm = () => {
           )}
           {/* Shared Fields (Two Columns) */}
           <div className="grid grid-cols-2 gap-4">
-            {commmonFields.map(({ id, label, type }) => (
+            {commmonFields.map(({ id, label, type, options }) => (
               <FormInputFields
                 errorField={errorFields}
                 input={formData[id]}
@@ -160,12 +179,14 @@ const RegisterForm = () => {
                 id={id}
                 setInput={handleInputChange}
                 type={type}
+                multiple={false}
+                options={options}
               />
             ))}
           </div>
           <button
             onClick={handleSubmit}
-            className="w-full bg-primary-dark text-white py-2 rounded hover:bg-primary"
+            className="w-full bg-primary-dark text-white py-2 rounded hover:bg-primary-"
           >
             {activeTab === "user" ? "Register User" : "Register Employee"}
           </button>
