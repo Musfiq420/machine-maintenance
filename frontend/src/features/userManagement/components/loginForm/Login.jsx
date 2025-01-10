@@ -15,7 +15,6 @@ const Login = () => {
       return;
     }
 
-    console.log("test");
     login(email, password);
   };
 
