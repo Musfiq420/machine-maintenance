@@ -5,6 +5,8 @@ class EmployeeAdmin(admin.ModelAdmin):
     list_display = (
         'name', 
         'get_user_email', 
+        'department',
+        'designation',
         'company', 
         'mobile', 
         'employee_id', 
