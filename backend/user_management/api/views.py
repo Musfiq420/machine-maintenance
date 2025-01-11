@@ -61,7 +61,7 @@ class UserRegistrationView(generics.CreateAPIView):
 class AddEmployeeViewset(ModelViewSet):
     queryset = Employee.objects.all()
     serializer_class = AddEmployeeSerializer
-    # permission_classes = [IsAdminOrHR, IsAuthenticated]  # Adjust as needed
+    # permission_classes =  [IsAdminOrHR, IsAuthenticated]  # Adjust as needed
 
 
 # -----------------------------------------------------
