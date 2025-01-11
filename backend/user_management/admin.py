@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Employee, Department, Designation
+from .models import Employee, Department, Designation, DeviceToken
 
 class EmployeeAdmin(admin.ModelAdmin):
     list_display = (
@@ -28,3 +28,4 @@ class DesignationAdmin(admin.ModelAdmin):
 admin.site.register(Employee, EmployeeAdmin)
 admin.site.register(Department, DepartmentAdmin)
 admin.site.register(Designation, DesignationAdmin)
+admin.site.register(DeviceToken)

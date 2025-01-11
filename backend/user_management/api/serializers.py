@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
 from company.models import Company, Location  # Assuming these are in the company app
-from ..models import Employee, Department, Designation
+from ..models import Employee, Department, Designation, DeviceToken
 
 
 # --------------------------
@@ -182,6 +182,18 @@ class UserLoginSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
     password = serializers.CharField(required=True)
 
+<<<<<<< HEAD
+
+# --------------------------
+# PUsh Notification DeviceToken Serializer
+# --------------------------
+
+class DeviceTokenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DeviceToken
+        fields = ['id', 'token']
+        read_only_fields = ['id']
+=======
 # --------------------------
 # User Group Serializer
 # --------------------------
@@ -190,3 +202,4 @@ class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
         fields = '__all__'
+>>>>>>> refs/remotes/origin/main

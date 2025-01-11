@@ -9,12 +9,16 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# FIREBASE_CREDENTIALS= "../credentials/firebase_service_account.json"
+# FIREBASE_CREDENTIALS = os.path.join(os.path.dirname(__file__), 'firebase_service_account.json')
+FIREBASE_CREDENTIALS = os.path.join(BASE_DIR, 'credentials', 'firebase_service_account.json')
+# FIREBASE_CREDENTIALS = os.getenv('FIREBASE_CREDENTIALS', os.path.join(BASE_DIR, 'credentials', 'firebase_service_account.json'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
