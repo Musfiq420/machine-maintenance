@@ -184,23 +184,20 @@ class BreakdownLogViewSet(ModelViewSet):
 
         # Calculate the number of breakdowns in the last week
         breakdowns_count_last_week = breakdowns_last_week.count()
-
-        # Calculate Mean Time Between Failures (MTBF) for the last week
-        if breakdowns_count_last_week > 1:
-            total_downtime = sum(
-                (breakdowns_last_week[i].breakdown_start - breakdowns_last_week[i - 1].breakdown_start).total_seconds()
-                for i in range(1, len(breakdowns_last_week))
-            )
-            mtbf_last_week = timedelta(seconds=total_downtime / (breakdowns_count_last_week - 1))
-        else:
-            mtbf_last_week = None
         
         # Calculate utilization based on the breakdowns (Assume utilization is a ratio of active time to total time in the last week)
         total_active_time_last_week = sum(
             breakdown.lost_time.total_seconds() for breakdown in breakdowns_last_week
         )
-        total_week_seconds = 7 * 10 * 60 * 60  # 1 week in seconds
-        utilization_last_week = 1 - (total_active_time_last_week / total_week_seconds) if total_week_seconds > 0 else 0
+        total_week_minutes = 7 * 10 * 60  # 1 week in seconds
+        utilization_last_week = 1 - ((total_active_time_last_week/60) / total_week_minutes) if total_week_minutes > 0 else 0
+
+        # Calculate Mean Time Between Failures (MTBF) for the last week
+        if breakdowns_count_last_week > 1:
+            mtbf_numbers = (total_week_minutes/breakdowns_count_last_week)
+            mtbf_last_week = timedelta(minutes=mtbf_numbers)
+        else:
+            mtbf_last_week = None
 
         # Breakdown details for the last week
         breakdown_details_last_week = [
