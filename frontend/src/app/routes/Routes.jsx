@@ -65,7 +65,7 @@ export const router = createBrowserRouter([
         element: <MainDashboard></MainDashboard>, // Sign-up layout
       },
       {
-        path: "/dashboard/machine-monitoring/:id", // Default route
+        path: "/dashboard/machine-monitoring/:machine_id", // Default route
         element: <MachineDetailsDashboard></MachineDetailsDashboard>, // Sign-up layout
       },
       {
