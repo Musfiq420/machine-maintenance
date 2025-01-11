@@ -9,17 +9,18 @@ import { Link } from "react-router-dom";
 import DashboardLoading from "../../../../shared/components/dashboard/dashboardLoading";
 import DashboardError from "../../../../shared/components/dashboard/dashboardError";
 import MachineCards from "../../../../shared/components/cards/machineCards";
+import FormInputFields from "../../../../shared/components/ui/formInputFields";
 
 const location = [
   {
-    "room": "A",
-    "line": ["1", "2", "3"]
+    room: "A",
+    line: ["1", "2", "3"],
   },
   {
-    "room": "B",
-    "line": ["1", "2"]
-  }
-]
+    room: "B",
+    line: ["1", "2"],
+  },
+];
 
 const AllMachineDetails = () => {
   const [machines, setMachines] = useState([]);
@@ -27,20 +28,19 @@ const AllMachineDetails = () => {
   const [error, setError] = useState(false);
   const { getToken } = useContext(UserContext);
 
-  const [selectedFloor, setSelectedFloor] = useState(location[0].room);
-  const [selectedLine, setSelectedLine] = useState("");
+  const [selectedFloor, setSelectedFloor] = useState([]);
+  const [selectedLine, setSelectedLine] = useState([]);
 
-  const [floors, setFloors] = useState(location.map((l) => l.room));
   const [lines, setLines] = useState(location[0].line.map((r) => r));
-  
+
   const [stats, setStats] = useState([]);
 
   // API URL
 
   // Fetch machine data from API
   const fetchMachines = async (room, lines) => {
-    console.log(room)
-    console.log(lines)
+    console.log(room);
+    console.log(lines);
     setError(false);
     const token = getToken();
     try {
@@ -60,8 +60,6 @@ const AllMachineDetails = () => {
       const res = await response.json();
       console.log(res);
       setMachines(res.machines);
-      // setFloors(res.rooms);
-      // setLines(res.line_nos);
       setLoading(false);
       const newStats = [
         {
@@ -92,10 +90,34 @@ const AllMachineDetails = () => {
       setLoading(false);
     }
   };
+  const fields = [
+    {
+      input: selectedFloor,
+      name: "Floors",
+      prefix: "Floor",
+
+      id: "floor",
+      options: location.map((l) => l.room),
+      setInput: (id, value) => setSelectedFloor(value),
+    },
+    {
+      input: selectedLine,
+      name: "Lines",
+      prefix: "Line",
+      id: "line",
+      options: [
+        ...new Set(
+          location
+            .filter((l) => selectedFloor.includes(l.room))
+            .reduce((prev, curr) => [...prev, ...curr?.line], []) || []
+        ),
+      ],
+      setInput: (id, value) => setSelectedLine(value),
+    },
+  ];
+  console.log();
 
   useEffect(() => {
-    
-
     fetchMachines(selectedFloor, selectedLine);
   }, [selectedLine, selectedFloor]);
 
@@ -127,67 +149,20 @@ const AllMachineDetails = () => {
     <div className="bg-gradient-to-br from-gray-100 via-white to-gray-100 p-6 min-h-screen">
       {/* Dropdowns for Floor and Line Selection */}
       <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Floor Selection */}
-        <div>
-          <label
-            htmlFor="floor-select"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
-            Select Floor
-          </label>
-          <select
-            id="floor-select"
-            value={selectedFloor}
-            onChange={(e) =>{
-              
-                setSelectedFloor(
-                   e.target.value
-                )
-                const lines = location.find((v) => v.room == e.target.value).line
-                setLines(lines)
-                setSelectedLine("")
-              }
-            }
-            className="w-full px-4 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:border-blue-500 hover:border-blue-400 transition-colors bg-white"
-            aria-label="Select Floor"
-          >
-            {floors.map((floor) => (
-              <option key={floor} value={floor}>
-                Floor {floor}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Line Selection */}
-        <div>
-          <label
-            htmlFor="line-select"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
-            Select Line
-          </label>
-          <select
-            id="line-select"
-            value={selectedLine}
-            onChange={(e) =>
-              setSelectedLine(
-                e.target.value === "All Lines"
-                  ? ""
-                  : Number(e.target.value)
-              )
-            }
-            className="w-full px-4 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:border-blue-500 hover:border-blue-400 transition-colors bg-white"
-            aria-label="Select Line"
-          >
-            <option value={""}>All Lines</option>
-            {lines.map((line) => (
-              <option key={line} value={line}>
-                Line {line}
-              </option>
-            ))}
-          </select>
-        </div>
+        {/* Floor and Line Selection */}
+        {fields.map((f) => (
+          <FormInputFields
+            input={f.input}
+            name={f.name}
+            id={f.id}
+            options={f.options}
+            option_pref={f.prefix}
+            setInput={f.setInput}
+            errorField={[]}
+            multiple={true}
+            type="select"
+          />
+        ))}
       </div>
 
       {/* Loading and Error States */}

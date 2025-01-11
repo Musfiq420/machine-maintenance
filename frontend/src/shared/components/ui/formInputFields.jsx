@@ -10,6 +10,7 @@ export default function FormInputFields({
   type = "text",
   options = [],
   multiple = false,
+  option_pref = "",
 }) {
   const dateValue = (e) => {
     let value = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
@@ -63,7 +64,9 @@ export default function FormInputFields({
               return <em>{name}</em>;
             }
             if (Array.isArray(selected)) {
-              return selected.join(", ");
+              return selected
+                .map((item) => `${option_pref} ${item}`)
+                .join(", ");
             }
             return selected;
           }}
@@ -74,7 +77,7 @@ export default function FormInputFields({
           </MenuItem>
           {options.map((opt) => (
             <MenuItem key={opt} value={opt}>
-              {opt}
+              {option_pref} {opt}
             </MenuItem>
           ))}
         </Select>
