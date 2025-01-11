@@ -110,12 +110,12 @@
 
 from rest_framework import generics, status
 from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.shortcuts import redirect
 
 from ..models import Employee, Department, Designation
@@ -124,7 +124,8 @@ from .serializers import (
     UserLoginSerializer,
     AddEmployeeSerializer,
     DepartmentSerializer,
-    DesignationSerializer
+    DesignationSerializer,
+    GroupSerializer
 )
 from permissions.base_permissions import (
     IsAdmin, 
@@ -291,3 +292,14 @@ class DesignationViewSet(ModelViewSet):
     queryset = Designation.objects.all()
     serializer_class = DesignationSerializer
     # permission_classes = [IsAdminOrHR, IsAuthenticated]  # Adjust as needed
+
+# -----------------------------------------------------
+# Group ViewSet
+# -----------------------------------------------------
+class GroupViewSet(ReadOnlyModelViewSet):
+    """
+    Model View Set for Group
+    """
+    queryset = Group.objects.all()  # Query all groups
+    serializer_class = GroupSerializer
+    

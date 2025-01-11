@@ -53,18 +53,27 @@ const QrCodeGenerator = () => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${token}`, // Ensure this header matches what your server expects
+        Authorization: `Token ${token}`, // Ensure this header matches what your server expects
       },
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          // If the response is not ok, throw an error with the response details
+          return response.json().then((err) => {
+            throw new Error(err.detail || "An error occurred");
+          });
+        }
+        return response.json();
+      })
       .then((data) => {
         console.log(data);
-        setData(data.results);
+        setData(data.results || []);
         setLoading(false);
       })
       .catch((err) => {
         setError(err);
         setLoading(false);
+        setData([]);
       });
   }, []);
 
