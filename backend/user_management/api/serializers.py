@@ -182,7 +182,6 @@ class UserLoginSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
     password = serializers.CharField(required=True)
 
-<<<<<<< HEAD
 
 # --------------------------
 # PUsh Notification DeviceToken Serializer
@@ -193,7 +192,7 @@ class DeviceTokenSerializer(serializers.ModelSerializer):
         model = DeviceToken
         fields = ['id', 'token']
         read_only_fields = ['id']
-=======
+
 # --------------------------
 # User Group Serializer
 # --------------------------
@@ -202,4 +201,3 @@ class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
         fields = '__all__'
->>>>>>> refs/remotes/origin/main

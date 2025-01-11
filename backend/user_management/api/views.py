@@ -15,11 +15,10 @@ from .serializers import (
     AddEmployeeSerializer,
     DepartmentSerializer,
     DesignationSerializer,
-<<<<<<< HEAD
+
     DeviceTokenSerializer,
-=======
+
     GroupSerializer
->>>>>>> refs/remotes/origin/main
 )
 from permissions.base_permissions import (
     IsAdmin, 
@@ -187,8 +186,6 @@ class DesignationViewSet(ModelViewSet):
     serializer_class = DesignationSerializer
     # permission_classes = [IsAdminOrHR, IsAuthenticated]  # Adjust as needed
 
-<<<<<<< HEAD
-
 # -----------------------------------------------------
 # Push Notification DeviceToken CRUD ViewSet
 # -----------------------------------------------------
@@ -200,7 +197,7 @@ class DeviceTokenViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-=======
+
 # -----------------------------------------------------
 # Group ViewSet
 # -----------------------------------------------------
@@ -211,4 +208,4 @@ class GroupViewSet(ReadOnlyModelViewSet):
     queryset = Group.objects.all()  # Query all groups
     serializer_class = GroupSerializer
     
->>>>>>> refs/remotes/origin/main
+
