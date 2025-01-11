@@ -21,6 +21,8 @@ import { getApiUrl } from "../../../../shared/components/getApiUrl";
 import { jsPDF } from "jspdf";
 import qrcode from "qrcode"; // For generating QR code data URLs
 import { UserContext } from "../../../../context/userProvider";
+import DashboardLoading from "../../../../shared/components/dashboard/dashboardLoading";
+import MachineForm from "./machineForm";
 
 const QrCodeGenerator = () => {
   const { getToken } = useContext(UserContext);
@@ -32,54 +34,9 @@ const QrCodeGenerator = () => {
   const [openModal, setOpenModal] = useState(false);
   const [selectedMachine, setSelectedMachine] = useState(null);
 
-  // Add Machine Modal
-  const [openAddModal, setOpenAddModal] = useState(false);
-
-  // Update Machine Modal
-  const [openUpdateModal, setOpenUpdateModal] = useState(false);
-
   // Delete Confirmation
   const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
   const [machineToDelete, setMachineToDelete] = useState(null);
-
-  // Add Machine Form States
-  const [newMachineId, setNewMachineId] = useState("");
-  const [newCategory, setNewCategory] = useState("");
-  const [newType, setNewType] = useState("");
-  const [newBrand, setNewBrand] = useState("");
-  const [newModelNumber, setNewModelNumber] = useState("");
-  const [newSerialNo, setNewSerialNo] = useState("");
-  const [newFloorNo, setNewFloorNo] = useState("");
-  const [newLineNo, setNewLineNo] = useState("");
-  const [newSupplier, setNewSupplier] = useState("");
-  const [newPurchaseDate, setNewPurchaseDate] = useState("");
-  const [newLocation, setNewLocation] = useState("");
-  const [newLastBreakdownStart, setNewLastBreakdownStart] = useState("");
-  const [newStatus, setNewStatus] = useState("active");
-
-  // Update Form States
-  const [updateMachineId, setUpdateMachineId] = useState("");
-  const [updateCategory, setUpdateCategory] = useState("");
-  const [updateType, setUpdateType] = useState("");
-  const [updateBrand, setUpdateBrand] = useState("");
-  const [updateModelNumber, setUpdateModelNumber] = useState("");
-  const [updateSerialNo, setUpdateSerialNo] = useState("");
-  const [updateFloorNo, setUpdateFloorNo] = useState("");
-  const [updateLineNo, setUpdateLineNo] = useState("");
-  const [updateSupplier, setUpdateSupplier] = useState("");
-  const [updatePurchaseDate, setUpdatePurchaseDate] = useState("");
-  const [updateLocation, setUpdateLocation] = useState("");
-  const [updateLastBreakdownStart, setUpdateLastBreakdownStart] = useState("");
-  const [updateStatus, setUpdateStatus] = useState("active");
-
-  const [formError, setFormError] = useState("");
-
-  const STATUS_CHOICES = [
-    { value: "active", label: "Active" },
-    { value: "inactive", label: "Inactive" },
-    { value: "maintenance", label: "Under Maintenance" },
-    { value: "broken", label: "Broken" },
-  ];
 
   const statusColors = {
     active: "#28a745",
@@ -109,7 +66,7 @@ const QrCodeGenerator = () => {
         setError(err);
         setLoading(false);
       });
-  }, [Machine_QR_Data_API]);
+  }, []);
 
   const handleOpenModal = (machine) => {
     setSelectedMachine(machine);
@@ -119,149 +76,6 @@ const QrCodeGenerator = () => {
   const handleCloseModal = () => {
     setOpenModal(false);
     setSelectedMachine(null);
-  };
-
-  const handleOpenAddModal = () => setOpenAddModal(true);
-  const handleCloseAddModal = () => {
-    setOpenAddModal(false);
-    setFormError("");
-    resetAddFields();
-  };
-
-  const resetAddFields = () => {
-    setNewMachineId("");
-    setNewCategory("");
-    setNewType("");
-    setNewBrand("");
-    setNewModelNumber("");
-    setNewSerialNo("");
-    setNewFloorNo("");
-    setNewLineNo("");
-    setNewSupplier("");
-    setNewPurchaseDate("");
-    setNewLocation("");
-    setNewLastBreakdownStart("");
-    setNewStatus("active");
-  };
-
-  const handleOpenUpdateModal = (machine) => {
-    // Pre-fill update fields
-    setUpdateMachineId(machine.machine_id);
-    setUpdateCategory(machine.category || "");
-    setUpdateType(machine.type || "");
-    setUpdateBrand(machine.brand || "");
-    setUpdateModelNumber(machine.model_number || "");
-    setUpdateSerialNo(machine.serial_no || "");
-    setUpdateFloorNo(machine.floor_no || "");
-    setUpdateLineNo(machine.line_no || "");
-    setUpdateSupplier(machine.supplier || "");
-    setUpdatePurchaseDate(machine.purchase_date || "");
-    setUpdateLocation(machine.location || "");
-    setUpdateLastBreakdownStart(machine.last_breakdown_start || "");
-    setUpdateStatus(machine.status || "active");
-
-    setSelectedMachine(machine);
-    setOpenUpdateModal(true);
-  };
-
-  const handleCloseUpdateModal = () => {
-    setOpenUpdateModal(false);
-    setSelectedMachine(null);
-  };
-
-  const handleSaveMachine = () => {
-    setFormError("");
-    const floorNoInt = newFloorNo ? parseInt(newFloorNo, 10) : null;
-    const lineNoInt = newLineNo ? parseInt(newLineNo, 10) : null;
-
-    const payload = {
-      machine_id: newMachineId,
-      category: newCategory || null,
-      type: newType || null,
-      brand: newBrand || null,
-      model_number: newModelNumber || null,
-      serial_no: newSerialNo || null,
-      floor_no: floorNoInt,
-      line_no: lineNoInt,
-      supplier: newSupplier || null,
-      purchase_date: newPurchaseDate || null,
-      location: newLocation || null,
-      last_breakdown_start: newLastBreakdownStart || null,
-      status: newStatus,
-    };
-
-    fetch(Machine_QR_Data_API, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    })
-      .then((res) => {
-        if (!res.ok) {
-          return res.json().then((errData) => {
-            if (res.status === 400 && errData && errData.machine_id) {
-              throw new Error(
-                `Machine with ID "${newMachineId}" already exists.`
-              );
-            }
-            throw new Error("Failed to create machine");
-          });
-        }
-        return res.json();
-      })
-      .then(() => fetch(Machine_QR_Data_API))
-      .then((res) => res.json())
-      .then((updatedData) => {
-        setData(updatedData);
-        handleCloseAddModal();
-      })
-      .catch((error) => {
-        console.error(error);
-        setFormError(error.message);
-      });
-  };
-
-  const handleUpdateMachine = () => {
-    if (!selectedMachine) return;
-    const floorNoInt = updateFloorNo ? parseInt(updateFloorNo, 10) : null;
-    const lineNoInt = updateLineNo ? parseInt(updateLineNo, 10) : null;
-
-    const payload = {
-      machine_id: updateMachineId,
-      category: updateCategory || null,
-      type: updateType || null,
-      brand: updateBrand || null,
-      model_number: updateModelNumber || null,
-      serial_no: updateSerialNo || null,
-      floor_no: floorNoInt,
-      line_no: lineNoInt,
-      supplier: updateSupplier || null,
-      purchase_date: updatePurchaseDate || null,
-      location: updateLocation || null,
-      last_breakdown_start: updateLastBreakdownStart || null,
-      status: updateStatus,
-    };
-
-    fetch(`${Machine_QR_Data_API}${updateMachineId}/`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Failed to update machine");
-        }
-        return res.json();
-      })
-      .then(() => fetch(Machine_QR_Data_API))
-      .then((res) => res.json())
-      .then((updatedData) => {
-        setData(updatedData);
-        handleCloseUpdateModal();
-      })
-      .catch((error) => {
-        console.error(error);
-        alert(error.message);
-      });
   };
 
   const handleOpenDeleteConfirm = (machine) => {
@@ -383,13 +197,7 @@ const QrCodeGenerator = () => {
               >
                 Delete
               </Button>
-              <Button
-                variant="contained"
-                color="info"
-                onClick={() => handleOpenUpdateModal(machine)}
-              >
-                Update
-              </Button>
+              <MachineForm machine={machine} />
             </Box>
           );
         },
@@ -468,19 +276,7 @@ const QrCodeGenerator = () => {
 
   // Updated loading state with CircularProgress spinner
   if (loading) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh", // Full viewport height
-          backgroundColor: "#f5f5f5", // Optional: Light background color
-        }}
-      >
-        <CircularProgress size={60} thickness={4} />
-      </Box>
-    );
+    return <DashboardLoading />;
   }
 
   if (error) return <div>Error loading data: {error.message}</div>;
@@ -494,30 +290,6 @@ const QrCodeGenerator = () => {
         padding: "8px",
       }}
     >
-      {/* Optional: Loading Overlay if you prefer overlay instead of full screen spinner */}
-      {/* Uncomment the following block if you want an overlay spinner */}
-
-      {/* 
-      {loading && (
-        <Box
-          sx={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            backgroundColor: 'rgba(255, 255, 255, 0.7)',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            zIndex: 1000,
-          }}
-        >
-          <CircularProgress size={60} thickness={4} />
-        </Box>
-      )}
-      */}
-
       <MaterialReactTable
         columns={columns}
         data={data}
@@ -529,23 +301,14 @@ const QrCodeGenerator = () => {
           },
         }}
         renderBottomToolbarCustomActions={() => (
-          <Button
-            variant="contained"
-            color="secondary"
+          <button
+            className="px-12 py-3 bg-primary text-white font-semibold rounded-md"
             onClick={handlePrintAllQrs}
           >
             Print QR
-          </Button>
+          </button>
         )}
-        renderTopToolbarCustomActions={() => (
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleOpenAddModal}
-          >
-            Add Machine
-          </Button>
-        )}
+        renderTopToolbarCustomActions={() => <MachineForm />}
         muiTableBodyCellProps={{
           sx: {
             padding: "4px 8px",
@@ -635,241 +398,6 @@ const QrCodeGenerator = () => {
             color="primary"
           >
             Close
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Modal for Adding a Machine */}
-      <Dialog
-        open={openAddModal}
-        onClose={handleCloseAddModal}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>Add Machine</DialogTitle>
-        <DialogContent>
-          {formError && (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              {formError}
-            </Alert>
-          )}
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
-            <TextField
-              label="Machine ID"
-              variant="outlined"
-              value={newMachineId}
-              onChange={(e) => setNewMachineId(e.target.value)}
-              required
-            />
-            <TextField
-              label="Category"
-              variant="outlined"
-              value={newCategory}
-              onChange={(e) => setNewCategory(e.target.value)}
-            />
-            <TextField
-              label="Type"
-              variant="outlined"
-              value={newType}
-              onChange={(e) => setNewType(e.target.value)}
-            />
-            <TextField
-              label="Brand"
-              variant="outlined"
-              value={newBrand}
-              onChange={(e) => setNewBrand(e.target.value)}
-            />
-            <TextField
-              label="Model Number"
-              variant="outlined"
-              value={newModelNumber}
-              onChange={(e) => setNewModelNumber(e.target.value)}
-            />
-            <TextField
-              label="Serial No"
-              variant="outlined"
-              value={newSerialNo}
-              onChange={(e) => setNewSerialNo(e.target.value)}
-            />
-            <TextField
-              label="Floor No"
-              variant="outlined"
-              value={newFloorNo}
-              onChange={(e) => setNewFloorNo(e.target.value)}
-              type="number"
-            />
-            <TextField
-              label="Line No"
-              variant="outlined"
-              value={newLineNo}
-              onChange={(e) => setNewLineNo(e.target.value)}
-              type="number"
-            />
-            <TextField
-              label="Supplier"
-              variant="outlined"
-              value={newSupplier}
-              onChange={(e) => setNewSupplier(e.target.value)}
-            />
-            <TextField
-              label="Purchase Date (YYYY-MM-DD)"
-              variant="outlined"
-              value={newPurchaseDate}
-              onChange={(e) => setNewPurchaseDate(e.target.value)}
-            />
-            <TextField
-              label="Location"
-              variant="outlined"
-              value={newLocation}
-              onChange={(e) => setNewLocation(e.target.value)}
-            />
-            <TextField
-              label="Last Breakdown Start (YYYY-MM-DDTHH:MM:SS)"
-              variant="outlined"
-              value={newLastBreakdownStart}
-              onChange={(e) => setNewLastBreakdownStart(e.target.value)}
-            />
-            <FormControl>
-              <InputLabel>Status</InputLabel>
-              <Select
-                value={newStatus}
-                label="Status"
-                onChange={(e) => setNewStatus(e.target.value)}
-              >
-                {STATUS_CHOICES.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseAddModal} variant="text">
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSaveMachine}
-            variant="contained"
-            color="primary"
-          >
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Modal for Update Machine */}
-      <Dialog
-        open={openUpdateModal}
-        onClose={handleCloseUpdateModal}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>Update Machine</DialogTitle>
-        <DialogContent>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
-            <TextField
-              disabled
-              label="Machine ID"
-              variant="outlined"
-              value={updateMachineId}
-              onChange={(e) => setUpdateMachineId(e.target.value)}
-            />
-            <TextField
-              label="Category"
-              variant="outlined"
-              value={updateCategory}
-              onChange={(e) => setUpdateCategory(e.target.value)}
-            />
-            <TextField
-              label="Type"
-              variant="outlined"
-              value={updateType}
-              onChange={(e) => setUpdateType(e.target.value)}
-            />
-            <TextField
-              label="Brand"
-              variant="outlined"
-              value={updateBrand}
-              onChange={(e) => setUpdateBrand(e.target.value)}
-            />
-            <TextField
-              label="Model Number"
-              variant="outlined"
-              value={updateModelNumber}
-              onChange={(e) => setUpdateModelNumber(e.target.value)}
-            />
-            <TextField
-              label="Serial No"
-              variant="outlined"
-              value={updateSerialNo}
-              onChange={(e) => setUpdateSerialNo(e.target.value)}
-            />
-            <TextField
-              label="Floor No"
-              variant="outlined"
-              value={updateFloorNo}
-              onChange={(e) => setUpdateFloorNo(e.target.value)}
-              type="number"
-            />
-            <TextField
-              label="Line No"
-              variant="outlined"
-              value={updateLineNo}
-              onChange={(e) => setUpdateLineNo(e.target.value)}
-              type="number"
-            />
-            <TextField
-              label="Supplier"
-              variant="outlined"
-              value={updateSupplier}
-              onChange={(e) => setUpdateSupplier(e.target.value)}
-            />
-            <TextField
-              label="Purchase Date (YYYY-MM-DD)"
-              variant="outlined"
-              value={updatePurchaseDate}
-              onChange={(e) => setUpdatePurchaseDate(e.target.value)}
-            />
-            <TextField
-              label="Location"
-              variant="outlined"
-              value={updateLocation}
-              onChange={(e) => setUpdateLocation(e.target.value)}
-            />
-            <TextField
-              label="Last Breakdown Start (YYYY-MM-DDTHH:MM:SS)"
-              variant="outlined"
-              value={updateLastBreakdownStart}
-              onChange={(e) => setUpdateLastBreakdownStart(e.target.value)}
-            />
-            <FormControl>
-              <InputLabel>Status</InputLabel>
-              <Select
-                value={updateStatus}
-                label="Status"
-                onChange={(e) => setUpdateStatus(e.target.value)}
-              >
-                {STATUS_CHOICES.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseUpdateModal} variant="text">
-            Cancel
-          </Button>
-          <Button
-            onClick={handleUpdateMachine}
-            variant="contained"
-            color="primary"
-          >
-            Update
           </Button>
         </DialogActions>
       </Dialog>

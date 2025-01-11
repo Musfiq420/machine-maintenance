@@ -21,8 +21,6 @@ export default function DashboardWrapper({ children }) {
               <div className="flex-1 p-8 bg-gray-50">{children}</div>
             </div>
           </div>
-          {/* Footer */}
-          <Footer />
         </div>
       ) : (
         <ErrorPage />

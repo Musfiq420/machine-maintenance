@@ -45,6 +45,7 @@ const AllMachineDetails = () => {
           }
         );
         const res = await response.json();
+        console.log(res);
         setMachines(res.machines);
         setFloors(res.rooms);
         setLines(res.line_nos);
