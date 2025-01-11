@@ -3,9 +3,10 @@ import { UserContext } from "../../../context/userProvider";
 import DashboardSidebar from "./DashboardSidebar";
 import Footer from "../footer/Footer";
 import ErrorPage from "../ui/errorPage";
+import DashboardLoading from "./dashboardLoading";
 
 export default function DashboardWrapper({ children }) {
-  const { user } = useContext(UserContext);
+  const { user, userLoading } = useContext(UserContext);
   return (
     <>
       {user ? (
@@ -22,6 +23,8 @@ export default function DashboardWrapper({ children }) {
             </div>
           </div>
         </div>
+      ) : userLoading ? (
+        <DashboardLoading />
       ) : (
         <ErrorPage />
       )}
