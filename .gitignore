@@ -1,4 +1,5 @@
 fastTracker/
+backend/credentials/
 
 
 # Ignore .env files at the root and inside frontend folder
