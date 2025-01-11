@@ -12,6 +12,8 @@ from rest_framework.exceptions import NotFound
 from django.db.models import Sum
 from rest_framework.decorators import action
 
+from rest_framework.exceptions import PermissionDenied
+
 class MachinePagination(PageNumberPagination):
     page_size = 10  # Number of items per page
     page_size_query_param = 'page_size'  # Allows users to specify the page size via query parameter
@@ -28,6 +30,8 @@ class MachineViewSet(ModelViewSet):
     pagination_class = MachinePagination
     search_fields = ['machine_id', 'brand__name', 'category__name', 'type__name', 'model_number', 'serial_no', 'location__room']
 
+    # permission_classes = [DjangoModelPermissions]
+
     def get_ordering(self):
         ordering = self.request.query_params.get('ordering', None)
         if ordering:
@@ -37,6 +41,15 @@ class MachineViewSet(ModelViewSet):
                 raise NotFound(f"Ordering by '{ordering}' is not allowed.")
             return [ordering]
         return super().get_ordering()
+    
+    def get_queryset(self):
+        # Check if the user belongs to the "Machine Viewer" group
+        if not self.request.user.groups.filter(name="Machine-Viewer").exists():
+            raise PermissionDenied("You do not have permission to view machines.")
+
+        # If the user is in the "Machine Viewer" group, return the queryset
+        return super().get_queryset()
+    
     # def get_permissions(self):
     #     if self.action in ['list', 'retrieve']:
     #         # print(f"{self.action.capitalize()} called.")
