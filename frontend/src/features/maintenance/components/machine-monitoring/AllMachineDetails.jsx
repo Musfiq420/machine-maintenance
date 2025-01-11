@@ -247,7 +247,7 @@ const AllMachineDetails = () => {
           <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
             {machines.map((machine) => (
               <MachineCards
-                machine_id={machine.id}
+                machine_id={encodeURIComponent(machine.machine_id)}
                 status={machine.status}
                 type={machine.type}
               />

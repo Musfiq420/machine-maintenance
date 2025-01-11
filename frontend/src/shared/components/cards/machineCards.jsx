@@ -51,7 +51,7 @@ export default function MachineCards({ status, machine_id, type }) {
         <span className={`font-semibold ${textColor}`}>{icon}</span>
       </div>
       <h3 className={`font-bold ${textColor} text-lg`}>
-        {machine_id || "N/A"}
+        {decodeURIComponent(machine_id) || "N/A"}
       </h3>
       <PieChartComponent status={status} />
       <p className="text-sm font-medium text-gray-800">{type || "N/A"}</p>
