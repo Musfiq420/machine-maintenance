@@ -10,79 +10,94 @@ import DashboardLoading from "../../../../shared/components/dashboard/dashboardL
 import DashboardError from "../../../../shared/components/dashboard/dashboardError";
 import MachineCards from "../../../../shared/components/cards/machineCards";
 
+const location = [
+  {
+    "room": "A",
+    "line": ["1", "2", "3"]
+  },
+  {
+    "room": "B",
+    "line": ["1", "2"]
+  }
+]
+
 const AllMachineDetails = () => {
   const [machines, setMachines] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const { getToken } = useContext(UserContext);
 
-  const [selectedFloor, setSelectedFloor] = useState("");
+  const [selectedFloor, setSelectedFloor] = useState(location[0].room);
   const [selectedLine, setSelectedLine] = useState("");
 
-  const [floors, setFloors] = useState([]);
-  const [lines, setLines] = useState([]);
+  const [floors, setFloors] = useState(location.map((l) => l.room));
+  const [lines, setLines] = useState(location[0].line.map((r) => r));
+  
   const [stats, setStats] = useState([]);
 
   // API URL
 
   // Fetch machine data from API
-  useEffect(() => {
-    const fetchMachines = async () => {
-      setError(false);
-      const token = getToken();
-      try {
-        setLoading(true);
-        // const response = await fetch();
-        const response = await fetch(
-          import.meta.env.VITE_URL_PREFIX +
-            "/api/maintenance/breakdown-logs/total-lost-time-per-location/?location_room=&location_line_no=",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `${token}`, // Ensure this header matches what your server expects
-            },
-          }
-        );
-        const res = await response.json();
-        console.log(res);
-        setMachines(res.machines);
-        setFloors(res.rooms);
-        setLines(res.line_nos);
-        setLoading(false);
-        const newStats = [
-          {
-            stat: "Total Lost Time",
-            value: res.total_lost_time,
+  const fetchMachines = async (room, lines) => {
+    console.log(room)
+    console.log(lines)
+    setError(false);
+    const token = getToken();
+    try {
+      setLoading(true);
+      // const response = await fetch();
+      const response = await fetch(
+        import.meta.env.VITE_URL_PREFIX +
+          `/api/maintenance/breakdown-logs/total-lost-time-per-location/?location_room=${room}&location_line_no=${lines}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${token}`, // Ensure this header matches what your server expects
           },
-          {
-            stat: "Total Machines",
-            value: res.total_machine_count,
-          },
-          {
-            stat: "Active",
-            value: res.total_active_machines,
-          },
-          {
-            stat: "Repairing",
-            value: res.total_repairing_machines,
-          },
-          {
-            stat: "Idle",
-            value: res.total_idle_machines,
-          },
-        ];
-        setStats(newStats);
-      } catch (error) {
-        console.error(error);
-        setError(true);
-        setLoading(false);
-      }
-    };
+        }
+      );
+      const res = await response.json();
+      console.log(res);
+      setMachines(res.machines);
+      // setFloors(res.rooms);
+      // setLines(res.line_nos);
+      setLoading(false);
+      const newStats = [
+        {
+          stat: "Total Lost Time",
+          value: res.total_lost_time,
+        },
+        {
+          stat: "Total Machines",
+          value: res.total_machine_count,
+        },
+        {
+          stat: "Active",
+          value: res.total_active_machines,
+        },
+        {
+          stat: "Repairing",
+          value: res.total_repairing_machines,
+        },
+        {
+          stat: "Idle",
+          value: res.total_idle_machines,
+        },
+      ];
+      setStats(newStats);
+    } catch (error) {
+      console.error(error);
+      setError(true);
+      setLoading(false);
+    }
+  };
 
-    fetchMachines();
-  }, []);
-  console.log(machines);
+  useEffect(() => {
+    
+
+    fetchMachines(selectedFloor, selectedLine);
+  }, [selectedLine, selectedFloor]);
 
   // Extract unique line numbers for footer
   const uniqueLines = Array.from(
@@ -123,17 +138,19 @@ const AllMachineDetails = () => {
           <select
             id="floor-select"
             value={selectedFloor}
-            onChange={(e) =>
-              setSelectedFloor(
-                e.target.value === "All Floors"
-                  ? "All Floors"
-                  : Number(e.target.value)
-              )
+            onChange={(e) =>{
+              
+                setSelectedFloor(
+                   e.target.value
+                )
+                const lines = location.find((v) => v.room == e.target.value).line
+                setLines(lines)
+                setSelectedLine("")
+              }
             }
             className="w-full px-4 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:border-blue-500 hover:border-blue-400 transition-colors bg-white"
             aria-label="Select Floor"
           >
-            <option value="All Floors">All Floors</option>
             {floors.map((floor) => (
               <option key={floor} value={floor}>
                 Floor {floor}
@@ -156,14 +173,14 @@ const AllMachineDetails = () => {
             onChange={(e) =>
               setSelectedLine(
                 e.target.value === "All Lines"
-                  ? "All Lines"
+                  ? ""
                   : Number(e.target.value)
               )
             }
             className="w-full px-4 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:border-blue-500 hover:border-blue-400 transition-colors bg-white"
             aria-label="Select Line"
           >
-            <option value="All Lines">All Lines</option>
+            <option value={""}>All Lines</option>
             {lines.map((line) => (
               <option key={line} value={line}>
                 Line {line}
