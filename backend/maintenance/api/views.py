@@ -11,6 +11,8 @@ from permissions.base_permissions import IsAdmin, IsHR, IsMechanic, IsSupervisor
 from rest_framework.exceptions import NotFound
 from django.db.models import Sum
 from rest_framework.decorators import action
+from django.utils import timezone
+from datetime import timedelta
 
 from rest_framework.exceptions import PermissionDenied
 
@@ -42,13 +44,13 @@ class MachineViewSet(ModelViewSet):
             return [ordering]
         return super().get_ordering()
     
-    def get_queryset(self):
-        # Check if the user belongs to the "Machine Viewer" group
-        if not self.request.user.groups.filter(name="Machine-Viewer").exists():
-            raise PermissionDenied("You do not have permission to view machines.")
+    # def get_queryset(self):
+    #     # Check if the user belongs to the "Machine Viewer" group
+    #     if not self.request.user.groups.filter(name="Machine-Viewer").exists():
+    #         raise PermissionDenied("You do not have permission to view machines.")
 
-        # If the user is in the "Machine Viewer" group, return the queryset
-        return super().get_queryset()
+    #     # If the user is in the "Machine Viewer" group, return the queryset
+    #     return super().get_queryset()
     
     # def get_permissions(self):
     #     if self.action in ['list', 'retrieve']:
@@ -158,6 +160,103 @@ class BreakdownLogViewSet(ModelViewSet):
         }
 
         return Response(response_data)
+    
+    @action(detail=False, methods=["get"], url_path="machines-monitoring")
+    def machine_monitoring(self, request):
+        machine_id = request.query_params.get("machine_id")
+        if not machine_id:
+            return Response({"error": "Machine ID is required"}, status=400)
+
+        # Retrieve the machine object based on the provided machine_id
+        machine = Machine.objects.filter(machine_id=machine_id).first()
+        if not machine:
+            return Response({"error": "Machine not found"}, status=404)
+         # Get the breakdowns for the specified machine in the last week
+        one_week_ago = timezone.now() - timedelta(weeks=1)
+        breakdowns_last_week = BreakdownLog.objects.filter(
+            machine=machine, breakdown_start__gte=one_week_ago
+        )
+
+        # Calculate total lost time for the last week
+        total_lost_time_last_week = breakdowns_last_week.aggregate(
+            total_lost_time=Sum("lost_time")
+        )["total_lost_time"]
+
+        # Calculate the number of breakdowns in the last week
+        breakdowns_count_last_week = breakdowns_last_week.count()
+
+        # Calculate Mean Time Between Failures (MTBF) for the last week
+        if breakdowns_count_last_week > 1:
+            total_downtime = sum(
+                (breakdowns_last_week[i].breakdown_start - breakdowns_last_week[i - 1].breakdown_start).total_seconds()
+                for i in range(1, len(breakdowns_last_week))
+            )
+            mtbf_last_week = timedelta(seconds=total_downtime / (breakdowns_count_last_week - 1))
+        else:
+            mtbf_last_week = None
+        
+        # Calculate utilization based on the breakdowns (Assume utilization is a ratio of active time to total time in the last week)
+        total_active_time_last_week = sum(
+            breakdown.lost_time.total_seconds() for breakdown in breakdowns_last_week
+        )
+        total_week_seconds = 7 * 10 * 60 * 60  # 1 week in seconds
+        utilization_last_week = 1 - (total_active_time_last_week / total_week_seconds) if total_week_seconds > 0 else 0
+
+        # Breakdown details for the last week
+        breakdown_details_last_week = [
+            {
+                "breakdown-start": breakdown.breakdown_start,
+                "lost-time": str(breakdown.lost_time),
+            }
+            for breakdown in breakdowns_last_week
+        ]
+
+        # Lost time reasons for the last week (group by problem category)
+        lost_time_reasons_last_week = (
+            breakdowns_last_week.values("problem_category__name")
+            .annotate(total_lost_time=Sum("lost_time"))
+            .order_by("problem_category__name")
+        )
+
+        lost_time_reasons_last_week = [
+            {
+                "problem-category": reason["problem_category__name"],
+                "lost-time": str(reason["total_lost_time"]),
+            }
+            for reason in lost_time_reasons_last_week
+        ]
+
+        # Format total lost time to HH:MM:SS
+        formatted_total_lost_time_last_week = str(total_lost_time_last_week) if total_lost_time_last_week else "0:00:00"
+        formatted_mtbf_last_week = str(mtbf_last_week) if mtbf_last_week else "0:00:00"
+
+        # Prepare the response data
+        response_data = {
+            "id": machine.id,
+            "machine_id": machine.machine_id,
+            "model_number": machine.model_number,
+            "serial_no": machine.serial_no,
+            "purchase_date": machine.purchase_date,
+            "last_breakdown_start": machine.last_breakdown_start,
+            "status": machine.status,
+            "category": machine.category.id if machine.category else None,
+            "type": machine.type.id if machine.type else None,
+            "brand": machine.brand.id if machine.brand else None,
+            "location": machine.location.id if machine.location else None,
+            "supplier": machine.supplier.id if machine.supplier else None,
+            "total-lost-time-last-week": formatted_total_lost_time_last_week,
+            "utilization-last-week": utilization_last_week,
+            "breakdowns-count-last-week": breakdowns_count_last_week,
+            "MTBF-last-week": formatted_mtbf_last_week,
+            "breakdowns-last-week": breakdown_details_last_week,
+            "lost-time-reasons-last-week": lost_time_reasons_last_week,
+        }
+
+        return Response(response_data)
+
+
+
+
     # def get_permissions(self):
     #     if self.action in ['list', 'retrieve', 'create', 'update', 'partial_update', 'destroy']:
     #         return [IsAdmin()]  # Adjust as needed   
