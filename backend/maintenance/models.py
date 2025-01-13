@@ -47,6 +47,10 @@ class Machine(models.Model):
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE,blank=True, null=True)
     purchase_date = models.DateField(blank=True, null=True)
     last_breakdown_start = models.DateTimeField(blank=True, null=True)
+    last_repairing_start = models.DateTimeField(blank=True, null=True)
+    mechanic = models.ForeignKey(Employee, on_delete=models.SET_NULL, null=True, related_name="mechanic_machine")
+    operator = models.ForeignKey(Employee, on_delete=models.SET_NULL, null=True, related_name="operator_machine")
+    last_problem = models.CharField(max_length=255, blank=True, null=True)
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='active')
 
     def __str__(self):
