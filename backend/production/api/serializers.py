@@ -1,14 +1,14 @@
-# from rest_framework import serializers
-# from ..models import ProductionLine, Floor
+from rest_framework import serializers
+from ..models import Line, Floor
 
-# class FloorSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Floor
-#         fields = '__all__'
+class FloorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Floor
+        fields = '__all__'
 
-# class ProductionLineSerializer(serializers.ModelSerializer):
-#     floor = FloorSerializer()  # Nested representation
+class LineSerializer(serializers.ModelSerializer):
+    floor = FloorSerializer()  # Nested representation
 
-#     class Meta:
-#         model = ProductionLine
-#         fields = ['id', 'name', 'description', 'operation_type', 'floor']
+    class Meta:
+        model = Line
+        fields = ['id', 'name', 'description', 'operation_type', 'floor']

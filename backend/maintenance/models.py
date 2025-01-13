@@ -1,6 +1,7 @@
 from django.db import models
 from user_management.models import Employee
 from company.models import Company, Location
+from production.models import Line
 from django.db import models
 
 class Brand(models.Model):
@@ -44,6 +45,8 @@ class Machine(models.Model):
     model_number = models.CharField(max_length=255, blank=True, null=True)
     serial_no = models.CharField(max_length=255, blank=True, null=True)
     location = models.ForeignKey(Location, on_delete=models.CASCADE, blank=True, null=True)
+    line = models.ForeignKey(Line, on_delete=models.SET_NULL, blank=True, null=True)
+    sequence = models.SmallIntegerField(blank=True, null=True)
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE,blank=True, null=True)
     purchase_date = models.DateField(blank=True, null=True)
     last_breakdown_start = models.DateTimeField(blank=True, null=True)
