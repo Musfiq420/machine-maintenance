@@ -82,7 +82,7 @@ class BreakdownLog(models.Model):
     problem_category = models.ForeignKey(ProblemCategory, on_delete=models.CASCADE,blank=True, null=True, related_name="breakdown_logs")
     location = models.ForeignKey(Location, on_delete=models.CASCADE, blank=True, null=True)
     breakdown_start = models.DateTimeField()
-    repairing_start = models.DateTimeField()
+    repairing_start = models.DateTimeField(blank=True, null=True)
     lost_time = models.DurationField()
     comments = models.TextField(blank=True, null=True)
 
