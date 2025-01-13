@@ -13,7 +13,7 @@ from django.db.models import Sum
 from rest_framework.decorators import action
 from django.utils import timezone
 from datetime import timedelta
-
+from collections import defaultdict
 from rest_framework.exceptions import PermissionDenied
 
 class MachinePagination(PageNumberPagination):
@@ -171,63 +171,46 @@ class BreakdownLogViewSet(ModelViewSet):
         machine = Machine.objects.filter(machine_id=machine_id).first()
         if not machine:
             return Response({"error": "Machine not found"}, status=404)
-         # Get the breakdowns for the specified machine in the last week
+
+        # Get the breakdowns for the specified machine in the last week
         one_week_ago = timezone.now() - timedelta(weeks=1)
         breakdowns_last_week = BreakdownLog.objects.filter(
             machine=machine, breakdown_start__gte=one_week_ago
         )
 
-        # Calculate total lost time for the last week
+        # Group lost time by day
+        daily_lost_time = defaultdict(timedelta)  # Initialize with timedelta values
+        for breakdown in breakdowns_last_week:
+            breakdown_date = breakdown.breakdown_start.date()  # Extract date
+            daily_lost_time[breakdown_date] += breakdown.lost_time  # Add lost time
+
+        # Format daily lost time into a list of dictionaries
+        daily_lost_time_list = [
+            {"date": day, "lost-time": str(lost_time)}
+            for day, lost_time in sorted(daily_lost_time.items())
+        ]
+
+        # Additional Calculations (existing logic remains the same)
         total_lost_time_last_week = breakdowns_last_week.aggregate(
             total_lost_time=Sum("lost_time")
         )["total_lost_time"]
 
-        # Calculate the number of breakdowns in the last week
         breakdowns_count_last_week = breakdowns_last_week.count()
-        
-        # Calculate utilization based on the breakdowns (Assume utilization is a ratio of active time to total time in the last week)
         total_active_time_last_week = sum(
             breakdown.lost_time.total_seconds() for breakdown in breakdowns_last_week
         )
         total_week_minutes = 7 * 10 * 60  # 1 week in seconds
-        utilization_last_week = 1 - ((total_active_time_last_week/60) / total_week_minutes) if total_week_minutes > 0 else 0
+        utilization_last_week = 1 - ((total_active_time_last_week / 60) / total_week_minutes) if total_week_minutes > 0 else 0
 
-        # Calculate Mean Time Between Failures (MTBF) for the last week
-        if breakdowns_count_last_week > 1:
-            mtbf_numbers = (total_week_minutes/breakdowns_count_last_week)
-            mtbf_last_week = timedelta(minutes=mtbf_numbers)
-        else:
-            mtbf_last_week = None
-
-        # Breakdown details for the last week
-        breakdown_details_last_week = [
-            {
-                "breakdown-start": breakdown.breakdown_start,
-                "lost-time": str(breakdown.lost_time),
-            }
-            for breakdown in breakdowns_last_week
-        ]
-
-        # Lost time reasons for the last week (group by problem category)
-        lost_time_reasons_last_week = (
-            breakdowns_last_week.values("problem_category__name")
-            .annotate(total_lost_time=Sum("lost_time"))
-            .order_by("problem_category__name")
+        mtbf_last_week = (
+            timedelta(minutes=(total_week_minutes / breakdowns_count_last_week))
+            if breakdowns_count_last_week > 1
+            else None
         )
 
-        lost_time_reasons_last_week = [
-            {
-                "problem-category": reason["problem_category__name"],
-                "lost-time": str(reason["total_lost_time"]),
-            }
-            for reason in lost_time_reasons_last_week
-        ]
-
-        # Format total lost time to HH:MM:SS
         formatted_total_lost_time_last_week = str(total_lost_time_last_week) if total_lost_time_last_week else "0:00:00"
         formatted_mtbf_last_week = str(mtbf_last_week) if mtbf_last_week else "0:00:00"
 
-        # Prepare the response data
         response_data = {
             "id": machine.id,
             "machine_id": machine.machine_id,
@@ -245,8 +228,24 @@ class BreakdownLogViewSet(ModelViewSet):
             "utilization-last-week": utilization_last_week,
             "breakdowns-count-last-week": breakdowns_count_last_week,
             "MTBF-last-week": formatted_mtbf_last_week,
-            "breakdowns-last-week": breakdown_details_last_week,
-            "lost-time-reasons-last-week": lost_time_reasons_last_week,
+            "breakdowns-last-week": daily_lost_time_list,  # Add daily lost time
+            # "breakdowns-last-week": [
+            #     {
+            #         "breakdown-start": breakdown.breakdown_start,
+            #         "lost-time": str(breakdown.lost_time),
+            #     }
+            #     for breakdown in breakdowns_last_week
+            # ],
+            "lost-time-reasons-last-week": [
+                {
+                    "problem-category": reason["problem_category__name"],
+                    "lost-time": str(reason["total_lost_time"]),
+                }
+                for reason in breakdowns_last_week.values("problem_category__name")
+                .annotate(total_lost_time=Sum("lost_time"))
+                .order_by("problem_category__name")
+            ],
+            
         }
 
         return Response(response_data)
