@@ -16,12 +16,3 @@ class Company(models.Model):
     def __str__(self):
         return self.name
 
-
-class Location(models.Model):
-    desk = models.CharField(max_length = 30,blank=True, null=True)
-    floor_no = models.CharField(max_length=50,blank=True, null=True)
-    line_no = models.CharField(max_length=50,blank=True, null=True)
-    room = models.CharField(max_length=50)
-    company = models.ForeignKey(Company, on_delete=models.CASCADE)
-    def __str__(self):
-        return f"desk {self.desk} - line {self.line_no} - room {self.room} - floor {self.floor_no}"

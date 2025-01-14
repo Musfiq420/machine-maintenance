@@ -13,3 +13,4 @@ build/
 *.log
 
 backend/.myenv
+backend/myenv

@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
-from company.models import Company, Location  # Assuming these are in the company app
+from company.models import Company  # Assuming these are in the company app
 from ..models import Employee, Department, Designation, DeviceToken
 
 
@@ -75,7 +75,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
         model = Employee
         fields = [
             'id', 'user', 'name', 'company', 'department', 'mobile',
-            'designation', 'employee_id', 'date_of_joining', 'location'
+            'designation', 'employee_id', 'date_of_joining',
         ]
         read_only_fields = ['id', 'user']
 
@@ -90,7 +90,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         model = Employee
         fields = [
             'id','user', 'name', 'company', 'department', 'mobile',
-            'designation', 'employee_id', 'date_of_joining', 'location'
+            'designation', 'employee_id', 'date_of_joining'
         ]
 
     def validate_company(self, value):
@@ -146,7 +146,7 @@ class AddEmployeeSerializer(serializers.ModelSerializer):
         model = Employee
         fields = [
             'id', 'name', 'company', 'department', 'mobile',
-            'designation', 'employee_id', 'date_of_joining', 'location'
+            'designation', 'employee_id', 'date_of_joining'
         ]
 
     def validate_company(self, value):

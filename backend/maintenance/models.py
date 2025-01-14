@@ -1,8 +1,7 @@
 from django.db import models
 from user_management.models import Employee
-from company.models import Company, Location
+from company.models import Company
 from production.models import Line
-from django.db import models
 
 class Brand(models.Model):
     name = models.CharField(max_length = 30)
@@ -44,7 +43,6 @@ class Machine(models.Model):
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE, blank=True, null=True)
     model_number = models.CharField(max_length=255, blank=True, null=True)
     serial_no = models.CharField(max_length=255, blank=True, null=True)
-    location = models.ForeignKey(Location, on_delete=models.CASCADE, blank=True, null=True)
     line = models.ForeignKey(Line, on_delete=models.SET_NULL, blank=True, null=True)
     sequence = models.SmallIntegerField(blank=True, null=True)
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE,blank=True, null=True)
@@ -87,7 +85,7 @@ class BreakdownLog(models.Model):
     mechanic = models.ForeignKey(Employee, on_delete=models.SET_NULL, null=True, related_name="mechanic_breakdowns")
     operator = models.ForeignKey(Employee, on_delete=models.SET_NULL, null=True, related_name="operator_breakdowns")
     problem_category = models.ForeignKey(ProblemCategory, on_delete=models.CASCADE,blank=True, null=True, related_name="breakdown_logs")
-    location = models.ForeignKey(Location, on_delete=models.CASCADE, blank=True, null=True)
+    line = models.ForeignKey(Line, on_delete=models.SET_NULL, blank=True, null=True)
     breakdown_start = models.DateTimeField()
     repairing_start = models.DateTimeField(blank=True, null=True)
     lost_time = models.DurationField()
