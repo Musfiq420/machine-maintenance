@@ -67,46 +67,24 @@ class MachineViewSet(ModelViewSet):
     
 class BreakdownLogViewSet(ModelViewSet):
     queryset = BreakdownLog.objects.all()
-    serializer_class = BreakdownLogSerializer
-
-    @action(detail=False, methods=["get"], url_path="total-lost-time-per-machine")
-    def total_lost_time_per_machine(self, request):
-        # Aggregate lost time for each machine
-        lost_time_per_machine = (
-            self.get_queryset()
-            .values("machine__id", "machine__model_number")
-            .annotate(total_lost_time=Sum("lost_time"))
-            .order_by("machine__model_number")  # Optional: Sort by model number
-        )
-
-        # Convert total_lost_time to HH:MM:SS format
-        for item in lost_time_per_machine:
-            total_lost_time = item["total_lost_time"]
-            if total_lost_time is not None:
-                # Directly convert timedelta to string
-                item["total_lost_time"] = str(total_lost_time)
-            else:
-                item["total_lost_time"] = "0:00:00"
-
-        return Response(lost_time_per_machine)
-    
+    serializer_class = BreakdownLogSerializer    
 
     @action(detail=False, methods=["get"], url_path="total-lost-time-per-location")
     def total_lost_time(self, request):
         # Parse query parameters
-        rooms = request.query_params.get("location_room", "")  # Example: "A,B"
-        line_nos = request.query_params.get("location_line_no", "")  # Example: "1,2"
+        floors = request.query_params.get("floor", "")  # Example: "A,B"
+        line_nos = request.query_params.get("line", "")  # Example: "1,2"
 
         # Split the parameters into lists
-        room_list = rooms.split(",") if rooms else []
+        floor_list = floors.split(",") if floors else []
         line_no_list = line_nos.split(",") if line_nos else []
 
         # Filter the BreakdownLog queryset based on the parameters
         breakdown_queryset = self.get_queryset()
-        if room_list:
-            breakdown_queryset = breakdown_queryset.filter(location__room__in=room_list)
+        if floor_list:
+            breakdown_queryset = breakdown_queryset.filter(line__floor__id__in=floor_list)
         if line_no_list:
-            breakdown_queryset = breakdown_queryset.filter(location__line_no__in=line_no_list)
+            breakdown_queryset = breakdown_queryset.filter(line__id__in=line_no_list)
 
         # Calculate the total lost time
         total_lost_time = breakdown_queryset.aggregate(Sum("lost_time"))["lost_time__sum"]
@@ -116,11 +94,10 @@ class BreakdownLogViewSet(ModelViewSet):
 
         # Filter the Machine queryset based on the parameters
         machine_queryset = Machine.objects.all()
-        print(machine_queryset)
-        if room_list:
-            machine_queryset = machine_queryset.filter(location__room__in=room_list)
+        if floor_list:
+            machine_queryset = machine_queryset.filter(line__floor__id__in=floor_list)
         if line_no_list:
-            machine_queryset = machine_queryset.filter(location__line_no__in=line_no_list)
+            machine_queryset = machine_queryset.filter(line__id__in=line_no_list)
 
         # Calculate machine stats
         total_machine_count = machine_queryset.count()
@@ -138,18 +115,19 @@ class BreakdownLogViewSet(ModelViewSet):
                 "purchase_date": machine.purchase_date,
                 "last_breakdown_start": machine.last_breakdown_start,
                 "status": machine.status,
-                "category": machine.category.id if machine.category else None,
-                "type": machine.type.id if machine.type else None,
-                "brand": machine.brand.id if machine.brand else None,
-                "location": machine.location.id if machine.location else None,
-                "supplier": machine.supplier.id if machine.supplier else None,
+                "category": machine.category.name if machine.category else None,
+                "type": machine.type.name if machine.type else None,
+                "brand": machine.brand.name if machine.brand else None,
+                "line": machine.line.name if machine.line else None,
+                "floor": machine.line.floor.name if machine.line.floor else None,
+                "supplier": machine.supplier.name if machine.supplier else None,
             }
             for machine in machine_queryset
         ]
 
         # Build the response
         response_data = {
-            "rooms": room_list,
+            "rooms": floor_list,
             "line_nos": line_no_list,
             "total_lost_time": formatted_total_lost_time,
             "total_machine_count": total_machine_count,
@@ -219,11 +197,12 @@ class BreakdownLogViewSet(ModelViewSet):
             "purchase_date": machine.purchase_date,
             "last_breakdown_start": machine.last_breakdown_start,
             "status": machine.status,
-            "category": machine.category.id if machine.category else None,
-            "type": machine.type.id if machine.type else None,
-            "brand": machine.brand.id if machine.brand else None,
-            "location": machine.location.id if machine.location else None,
-            "supplier": machine.supplier.id if machine.supplier else None,
+            "category": machine.category.name if machine.category else None,
+            "type": machine.type.name if machine.type else None,
+            "brand": machine.brand.name if machine.brand else None,
+            "line": machine.line.name if machine.line else None,
+            "floor": machine.line.floor.name if machine.line.floor else None,
+            "supplier": machine.supplier.name if machine.supplier else None,
             "total-lost-time-last-week": formatted_total_lost_time_last_week,
             "utilization-last-week": utilization_last_week,
             "breakdowns-count-last-week": breakdowns_count_last_week,
