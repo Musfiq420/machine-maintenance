@@ -167,6 +167,7 @@ CORS_ALLOWED_ORIGINS = [
 # settings.py
 
 CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
     'https://fast-tracker-bo3s.onrender.com',
 ]
 
