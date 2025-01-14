@@ -10,16 +10,16 @@ class MachineAdminForm(forms.ModelForm):
 
 class MachineAdmin(admin.ModelAdmin):
     # Fields to display in the list view
-    list_display = ('machine_id', 'category', 'type', 'brand', 'model_number', 'serial_no', 'status', 'location', 'purchase_date', 'last_breakdown_start')
+    list_display = ('machine_id', 'category', 'type', 'brand', 'model_number', 'serial_no', 'status', 'purchase_date', 'last_breakdown_start')
     
     # Fields that will be used for filtering the machines in the list view
-    list_filter = ('status', 'category', 'brand', 'location')
+    list_filter = ('status', 'category', 'brand')
     
     # Fields to search in the list view
-    search_fields = ('machine_id', 'category', 'type', 'brand', 'model_number', 'serial_no', 'location')
+    search_fields = ('machine_id', 'category', 'type', 'brand', 'model_number', 'serial_no')
     
     # Fields that should be displayed in the detail view (edit form)
-    fields = ('machine_id', 'category', 'type', 'brand', 'model_number', 'serial_no', 'supplier', 'purchase_date', 'location', 'status', 'last_breakdown_start')
+    fields = ('machine_id', 'category', 'type', 'brand', 'model_number', 'serial_no', 'supplier', 'purchase_date', 'status', 'last_breakdown_start')
     
     # Customize the ordering of machines in the list view
     ordering = ('-purchase_date',)  # Display the most recently purchased machines first

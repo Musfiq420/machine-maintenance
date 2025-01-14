@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from ..models import BreakdownLog, Machine, Type, Brand, Category, Location, Supplier, ProblemCategory
+from ..models import BreakdownLog, Machine, Type, Brand, Category, Supplier, ProblemCategory
 from .serializers import BreakdownLogSerializer, MachineSerializer, TypeSerializers, BrandSerializers, CategorySerializers, SupplierSerializers, ProblemCategorySerializers
 from rest_framework.exceptions import ValidationError
 from django_filters.rest_framework import DjangoFilterBackend
