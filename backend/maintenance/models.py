@@ -53,6 +53,7 @@ class Machine(models.Model):
     operator = models.ForeignKey(Employee, on_delete=models.SET_NULL, null=True, related_name="operator_machine")
     last_problem = models.CharField(max_length=255, blank=True, null=True)
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='active')
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.category} ({self.model_number})"
