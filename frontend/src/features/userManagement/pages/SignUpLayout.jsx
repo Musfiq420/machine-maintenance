@@ -4,25 +4,14 @@ import Navbar from "../../../shared/components/navbar/Navbar";
 import RegisterForm from "../components/registerForm/RegistrationForm";
 import { UserContext } from "../../../context/userProvider";
 import ErrorPage from "../../../shared/components/ui/errorPage";
+import DashboardWrapper from "../../../shared/components/dashboard/dashboardWrapper";
 
 const SignUpLayout = () => {
   const { user } = useContext(UserContext);
   return (
-    <div className="bg-primary-accent">
-      {user ? (
-        <>
-          <Navbar></Navbar>
-          <div className="mt-10">
-            {" "}
-            {/* Add margin-top */}
-            <RegisterForm />
-          </div>
-          <Footer></Footer>
-        </>
-      ) : (
-        <ErrorPage />
-      )}
-    </div>
+    <DashboardWrapper>
+      <RegisterForm />
+    </DashboardWrapper>
   );
 };
 
