@@ -1,5 +1,3 @@
-// src/shared/components/MachineStatus/AllMachineDetails.jsx
-
 import React, { useState, useEffect, useContext } from "react";
 import { FaArrowUp, FaArrowDown, FaQuestionCircle } from "react-icons/fa";
 import PieChartComponent from "../../../../shared/components/PieChartComponent";
@@ -11,18 +9,8 @@ import DashboardError from "../../../../shared/components/dashboard/dashboardErr
 import MachineCards from "../../../../shared/components/cards/machineCards";
 import FormInputFields from "../../../../shared/components/ui/formInputFields";
 
-const location = [
-  {
-    room: "A",
-    line: ["1", "2", "3"],
-  },
-  {
-    room: "B",
-    line: ["1", "2"],
-  },
-];
-
 const AllMachineDetails = () => {
+  const [location, setLocation] = useState([]); // Dynamic location data
   const [machines, setMachines] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -31,73 +19,82 @@ const AllMachineDetails = () => {
   const [selectedFloor, setSelectedFloor] = useState([]);
   const [selectedLine, setSelectedLine] = useState([]);
 
-  const [lines, setLines] = useState(location[0].line.map((r) => r));
-
   const [stats, setStats] = useState([]);
 
-  // API URL
-
-  // Fetch machine data from API
-  const fetchMachines = async (room, lines) => {
-    console.log(room);
-    console.log(lines);
-    setError(false);
+  // Fetch lines and floors dynamically
+  const fetchLines = async () => {
     const token = getToken();
     try {
-      setLoading(true);
-      // const response = await fetch();
       const response = await fetch(
-        import.meta.env.VITE_URL_PREFIX +
-          `/api/maintenance/breakdown-logs/total-lost-time-per-location/?location_room=${room}&location_line_no=${lines}`,
+        `${import.meta.env.VITE_URL_PREFIX}/api/production/lines/`,
         {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `${token}`, // Ensure this header matches what your server expects
+            Authorization: `Bearer ${token}`,
           },
         }
       );
       const res = await response.json();
-      console.log(res);
+      const formattedLocation = res.reduce((acc, curr) => {
+        const floor = acc.find((f) => f.id === curr.floor.id);
+        if (floor) {
+          floor.line.push({ id: curr.id, name: curr.name });
+        } else {
+          acc.push({
+            id: curr.floor.id,
+            name: curr.floor.name,
+            line: [{ id: curr.id, name: curr.name }],
+          });
+        }
+        return acc;
+      }, []);
+      setLocation(formattedLocation);
+    } catch (error) {
+      console.error("Error fetching lines:", error);
+    }
+  };
+
+  // Fetch machine data based on selected floor and lines
+  const fetchMachines = async (floor, lines) => {
+    setError(false);
+    const token = getToken();
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `${import.meta.env.VITE_URL_PREFIX}/api/maintenance/breakdown-logs/total-lost-time-per-location/?floor=${floor}&line=${lines}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const res = await response.json();
       setMachines(res.machines);
       setLoading(false);
-      const newStats = [
-        {
-          stat: "Total Lost Time",
-          value: res.total_lost_time,
-        },
-        {
-          stat: "Total Machines",
-          value: res.total_machine_count,
-        },
-        {
-          stat: "Active",
-          value: res.total_active_machines,
-        },
-        {
-          stat: "Repairing",
-          value: res.total_repairing_machines,
-        },
-        {
-          stat: "Idle",
-          value: res.total_idle_machines,
-        },
-      ];
-      setStats(newStats);
+      setStats([
+        { stat: "Total Lost Time", value: res.total_lost_time },
+        { stat: "Total Machines", value: res.total_machine_count },
+        { stat: "Active", value: res.total_active_machines },
+        { stat: "Repairing", value: res.total_repairing_machines },
+        { stat: "Idle", value: res.total_idle_machines },
+      ]);
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching machines:", error);
       setError(true);
       setLoading(false);
     }
   };
+
   const fields = [
     {
       input: selectedFloor,
       name: "Floors",
       prefix: "Floor",
-
       id: "floor",
-      options: location.map((l) => l.room),
+      options: location.map((l) => ({ id: l.id, name: l.name })), // Pass value and label
       setInput: (id, value) => setSelectedFloor(value),
     },
     {
@@ -108,54 +105,36 @@ const AllMachineDetails = () => {
       options: [
         ...new Set(
           location
-            .filter((l) => selectedFloor.includes(l.room))
-            .reduce((prev, curr) => [...prev, ...curr?.line], []) || []
+            .filter((l) => selectedFloor.includes(l.id))
+            .reduce((prev, curr) => [...prev, ...curr?.line], [])
         ),
-      ],
+      ]
+        .map((line) => ({ id: line.id, name: line.name })), // Pass value and label
       setInput: (id, value) => setSelectedLine(value),
     },
   ];
-  console.log();
 
   useEffect(() => {
-    fetchMachines(selectedFloor, selectedLine);
+    fetchLines();
+  }, []);
+
+  useEffect(() => {
+    if (selectedFloor.length && selectedLine.length) {
+      fetchMachines(selectedFloor, selectedLine);
+    }
   }, [selectedLine, selectedFloor]);
-
-  // Extract unique line numbers for footer
-  const uniqueLines = Array.from(
-    new Set(
-      machines
-        .filter((machine) => {
-          const floorMatch =
-            selectedFloor === "All Floors" ||
-            machine.floor_no === selectedFloor;
-          const lineMatch =
-            selectedLine === "All Lines" || machine.line_no === selectedLine;
-          return floorMatch && lineMatch;
-        })
-        .map((machine) => machine.line_no)
-    )
-  )
-    .filter((line) => line !== null)
-    .sort((a, b) => a - b);
-
-  const statusList = [
-    { state: "Active", color: "green-500" },
-    { state: "Maintanance", color: "yellow-500" },
-    { state: "Idle", color: "red-500" },
-  ];
 
   return (
     <div className="bg-gradient-to-br from-gray-100 via-white to-gray-100 p-6 min-h-screen">
       {/* Dropdowns for Floor and Line Selection */}
       <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Floor and Line Selection */}
         {fields.map((f) => (
           <FormInputFields
+            key={f.id}
             input={f.input}
             name={f.name}
             id={f.id}
-            options={f.options}
+            options={f.options} // Pass correctly formatted options
             option_pref={f.prefix}
             setInput={f.setInput}
             errorField={[]}
@@ -169,35 +148,8 @@ const AllMachineDetails = () => {
       {loading && <DashboardLoading title={"Machines"} />}
       {error && <DashboardError title={"Machines"} />}
 
-      {/* Machine Status Content */}
-      {machines.length && (
-        <div className="bg-white shadow-lg rounded-lg p-6">
-          {/* Header */}
-          <div className="flex justify-between items-center border-b border-gray-200 pb-4">
-            <h2 className="text-xl font-bold text-gray-800 tracking-wide">
-              {selectedFloor === "All Floors" && selectedLine === "All Lines"
-                ? "All Machines"
-                : selectedFloor !== "All Floors" && selectedLine === "All Lines"
-                ? `Floor ${selectedFloor} Machines`
-                : selectedFloor === "All Floors" && selectedLine !== "All Lines"
-                ? `Line ${selectedLine} Machines`
-                : `Floor ${selectedFloor} | Line ${selectedLine} Machines`}
-            </h2>
-            <div className="flex space-x-4 text-sm">
-              {/* Status Indicators */}
-              {statusList.map((status) => (
-                <div className="flex items-center space-x-2">
-                  <div
-                    className={`w-3 h-3 rounded-full bg-${status.color}`}
-                  ></div>
-                  <span className="text-gray-700">{status.state}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-6">
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-6">
             {stats.map((stat) => (
               <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-4 flex flex-col space-y-2">
                 <h2 className="text-sm text-gray-500 font-semibold">
@@ -218,8 +170,8 @@ const AllMachineDetails = () => {
             ))}
           </div>
 
-          {/* Machine Grid */}
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+      {/* Machine Grid */}
+      <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
             {machines.map((machine) => (
               <MachineCards
                 machine_id={encodeURIComponent(machine.machine_id)}
@@ -228,17 +180,6 @@ const AllMachineDetails = () => {
               />
             ))}
           </div>
-
-          {/* Footer: Dynamic Line Names */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-8 text-sm text-gray-600 border-t border-gray-200 pt-4">
-            {uniqueLines.map((line, index) => (
-              <span key={index} className="text-center font-medium">
-                {`Line ${line}`}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 };

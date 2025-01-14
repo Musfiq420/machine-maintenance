@@ -1,7 +1,10 @@
 from django.db import models
+from company.models import Company
 
 class Floor(models.Model):
     name = models.CharField(max_length=100, unique=True)  # Optional descriptive name
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+
 
     def __str__(self):
         return f"{self.name}"

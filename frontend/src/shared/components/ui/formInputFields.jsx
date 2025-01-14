@@ -65,10 +65,14 @@ export default function FormInputFields({
             }
             if (Array.isArray(selected)) {
               return selected
-                .map((item) => `${option_pref} ${item}`)
+                .map((item) => {
+                  const option = options.find((opt) => opt.id === item);
+                  return option ? `${option_pref} ${option.name}` : item;
+                })
                 .join(", ");
             }
-            return selected;
+            const option = options.find((opt) => opt.id === selected);
+            return option ? `${option_pref} ${option.name}` : selected;
           }}
           className="w-full my-2 h-11 border-black border-[2px]"
         >
@@ -76,8 +80,8 @@ export default function FormInputFields({
             <em>{name}</em>
           </MenuItem>
           {options.map((opt) => (
-            <MenuItem key={opt} value={opt}>
-              {option_pref} {opt}
+            <MenuItem key={opt} value={opt.id}>
+              {option_pref} {opt.name}
             </MenuItem>
           ))}
         </Select>
