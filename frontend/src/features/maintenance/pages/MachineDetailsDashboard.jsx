@@ -1,11 +1,10 @@
 import MachineDetails from "../components/machineDetails/MachineDetails";
 import DashboardWrapper from "../../../shared/components/dashboard/dashboardWrapper";
-import MaintenanceDashboardHeader from "../components/MaintenanceDashboardHeader";
+import MaintenanceDashboardHeader from "../../../shared/components/dashboard/DashboardHeader";
 
 const MachineDetailsDashboard = () => {
   return (
     <DashboardWrapper>
-      <MaintenanceDashboardHeader />
       <MachineDetails />
     </DashboardWrapper>
   );

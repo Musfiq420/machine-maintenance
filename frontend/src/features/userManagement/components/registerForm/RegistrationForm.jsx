@@ -1,11 +1,14 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import FormInputFields from "../../../../shared/components/ui/formInputFields";
 
 const RegisterForm = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("user");
+  const [roleOptions, setRoleOptions] = useState([]);
+  const [departmentOptions, setDepartmentOptions] = useState([]);
+  const [companyOptions, setCompanyOptions] = useState([]);
   const [errorFields, setErrorFields] = useState([]);
 
   // Shared Form Data
@@ -50,8 +53,8 @@ const RegisterForm = () => {
 
     const url =
       activeTab === "user"
-        ? "http://127.0.0.1:8000/api/user_management/register/"
-        : "http://127.0.0.1:8000/api/user_management/employees/";
+        ? `${import.meta.env.VITE_URL_PREFIX}/api/user_management/register/`
+        : `${import.meta.env.VITE_URL_PREFIX}/api/user_management/employees/`;
 
     try {
       const response = await fetch(url, {
@@ -85,6 +88,47 @@ const RegisterForm = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const dept_url = `${
+        import.meta.env.VITE_URL_PREFIX
+      }/api/user_management/department/`;
+      const role_url = `${
+        import.meta.env.VITE_URL_PREFIX
+      }/api/user_management/designation/`;
+      const comp_url = `${
+        import.meta.env.VITE_URL_PREFIX
+      }/api/user_management/groups/`;
+      try {
+        const dept_res = await fetch(dept_url, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
+        const dept_data = await dept_res.json();
+        const role_res = await fetch(role_url, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
+        const role_data = await role_res.json();
+        const comp_res = await fetch(comp_url, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
+        const comp_data = await comp_res.json();
+        const roles = role_data.map((d) => d.title);
+        const comps = comp_data.map((d) => d.name);
+        const depts = dept_data.map((d) => d.name);
+        setRoleOptions(roles);
+        setDepartmentOptions(depts);
+        setCompanyOptions(comps);
+        console.log(depts, comps, roles);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, []);
+
   const userFields = [
     { id: "email", label: "Email" },
     { id: "password", label: "Password" },
@@ -95,18 +139,21 @@ const RegisterForm = () => {
       id: "company",
       label: "Company",
       type: "select",
-      options: [
-        "Company 1",
-        "Company 2",
-        "Company 3",
-        "Company 4",
-        "Company 5",
-        "Company 6",
-      ],
+      options: companyOptions,
     },
-    { id: "department", label: "Department", type: "text" },
+    {
+      id: "department",
+      label: "Department",
+      type: "select",
+      options: departmentOptions,
+    },
     { id: "mobile", label: "Mobile", type: "number" },
-    { id: "designation", label: "Designation", type: "text" },
+    {
+      id: "designation",
+      label: "Designation",
+      type: "select",
+      options: roleOptions,
+    },
     { id: "employee_id", label: "Employee ID", type: "text" },
     { id: "date_of_joining", label: "Date of Joining", type: "date" },
     { id: "assigned_line", label: "Assigned Line", type: "text" },
@@ -114,7 +161,7 @@ const RegisterForm = () => {
   ];
 
   return (
-    <div className="mb-20 bg-primary-accent">
+    <div className="mb-20 bg">
       {/* Fixed Tabs */}
       <div className="w-fit py-3 px-10 text-black  rounded-full mx-auto mt-12 bg-primary-dark shadow-md z-10 flex justify-center space-x-4 ">
         <button

@@ -4,6 +4,7 @@ import DashboardSidebar from "./DashboardSidebar";
 import Footer from "../footer/Footer";
 import ErrorPage from "../ui/errorPage";
 import DashboardLoading from "./dashboardLoading";
+import DashboardHeader from "./DashboardHeader";
 
 export default function DashboardWrapper({ children }) {
   const { user, userLoading } = useContext(UserContext);
@@ -19,6 +20,7 @@ export default function DashboardWrapper({ children }) {
 
             {/* Main Content with margin-left to make space for the sidebar */}
             <div className="flex-1 lg:ml-64 min-h-screen bg-white overflow-auto">
+              <DashboardHeader />
               <div className="flex-1 p-8 bg-gray-50">{children}</div>
             </div>
           </div>
