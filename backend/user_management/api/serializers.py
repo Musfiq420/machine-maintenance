@@ -85,6 +85,9 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     user = UserSerializer()
+    department = serializers.CharField(source='department.name', read_only=True)
+    designation = serializers.CharField(source='designation.title', read_only=True)
+    company = serializers.CharField(source='company.name', read_only=True)
 
     class Meta:
         model = Employee

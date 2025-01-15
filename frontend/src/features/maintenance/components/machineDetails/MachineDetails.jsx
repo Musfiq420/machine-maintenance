@@ -46,7 +46,7 @@ const MachineDetails = () => {
     const lostTimeInMinutes =
       parseInt(lostTimeParts[0]) * 60 + parseInt(lostTimeParts[1]);
     const breakdownDate = new Date(
-      breakdown["breakdown-start"]
+      breakdown["date"]
     ).toLocaleDateString();
     return {
       date: breakdownDate,
