@@ -115,13 +115,18 @@ const RegisterForm = () => {
           headers: { "Content-Type": "application/json" },
         });
         const comp_data = await comp_res.json();
-        const roles = role_data.map((d) => d.title);
-        const comps = comp_data.map((d) => d.name);
-        const depts = dept_data.map((d) => d.name);
+        const roles = role_data.map((d) => {
+          return { name: d.title, id: d.id };
+        });
+        const comps = comp_data.map((d) => {
+          return { name: d.name, id: d.id };
+        });
+        const depts = dept_data.map((d) => {
+          return { name: d.name, id: d.id };
+        });
         setRoleOptions(roles);
         setDepartmentOptions(depts);
         setCompanyOptions(comps);
-        console.log(depts, comps, roles);
       } catch (error) {
         console.log(error);
       }

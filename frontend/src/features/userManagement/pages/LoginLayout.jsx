@@ -11,7 +11,7 @@ const LoginLayout = () => {
   const navigate = useNavigate();
   useEffect(() => {
     if (user) {
-      navigate("/dashboard");
+      navigate("/dashboard/machine-monitoring");
     }
   }, [user]);
   return (

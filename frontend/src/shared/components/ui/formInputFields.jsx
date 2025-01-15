@@ -74,13 +74,13 @@ export default function FormInputFields({
             const option = options.find((opt) => opt.id === selected);
             return option ? `${option_pref} ${option.name}` : selected;
           }}
-          className="w-full my-2 h-11 border-black border-[2px]"
+          className="w-full my-2 h-11 disabled:border-gray-500 border-black border-[2px]"
         >
           <MenuItem disabled value="">
             <em>{name}</em>
           </MenuItem>
           {options.map((opt) => (
-            <MenuItem key={opt} value={opt.id}>
+            <MenuItem key={opt.id} value={opt.id}>
               {option_pref} {opt.name}
             </MenuItem>
           ))}

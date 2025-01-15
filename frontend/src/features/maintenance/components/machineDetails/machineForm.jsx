@@ -3,15 +3,45 @@ import FormInputFields from "../../../../shared/components/ui/formInputFields";
 import { Dialog, DialogTitle, DialogContent } from "@mui/material";
 import { UserContext } from "../../../../context/userProvider";
 
-export default function MachineForm({ machine = null }) {
-  const { getToken } = useContext(UserContext);
+export default function MachineForm({ machine = null, sucess, setSucess }) {
+  const initialForm = {
+    machine_id: machine ? machine.machine_id || "" : "",
+    category: machine ? machine.category || "" : "",
+    type: machine ? machine.type || "" : "",
+    brand: machine ? machine.brand || "" : "",
+    model_number: machine ? machine.model_number || "" : "",
+    serial_no: machine ? machine.serial_no || "" : "",
+    supplier: machine ? machine.supplier || "" : "",
+    purchase_date: machine ? machine.purchase_date || "" : "",
+    status: machine ? machine.status || "" : "",
+  };
+  const { getToken, user } = useContext(UserContext);
   const [openModal, setOpenModal] = useState(false);
   const [brandsOptions, setBrandsOptions] = useState([]);
-  const [suppliersOptions, setSuppliersOptions] = useState([]);
   const [probsOptions, setProbsOptions] = useState([]);
+  const [suppliersOptions, setSuppliersOptions] = useState([]);
+  const [lineOptions, setlineOptions] = useState([]);
   const [typesOptions, setTypesOptions] = useState([]);
   const [catsOptions, setCatsOptions] = useState([]);
   const [errorFields, setErrorFields] = useState([]);
+  const statusOptions = [
+    {
+      id: "active",
+      name: "Active",
+    },
+    {
+      id: "broken",
+      name: "Inactive",
+    },
+    {
+      id: "maintenance",
+      name: "Maintenance",
+    },
+    {
+      id: "inactive",
+      name: "Broken",
+    },
+  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,18 +60,18 @@ export default function MachineForm({ machine = null }) {
       const type_url = `${
         import.meta.env.VITE_URL_PREFIX
       }/api/maintenance/type/`;
+      const line_url = `${
+        import.meta.env.VITE_URL_PREFIX
+      }/api/production/lines/`;
+
       try {
-        const [brand_data, supplier_data, prob_data, type_data, cat_data] =
+        const [brand_data, supplier_data, type_data, cat_data, line_data] =
           await Promise.all([
             fetch(brand_url, {
               method: "GET",
               headers: { "Content-Type": "application/json" },
             }).then((res) => res.json()),
             fetch(supplier_url, {
-              method: "GET",
-              headers: { "Content-Type": "application/json" },
-            }).then((res) => res.json()),
-            fetch(prob_url, {
               method: "GET",
               headers: { "Content-Type": "application/json" },
             }).then((res) => res.json()),
@@ -53,17 +83,32 @@ export default function MachineForm({ machine = null }) {
               method: "GET",
               headers: { "Content-Type": "application/json" },
             }).then((res) => res.json()),
+            fetch(line_url, {
+              method: "GET",
+              headers: { "Content-Type": "application/json" },
+            }).then((res) => res.json()),
           ]);
 
-        const brands = brand_data.map((d) => d.name);
+        const lines = line_data.map((d) => {
+          return { name: d.name, id: d.name };
+        });
+        setlineOptions(lines);
+        const brands = brand_data.map((d) => {
+          return { name: d.name, id: d.id };
+        });
         setBrandsOptions(brands);
-        const suppliers = supplier_data.map((d) => d.name);
+        const suppliers = supplier_data.map((d) => {
+          return { name: d.name, id: d.id };
+        });
         setSuppliersOptions(suppliers);
-        const probs = prob_data.map((d) => d.name);
-        setProbsOptions(probs);
-        const types = type_data.map((d) => d.name);
+
+        const types = type_data.map((d) => {
+          return { name: d.name, id: d.id };
+        });
         setTypesOptions(types);
-        const cats = cat_data.map((d) => d.name);
+        const cats = cat_data.map((d) => {
+          return { name: d.name, id: d.id };
+        });
         setCatsOptions(cats);
       } catch (error) {
         console.log(error);
@@ -72,23 +117,17 @@ export default function MachineForm({ machine = null }) {
     fetchData();
   }, []);
 
-  const [formData, setFormData] = useState({
-    machine_id: machine ? machine.machine_id || "" : "",
-    category: machine ? machine.category || "" : "",
-    type: machine ? machine.type || "" : "",
-    brand: machine ? machine.brand || "" : "",
-    model_number: machine ? machine.model_number || "" : "",
-    serial_no: machine ? machine.serial_no || "" : "",
-    floor_no: machine ? machine.floor_no || "" : "",
-    line_no: machine ? machine.line_no || "" : "",
-    supplier: machine ? machine.supplier || "" : "",
-    purchase_date: machine ? machine.purchase_date || "" : "",
-    location: machine ? machine.location || "" : "",
-    last_breakdown_start: machine ? machine.last_breakdown_start || "" : "",
-    status: machine ? machine.status || "" : "",
+  const [formData, setFormData] = useState(initialForm);
+
+  const staticFields = {
+    last_breakdown_start: null,
     last_problem: machine ? machine?.last_problem || "" : "",
-  });
-  console.log(machine);
+    sequence: null,
+    mechanic: null,
+    operator: null,
+    company: 1,
+    line: null,
+  };
 
   const fields = [
     { id: "machine_id", label: "Machine Id", type: "text" },
@@ -97,8 +136,6 @@ export default function MachineForm({ machine = null }) {
     { id: "brand", label: "Brand", type: "select", options: brandsOptions },
     { id: "model_number", label: "Model Number", type: "text" },
     { id: "serial_no", label: "Serial No", type: "number" },
-    { id: "floor_no", label: "Floor No", type: "number" },
-    { id: "line_no", label: "Line No", type: "number" },
     {
       id: "supplier",
       label: "Supplier",
@@ -106,21 +143,19 @@ export default function MachineForm({ machine = null }) {
       options: suppliersOptions,
     },
     { id: "purchase_date", label: "Purchase Date", type: "date" },
-    { id: "location", label: "Location", type: "text" },
-    {
-      id: "last_problem",
-      label: "Problem Category",
-      type: "text",
-      options: probsOptions,
-    },
-    { id: "last_breakdown_start", label: "Last Breakdown Start", type: "text" },
     {
       id: "status",
       label: "Status",
       type: "select",
-      options: ["Active", "Inactive", "Maintenance", "Broken"],
+      options: statusOptions,
     },
   ];
+  useEffect(() => {
+    if (sucess) {
+      setFormData(initialForm);
+      setOpenModal(false);
+    }
+  }, [sucess]);
   const handleInputChange = (id, value) => {
     if (Array.isArray(value)) {
       setFormData({
@@ -133,17 +168,20 @@ export default function MachineForm({ machine = null }) {
   };
 
   const handleSaveMachine = async () => {
+    const id = encodeURI(machine?.machine_id);
     const url = machine
-      ? `${import.meta.env.VITE_MACHINE_QR_DATA_API}/${machine?.id}`
-      : `${import.meta.env.VITE_MACHINE_QR_DATA_API}`;
+      ? `${import.meta.env.VITE_MACHINE_QR_DATA_API}/${machine?.machine_id}`
+      : `${import.meta.env.VITE_MACHINE_QR_DATA_API}/`;
     const token = getToken();
     const empty = Object.keys(formData).filter(
       (key) => formData[key].length === 0
     );
+    console.log(empty);
     setErrorFields(empty);
     if (empty.length !== 0) {
       return;
     }
+    console.log(url);
     try {
       const res = await fetch(url, {
         method: machine ? "PUT" : "POST",
@@ -151,15 +189,16 @@ export default function MachineForm({ machine = null }) {
           "Content-Type": "application/json",
           Authorization: token, // Ensure the token is being sent
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, ...staticFields }),
       });
 
       const data = await res.text();
-      console.log(data);
+      setSucess(true);
     } catch (error) {
       console.error(error);
     }
   };
+  console.log(lineOptions);
   return (
     <div>
       <button

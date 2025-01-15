@@ -1,5 +1,5 @@
 import React from "react";
-import QrCodeGenerator from "../components/qrCodeGenerator/QrCodeGenerator";
+import QrCodeGenerator from "../components/machineTable/machineTable";
 import DashboardWrapper from "../../../shared/components/dashboard/dashboardWrapper";
 
 const QrCodeTable = () => {
