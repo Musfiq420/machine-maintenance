@@ -66,10 +66,6 @@ class DesignationSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class EmployeeSerializer(serializers.ModelSerializer):
-    department = DepartmentSerializer(read_only=True)
-    designation = DesignationSerializer(read_only=True)
-    company = serializers.StringRelatedField(read_only=True)
-    location = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = Employee
@@ -85,9 +81,9 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     user = UserSerializer()
-    department = serializers.CharField(source='department.name', read_only=True)
-    designation = serializers.CharField(source='designation.title', read_only=True)
-    company = serializers.CharField(source='company.name', read_only=True)
+    department = serializers.CharField(source='department.name')
+    designation = serializers.CharField(source='designation.title')
+    company = serializers.CharField(source='company.name')
 
     class Meta:
         model = Employee
