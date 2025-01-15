@@ -29,7 +29,6 @@ const RegisterForm = () => {
 
   // Handle Input Changes
   const handleInputChange = (id, value) => {
-    console.log(id);
     if (Array.isArray(value)) {
       setFormData({
         ...formData,
@@ -40,42 +39,60 @@ const RegisterForm = () => {
     setFormData({ ...formData, [id]: value });
   };
 
+  const commmonFields = [
+    {
+      id: "company",
+      label: "Company",
+      type: "select",
+      options: companyOptions,
+    },
+    {
+      id: "department",
+      label: "Department",
+      type: "select",
+      options: departmentOptions,
+    },
+    { id: "mobile", label: "Mobile", type: "number" },
+    {
+      id: "designation",
+      label: "Designation",
+      type: "select",
+      options: roleOptions,
+    },
+    { id: "employee_id", label: "Employee ID", type: "text" },
+    { id: "date_of_joining", label: "Date of Joining", type: "date" },
+    { id: "assigned_line", label: "Assigned Line", type: "text" },
+    { id: "assigned_block", label: "Assigned Block", type: "text" },
+  ];
+
   // Handle Form Submission
   const handleSubmit = async () => {
-    const currErrorFields = Object.keys(formData).filter(
-      (key) => formData[key] === ""
+    const currErrorFields = commmonFields.filter(
+      (fields) => formData[fields.id] === ""
     );
     setErrorFields(currErrorFields);
+    console.log(currErrorFields);
     if (errorFields.length) {
+      console.log("error", errorFields);
       return;
     }
-    console.log("error", errorFields);
 
-    const url =
-      activeTab === "user"
-        ? `${import.meta.env.VITE_URL_PREFIX}/api/user_management/register/`
-        : `${import.meta.env.VITE_URL_PREFIX}/api/user_management/employees/`;
-
+    const url = `${import.meta.env.VITE_EMPLOYEE_UPDATE_API}`;
     try {
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, company: 1 }),
       });
 
       if (response.ok) {
-        const data = await response.json();
-        if (data.redirect_url) {
-          alert(data.message); // Show success message
-          navigate(data.redirect_url); // Redirect to the login page
-        } else {
-          alert("Registration successful, but no redirect URL provided.");
-        }
+        navigate("/dashboard/employees"); // Redirect to the login page
       } else if (response.status === 400) {
         // Handle validation errors
         const errorData = await response.json();
+        console.log(errorData);
         const errorMessage = Object.values(errorData).flat().join("\n"); // Concatenate all error messages
-        alert(`Validation Error: ${errorMessage}`);
+        // alert(`Validation Error: ${errorMessage}`);
       } else {
         // Handle unexpected errors
         const text = await response.text();
@@ -138,31 +155,6 @@ const RegisterForm = () => {
     { id: "email", label: "Email" },
     { id: "password", label: "Password" },
     { id: "confirm_password", label: "Confirm Password" },
-  ];
-  const commmonFields = [
-    {
-      id: "company",
-      label: "Company",
-      type: "select",
-      options: companyOptions,
-    },
-    {
-      id: "department",
-      label: "Department",
-      type: "select",
-      options: departmentOptions,
-    },
-    { id: "mobile", label: "Mobile", type: "number" },
-    {
-      id: "designation",
-      label: "Designation",
-      type: "select",
-      options: roleOptions,
-    },
-    { id: "employee_id", label: "Employee ID", type: "text" },
-    { id: "date_of_joining", label: "Date of Joining", type: "date" },
-    { id: "assigned_line", label: "Assigned Line", type: "text" },
-    { id: "assigned_block", label: "Assigned Block", type: "text" },
   ];
 
   return (

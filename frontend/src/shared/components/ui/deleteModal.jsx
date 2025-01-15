@@ -8,10 +8,10 @@ export default function DeleteModal({ url, data_type }) {
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
   console.log(url);
-  const handleDelete = () => {
+  const handleDelete = async () => {
     const token = getToken();
     setLoading(true);
-    fetch(url, {
+    await fetch(url, {
       method: "DELETE",
       Authorization: `Token ${token}`, // Ensure this header matches what your server expects
     })
@@ -29,7 +29,7 @@ export default function DeleteModal({ url, data_type }) {
       .catch((error) => {
         console.log(error);
       });
-    setLoading(false);
+    // setLoading(false);
   };
 
   return (
