@@ -3,6 +3,12 @@ from maintenance.models import BreakdownLog
 from ..models import Machine, Type, Brand, Category, Supplier, ProblemCategory
 
 class MachineSerializer(serializers.ModelSerializer):
+    category = serializers.CharField(source='category.name', read_only=True)
+    type = serializers.CharField(source='type.name', read_only=True)
+    brand = serializers.CharField(source='brand.name', read_only=True)
+    line = serializers.CharField(source='line.name', read_only=True)
+    supplier = serializers.CharField(source='supplier.name', read_only=True)
+    company = serializers.CharField(source='company.name', read_only=True)
     class Meta:
         model = Machine
         fields = '__all__'
