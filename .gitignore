@@ -2,6 +2,10 @@ fastTracker/
 backend/credentials/
 Towaha.txt
 
+#Backend
+*.pyc
+__pycache__/
+
 
 # Ignore .env files at the root and inside frontend folder
 .env

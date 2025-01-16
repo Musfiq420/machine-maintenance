@@ -2,6 +2,8 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { UserContext } from "../../../../context/userProvider";
 import DashboardLoading from "../../../../shared/components/dashboard/dashboardLoading";
+import DeleteModal from "../../../../shared/components/ui/deleteModal";
+import EmployeeForm from "./employeeForm";
 
 const EmployeeList = () => {
   const navigate = useNavigate();
@@ -73,6 +75,7 @@ const EmployeeList = () => {
               <th className="p-3">Designation</th>
               <th className="p-3">Mobile</th>
               <th className="p-3">User Email</th>
+              <th className="p-3">User Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -94,6 +97,15 @@ const EmployeeList = () => {
                   ) : (
                     <span className="text-red-500 font-semibold">N/A</span>
                   )}
+                </td>
+                <td className="p-3 gap-4 flex ">
+                  <EmployeeForm employee={employee} />
+                  <DeleteModal
+                    data_type={"Employee"}
+                    url={`${import.meta.env.VITE_EMPLOYEE_UPDATE_API}${
+                      employee.id
+                    }/`}
+                  />
                 </td>
               </tr>
             ))}
