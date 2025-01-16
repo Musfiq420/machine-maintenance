@@ -1,3 +1,4 @@
+// MachineData.jsx
 import React, { useMemo, useState, useEffect, useContext } from "react";
 import { MaterialReactTable } from "material-react-table";
 import {
@@ -7,7 +8,6 @@ import {
   DialogContent,
   DialogActions,
   Button,
-  // Imported CircularProgress
 } from "@mui/material";
 import QRCode from "react-qr-code";
 import { getApiUrl } from "../../../../shared/components/getApiUrl";
@@ -16,11 +16,11 @@ import { jsPDF } from "jspdf";
 import qrcode from "qrcode"; // For generating QR code data URLs
 import { UserContext } from "../../../../context/userProvider";
 import DashboardLoading from "../../../../shared/components/dashboard/dashboardLoading";
-import MachineForm from "./machineForm";
+import MachineForm from "./MachineForm"; // Ensure the correct path
 import DeleteModal from "../../../../shared/components/ui/deleteModal";
 
-const MachineTable = () => {
-  const { getToken } = useContext(UserContext);
+const MachineData = () => {
+  const { userRole, getToken } = useContext(UserContext); // Access 'userRole' from context
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -43,13 +43,26 @@ const MachineTable = () => {
 
   const Machine_QR_Data_API = getApiUrl("Machine_QR_Data_API");
   const token = getToken();
+
+  // States for options data
+  const [brandsOptions, setBrandsOptions] = useState([]);
+  const [suppliersOptions, setSuppliersOptions] = useState([]);
+  const [typesOptions, setTypesOptions] = useState([]);
+  const [catsOptions, setCatsOptions] = useState([]);
+  const [lineOptions, setLineOptions] = useState([]);
+
+  // Define allowed roles
+  const allowedRoles = ["Mechanic", "Admin Officer"];
+  const isAuthorized = userRole && allowedRoles.includes(userRole);
+
+  // Fetch Machine Data
   const getMachineData = () => {
     setLoading(true);
     fetch(import.meta.env.VITE_MACHINE_DATA_API, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Token ${token}`, // Ensure this header matches what your server expects
+        Authorization: `Token ${token}`, // Use 'Token' prefix
       },
     })
       .then((response) => {
@@ -73,9 +86,87 @@ const MachineTable = () => {
       });
   };
 
+  // Fetch Options Data
   useEffect(() => {
+    const fetchOptionsData = async () => {
+      const brand_url = `${import.meta.env.VITE_URL_PREFIX}/api/maintenance/brand/`;
+      const supplier_url = `${import.meta.env.VITE_URL_PREFIX}/api/maintenance/supplier/`;
+      const type_url = `${import.meta.env.VITE_URL_PREFIX}/api/maintenance/type/`;
+      const cat_url = `${import.meta.env.VITE_URL_PREFIX}/api/maintenance/category/`;
+      const line_url = `${import.meta.env.VITE_URL_PREFIX}/api/production/lines/`;
+
+      try {
+        const [brand_data, supplier_data, type_data, cat_data, line_data] =
+          await Promise.all([
+            fetch(brand_url, {
+              method: "GET",
+              headers: { "Content-Type": "application/json" },
+            }).then((res) => res.json()),
+            fetch(supplier_url, {
+              method: "GET",
+              headers: { "Content-Type": "application/json" },
+            }).then((res) => res.json()),
+            fetch(type_url, {
+              method: "GET",
+              headers: { "Content-Type": "application/json" },
+            }).then((res) => res.json()),
+            fetch(cat_url, {
+              method: "GET",
+              headers: { "Content-Type": "application/json" },
+            }).then((res) => res.json()),
+            fetch(line_url, {
+              method: "GET",
+              headers: { "Content-Type": "application/json" },
+            }).then((res) => res.json()),
+          ]);
+
+        // Process and set options
+        const lines = line_data.map((d) => ({
+          name: d.name,
+          id: d.name,
+        }));
+        setLineOptions(lines);
+
+        const brands = brand_data.map((d) => ({
+          name: d.name,
+          id: d.id,
+        }));
+        setBrandsOptions(brands);
+
+        const suppliers = supplier_data.map((d) => ({
+          name: d.name,
+          id: d.id,
+        }));
+        setSuppliersOptions(suppliers);
+
+        const types = type_data.map((d) => ({
+          name: d.name,
+          id: d.id,
+        }));
+        setTypesOptions(types);
+
+        const cats = cat_data.map((d) => ({
+          name: d.name,
+          id: d.id,
+        }));
+        setCatsOptions(cats);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    // Fetch machine data and options data
     getMachineData();
-  }, []);
+    fetchOptionsData();
+  }, [token]); // Added token as a dependency to avoid potential issues
+
+  // Refetch Machine Data on Success
+  useEffect(() => {
+    if (sucess) {
+      getMachineData();
+      setSucess(false);
+    }
+  }, [sucess]);
 
   const handleOpenModal = (machine) => {
     setSelectedMachine(machine);
@@ -96,12 +187,6 @@ const MachineTable = () => {
     setOpenDeleteConfirm(false);
     setMachineToDelete(null);
   };
-  useEffect(() => {
-    if (sucess) {
-      getMachineData();
-      setSucess(false);
-    }
-  }, []);
 
   const handleDeleteMachine = () => {
     if (!machineToDelete) return;
@@ -111,28 +196,29 @@ const MachineTable = () => {
     console.log(url);
     fetch(url, {
       method: "DELETE",
-      Authorization: `Token ${token}`, // Ensure this header matches what your server expects
+      headers: {
+        Authorization: `Token ${token}`, // Use 'Token' prefix
+      },
     })
       .then(async (res) => {
         if (!res.ok) {
           const error = await res.text();
           console.log("error", error);
+          throw new Error(error);
         }
-        return fetch(Machine_QR_Data_API);
+        return getMachineData(); // Re-fetch machine data after deletion
       })
-      .then((res) => res.json())
-      .then((updatedData) => {
-        setData(updatedData);
+      .then(() => {
         handleCloseDeleteConfirm();
-        setOpenDeleteConfirm(false);
         setSucess(true);
-        window.location.reload();
       })
       .catch((error) => {
         console.error(error);
         alert(error.message);
+      })
+      .finally(() => {
+        setLoading(false);
       });
-    setLoading(false);
   };
 
   const columns = useMemo(
@@ -214,23 +300,39 @@ const MachineTable = () => {
           const machine = row.original;
           return (
             <Box sx={{ display: "flex", gap: 1 }}>
-              <DeleteModal
-                data_type={"machine"}
-                url={`${import.meta.env.VITE_MACHINE_MONITORING_DATA_API}${
-                  machine.id
-                }/`}
-              />
-              <MachineForm
-                machine={machine}
-                sucess={sucess}
-                setSucess={setSucess}
-              />
+              {isAuthorized && (
+                <>
+                  <DeleteModal
+                    data_type={"machine"}
+                    url={`${import.meta.env.VITE_MACHINE_MONITORING_DATA_API}${machine.id}/`}
+                    onDelete={() => handleOpenDeleteConfirm(machine)}
+                  />
+                  <MachineForm
+                    machine={machine}
+                    sucess={sucess}
+                    setSucess={setSucess}
+                    brandsOptions={brandsOptions}
+                    suppliersOptions={suppliersOptions}
+                    typesOptions={typesOptions}
+                    catsOptions={catsOptions}
+                    lineOptions={lineOptions}
+                  />
+                </>
+              )}
             </Box>
           );
         },
       },
     ],
-    []
+    [
+      brandsOptions,
+      suppliersOptions,
+      typesOptions,
+      catsOptions,
+      lineOptions,
+      sucess,
+      isAuthorized, // Added isAuthorized as a dependency
+    ]
   );
 
   const handlePrintAllQrs = async () => {
@@ -301,7 +403,7 @@ const MachineTable = () => {
     doc.save(`${machine_id}_qr.pdf`);
   };
 
-  // Updated loading state with CircularProgress spinner
+  // Updated loading state with DashboardLoading component
   if (loading) {
     return <DashboardLoading />;
   }
@@ -338,7 +440,17 @@ const MachineTable = () => {
               </button>
             )}
             renderTopToolbarCustomActions={() => (
-              <MachineForm sucess={sucess} setSucess={setSucess} />
+              isAuthorized && (
+                <MachineForm
+                  sucess={sucess}
+                  setSucess={setSucess}
+                  brandsOptions={brandsOptions}
+                  suppliersOptions={suppliersOptions}
+                  typesOptions={typesOptions}
+                  catsOptions={catsOptions}
+                  lineOptions={lineOptions}
+                />
+              )
             )}
             muiTableBodyCellProps={{
               sx: {
@@ -373,8 +485,7 @@ const MachineTable = () => {
                     <strong>Category:</strong> {selectedMachine.category}
                   </p>
                   <p>
-                    <strong>Model Number:</strong>{" "}
-                    {selectedMachine.model_number}
+                    <strong>Model Number:</strong> {selectedMachine.model_number}
                   </p>
                   <p>
                     <strong>Type:</strong> {selectedMachine.type}
@@ -418,7 +529,7 @@ const MachineTable = () => {
               )}
             </DialogContent>
             <DialogActions>
-              {selectedMachine && (
+              {selectedMachine && isAuthorized && (
                 <Button
                   variant="contained"
                   color="secondary"
@@ -447,13 +558,15 @@ const MachineTable = () => {
               <Button onClick={handleCloseDeleteConfirm} variant="text">
                 Cancel
               </Button>
-              <Button
-                onClick={handleDeleteMachine}
-                variant="contained"
-                color="error"
-              >
-                Delete
-              </Button>
+              {isAuthorized && (
+                <Button
+                  onClick={handleDeleteMachine}
+                  variant="contained"
+                  color="error"
+                >
+                  Delete
+                </Button>
+              )}
             </DialogActions>
           </Dialog>
         </Box>
@@ -464,4 +577,4 @@ const MachineTable = () => {
   );
 };
 
-export default MachineTable;
+export default MachineData;

@@ -1,3 +1,4 @@
+// EmployeeList.jsx
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { UserContext } from "../../../../context/userProvider";
@@ -7,24 +8,26 @@ import EmployeeForm from "./employeeForm";
 
 const EmployeeList = () => {
   const navigate = useNavigate();
-  const { getToken } = useContext(UserContext);
+  const { userRole, getToken } = useContext(UserContext); // Access 'userRole' from context
 
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const employeesPerPage = 10; // Number of employees per page
 
+  // Define allowed roles
+  const allowedRoles = ["HR Manager", "Admin Officer"];
+  const isAuthorized = userRole && allowedRoles.includes(userRole);
+
   useEffect(() => {
     const fetchEmployees = async () => {
       const token = getToken();
       try {
         const response = await fetch(
-          `${
-            import.meta.env.VITE_URL_PREFIX
-          }/api/user_management/employee-list/`,
+          `${import.meta.env.VITE_URL_PREFIX}/api/user_management/employee-list/`,
           {
             headers: {
-              Authorization: token, // Ensure the token is being sent
+              Authorization: `Token ${token}`, // Prefix token with 'Token '
             },
           }
         );
@@ -43,7 +46,7 @@ const EmployeeList = () => {
     };
 
     fetchEmployees();
-  }, []);
+  }, [getToken]);
 
   if (loading) {
     return <DashboardLoading title={"Employee"} />;
@@ -66,6 +69,16 @@ const EmployeeList = () => {
         Employee List
       </h1>
       <div className="overflow-x-auto">
+        {/* Conditionally render "Add Employee" button */}
+        {isAuthorized && (
+          <button
+            onClick={() => navigate("/signup")}
+            className="btn mb-4 bg-primary-dark text-white"
+          >
+            Add Employee
+          </button>
+        )}
+
         <table className="table w-full border border-primary-accent rounded-md shadow-md">
           <thead>
             <tr className="bg-primary-dark text-white">
@@ -99,26 +112,21 @@ const EmployeeList = () => {
                   )}
                 </td>
                 <td className="p-3 gap-4 flex ">
-                  <EmployeeForm employee={employee} />
-                  <DeleteModal
-                    data_type={"Employee"}
-                    url={`${import.meta.env.VITE_EMPLOYEE_UPDATE_API}${
-                      employee.id
-                    }/`}
-                  />
+                  {/* Conditionally render "Update" and "Delete" buttons */}
+                  {isAuthorized && (
+                    <>
+                      <EmployeeForm employee={employee} />
+                      <DeleteModal
+                        data_type={"Employee"}
+                        url={`${import.meta.env.VITE_EMPLOYEE_UPDATE_API}${employee.id}/`}
+                      />
+                    </>
+                  )}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-        <button
-          onClick={() => {
-            navigate("/signup");
-          }}
-          className="btn mt-5 bg-primary-dark text-white"
-        >
-          Add Employee
-        </button>
       </div>
 
       {/* Pagination */}

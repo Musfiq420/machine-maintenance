@@ -1,112 +1,32 @@
-import React, { useContext, useEffect, useState } from "react";
+// MachineForm.jsx
+import React, { useContext, useState } from "react";
 import FormInputFields from "../../../../shared/components/ui/formInputFields";
 import { Dialog, DialogTitle, DialogContent } from "@mui/material";
 import { UserContext } from "../../../../context/userProvider";
 import DashboardLoading from "../../../../shared/components/dashboard/dashboardLoading";
+import { Box, Button } from "@mui/material";
 
-export default function MachineForm({ machine = null }) {
-  const { getToken, user } = useContext(UserContext);
+export default function MachineForm({
+  machine = null,
+  brandsOptions,
+  suppliersOptions,
+  typesOptions,
+  catsOptions,
+  lineOptions,
+  sucess,
+  setSucess,
+}) {
+  const { userRole, getToken } = useContext(UserContext); // Access 'userRole' from context
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [brandsOptions, setBrandsOptions] = useState([]);
-  const [probsOptions, setProbsOptions] = useState([]);
-  const [suppliersOptions, setSuppliersOptions] = useState([]);
-  const [lineOptions, setlineOptions] = useState([]);
-  const [typesOptions, setTypesOptions] = useState([]);
-  const [catsOptions, setCatsOptions] = useState([]);
   const [errorFields, setErrorFields] = useState([]);
+
   const statusOptions = [
-    {
-      id: "active",
-      name: "Active",
-    },
-    {
-      id: "broken",
-      name: "Inactive",
-    },
-    {
-      id: "maintenance",
-      name: "Maintenance",
-    },
-    {
-      id: "inactive",
-      name: "Broken",
-    },
+    { id: "active", name: "Active" },
+    { id: "broken", name: "Broken" },
+    { id: "maintenance", name: "Maintenance" },
+    { id: "inactive", name: "Inactive" },
   ];
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const brand_url = `${
-        import.meta.env.VITE_URL_PREFIX
-      }/api/maintenance/brand/`;
-      const prob_url = `${
-        import.meta.env.VITE_URL_PREFIX
-      }/api/maintenance/problem-category/`;
-      const supplier_url = `${
-        import.meta.env.VITE_URL_PREFIX
-      }/api/maintenance/supplier/`;
-      const cat_url = `${
-        import.meta.env.VITE_URL_PREFIX
-      }/api/maintenance/category/`;
-      const type_url = `${
-        import.meta.env.VITE_URL_PREFIX
-      }/api/maintenance/type/`;
-      const line_url = `${
-        import.meta.env.VITE_URL_PREFIX
-      }/api/production/lines/`;
-
-      try {
-        const [brand_data, supplier_data, type_data, cat_data, line_data] =
-          await Promise.all([
-            fetch(brand_url, {
-              method: "GET",
-              headers: { "Content-Type": "application/json" },
-            }).then((res) => res.json()),
-            fetch(supplier_url, {
-              method: "GET",
-              headers: { "Content-Type": "application/json" },
-            }).then((res) => res.json()),
-            fetch(type_url, {
-              method: "GET",
-              headers: { "Content-Type": "application/json" },
-            }).then((res) => res.json()),
-            fetch(cat_url, {
-              method: "GET",
-              headers: { "Content-Type": "application/json" },
-            }).then((res) => res.json()),
-            fetch(line_url, {
-              method: "GET",
-              headers: { "Content-Type": "application/json" },
-            }).then((res) => res.json()),
-          ]);
-
-        const lines = line_data.map((d) => {
-          return { name: d.name, id: d.name };
-        });
-        setlineOptions(lines);
-        const brands = brand_data.map((d) => {
-          return { name: d.name, id: d.id };
-        });
-        setBrandsOptions(brands);
-        const suppliers = supplier_data.map((d) => {
-          return { name: d.name, id: d.id };
-        });
-        setSuppliersOptions(suppliers);
-
-        const types = type_data.map((d) => {
-          return { name: d.name, id: d.id };
-        });
-        setTypesOptions(types);
-        const cats = cat_data.map((d) => {
-          return { name: d.name, id: d.id };
-        });
-        setCatsOptions(cats);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchData();
-  }, []);
 
   const [formData, setFormData] = useState({
     machine_id: machine ? machine.machine_id || "" : "",
@@ -153,6 +73,7 @@ export default function MachineForm({ machine = null }) {
       options: statusOptions,
     },
   ];
+
   const handleInputChange = (id, value) => {
     if (Array.isArray(value)) {
       setFormData({
@@ -172,11 +93,12 @@ export default function MachineForm({ machine = null }) {
       : `${import.meta.env.VITE_MACHINE_QR_DATA_API}/`;
     const token = getToken();
     const empty = Object.keys(formData).filter(
-      (key) => formData[key].length === 0
+      (key) => formData[key].toString().trim().length === 0
     );
     console.log(empty);
     setErrorFields(empty);
     if (empty.length !== 0) {
+      setLoading(false);
       return;
     }
     console.log(url);
@@ -185,75 +107,106 @@ export default function MachineForm({ machine = null }) {
         method: machine ? "PUT" : "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: token, // Ensure the token is being sent
+          Authorization: `Token ${token}`, // Use 'Token' prefix as per UserProvider
         },
         body: JSON.stringify({ ...formData, ...staticFields }),
       });
 
-      const data = await res.text();
-      console.log(data);
-      window.location.reload();
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.detail || "Failed to save machine.");
+      }
+
+      setSucess(true);
+      handleCloseModal();
     } catch (error) {
       console.error(error);
+      // Optionally, display the error message to the user
+      // alert(error.message);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
-  console.log(loading);
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
+
+  // Define allowed roles
+  const allowedRoles = ["Mechanic", "Admin Officer"];
+
+  // Check if the user has an allowed role
+  const isAuthorized = userRole && allowedRoles.includes(userRole);
+
   return (
     <>
-      <div>
-        <button
-          className="px-8 py-3 font-semibold  w-fit text-white h-fit bg-primary-dark rounded-md"
-          onClick={() => setOpenModal(true)}
-        >
-          {machine ? "Update" : "Add Machine"}
-        </button>
-        <Dialog
-          open={openModal}
-          onClose={() => setOpenModal(false)}
-          maxWidth="sm"
-          fullWidth
-        >
-          {!loading ? (
-            <>
-              <DialogTitle>Add Machine</DialogTitle>
-              <DialogContent>
-                <div>
-                  {fields.map(({ id, label, type, options }) => (
-                    <FormInputFields
-                      errorField={errorFields}
-                      input={formData[id]}
-                      name={label}
-                      setInput={handleInputChange}
-                      id={id}
-                      key={id}
-                      multiple={false}
-                      options={options}
-                      type={type}
-                    />
-                  ))}
-                </div>
-              </DialogContent>
+      {isAuthorized && (
+        <div>
+          <button
+            className="px-8 py-3 font-semibold w-fit text-white h-fit bg-primary-dark rounded-md"
+            onClick={() => setOpenModal(true)}
+          >
+            {machine ? "Update" : "Add Machine"}
+          </button>
+          <Dialog
+            open={openModal}
+            onClose={handleCloseModal}
+            maxWidth="sm"
+            fullWidth
+          >
+            {!loading ? (
+              <>
+                <DialogTitle>
+                  {machine ? "Update Machine" : "Add Machine"}
+                </DialogTitle>
+                <DialogContent>
+                  <div>
+                    {fields.map(({ id, label, type, options }) => (
+                      <FormInputFields
+                        key={id}
+                        errorField={errorFields}
+                        input={formData[id]}
+                        name={label}
+                        setInput={handleInputChange}
+                        id={id}
+                        multiple={false}
+                        options={options}
+                        type={type}
+                      />
+                    ))}
+                  </div>
+                </DialogContent>
 
-              <button
-                className="text-primary font-semibold px-8 py-4 "
-                onClick={() => setOpenModal(false)}
-                variant="text"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSaveMachine}
-                className="bg-primary-dark text-white px-12 py-3 font-semibold "
-              >
-                {machine ? "Update Machine" : "Save Machine"}
-              </button>
-            </>
-          ) : (
-            <DashboardLoading />
-          )}
-        </Dialog>
-      </div>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    padding: "16px",
+                    gap: "8px",
+                  }}
+                >
+                  <Button
+                    onClick={handleCloseModal}
+                    variant="outlined"
+                    color="primary"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleSaveMachine}
+                    variant="contained"
+                    color="primary"
+                  >
+                    {machine ? "Update Machine" : "Save Machine"}
+                  </Button>
+                </Box>
+              </>
+            ) : (
+              <DashboardLoading />
+            )}
+          </Dialog>
+        </div>
+      )}
     </>
   );
 }
