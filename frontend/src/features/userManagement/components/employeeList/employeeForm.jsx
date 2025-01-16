@@ -8,7 +8,6 @@ export default function EmployeeForm({
   employee,
   roleOptions,
   departmentOptions,
-  companyOptions,
 }) {
   const { getToken } = useContext(UserContext);
   const [openModal, setOpenModal] = useState(false);
@@ -18,14 +17,16 @@ export default function EmployeeForm({
   const [formData, setFormData] = useState({
     name: employee.name || "",
     company: 1,
-    department:
-      departmentOptions?.find((d) => d.name === employee.department) || "",
+    department: employee.department || "",
     mobile: employee.mobile || "",
-    designation:
-      roleOptions?.find((d) => d.name === employee.designation) || "",
+    designation: employee.designation || "",
     employee_id: employee.employee_id || "",
     date_of_joining: employee.date_of_joining || "",
   });
+
+  console.log(
+    roleOptions?.find((d) => d.name === employee.designation || "Not")
+  );
 
   const fields = [
     { id: "name", label: "Name", type: "text" },
