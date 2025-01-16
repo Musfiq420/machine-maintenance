@@ -25,33 +25,40 @@ def send_status_change_notification(sender, instance, created, **kwargs):
         new_status = instance._new_status
         machine_id = instance.machine_id
         model_number = instance.model_number
-        location = instance.location 
+        line = instance.line
+        last_problem = instance.last_problem
         
         # Retrieve location details
-        room = location.room if location else 'Unknown Room'
-        line_no = location.line_no if location else 'Unknown Line'
-        floor_no = location.floor_no if location else 'Unknown Floor'
+        line_name = line.name if line else 'Unknown line'
+        operation_type = line.operation_type if line else 'operation'
+        floor_no = line.floor.name if line else 'Unknown Floor'
+        last_problem = last_problem if last_problem else 'Unknown Problem'
 
         if old_status == "active" and new_status == "broken":
             topic_name = "mechanics"
-            title = f"A machine is {new_status} in Floor No: {floor_no}, Room No: {room}, Line No: {line_no}"
+            title = f"🚨 A machine is broken down with {last_problem} in Floor: {floor_no}, Line: {line_name}, Operation: {operation_type}."
             body = (
-                f"Machine {machine_id} ({model_number}) is now broken.\n"
-                f"Status was 'Active' and has now changed to 'Broken'. Immediate attention is required.\n\n"
-                f"Location details:\n"
-                f"  - Room: {room}\n"
-                f"  - Line: {line_no}\n"
-                f"  - Floor: {floor_no}\n\n"
-                "Please inspect the machine and take appropriate action."
+                f"🔧 **Urgent Action Required**\n\n"
+                f"📌 **Machine Details:**\n"
+                f"    - ID: {machine_id}\n"
+                f"    - Model: {model_number}\n"
+                f"    - Status: ❌ Broken (was Active)\n"
+                f"    - Issue: {last_problem}\n\n"
+                f"📍 **Location Details:**\n"
+                f"    - Floor: {floor_no}\n"
+                f"    - Line: {line_name}\n"
+                f"    - Operation Type: {operation_type}\n\n"
+                "🚨 Immediate inspection and resolution are required to avoid further delays."
             )
+
         else:
             title = f"Machine {machine_id} Status Updated"
             topic_name = None
             body = (
                 f"Machine {machine_id} ({model_number}) status changed from {old_status} to {new_status}.\n"
                 f"Location details:\n"
-                f"  - Room: {room}\n"
-                f"  - Line: {line_no}\n"
+                f"  - Operation: {operation_type}\n"
+                f"  - Line: {line_name}\n"
                 f"  - Floor: {floor_no}\n\n"
                 "Please check the machine's current condition and ensure it's functioning as expected."
             )
