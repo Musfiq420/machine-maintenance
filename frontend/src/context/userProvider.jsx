@@ -27,8 +27,8 @@ export default function UserProvider({ children }) {
   };
 
   const loadUser = async () => {
-    const token = getToken();
     setUserLoading(true);
+    const token = getToken();
     if (token) {
       try {
         const response = await fetch(import.meta.env.VITE_USER_ACCOUNT_API, {

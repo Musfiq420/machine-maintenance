@@ -7,13 +7,7 @@ import {
   DialogContent,
   DialogActions,
   Button,
-  TextField,
-  MenuItem,
-  Select,
-  InputLabel,
-  FormControl,
-  Alert,
-  CircularProgress, // Imported CircularProgress
+  // Imported CircularProgress
 } from "@mui/material";
 import QRCode from "react-qr-code";
 import { getApiUrl } from "../../../../shared/components/getApiUrl";
@@ -23,12 +17,14 @@ import qrcode from "qrcode"; // For generating QR code data URLs
 import { UserContext } from "../../../../context/userProvider";
 import DashboardLoading from "../../../../shared/components/dashboard/dashboardLoading";
 import MachineForm from "./machineForm";
+import DeleteModal from "../../../../shared/components/ui/deleteModal";
 
-const QrCodeGenerator = () => {
+const MachineTable = () => {
   const { getToken } = useContext(UserContext);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [sucess, setSucess] = useState(false);
 
   // Modals state
   const [openModal, setOpenModal] = useState(false);
@@ -47,8 +43,8 @@ const QrCodeGenerator = () => {
 
   const Machine_QR_Data_API = getApiUrl("Machine_QR_Data_API");
   const token = getToken();
-
-  useEffect(() => {
+  const getMachineData = () => {
+    setLoading(true);
     fetch(import.meta.env.VITE_MACHINE_DATA_API, {
       method: "GET",
       headers: {
@@ -75,6 +71,10 @@ const QrCodeGenerator = () => {
         setLoading(false);
         setData([]);
       });
+  };
+
+  useEffect(() => {
+    getMachineData();
   }, []);
 
   const handleOpenModal = (machine) => {
@@ -96,16 +96,27 @@ const QrCodeGenerator = () => {
     setOpenDeleteConfirm(false);
     setMachineToDelete(null);
   };
+  useEffect(() => {
+    if (sucess) {
+      getMachineData();
+      setSucess(false);
+    }
+  }, []);
 
   const handleDeleteMachine = () => {
     if (!machineToDelete) return;
-    const { machine_id } = machineToDelete;
-    fetch(`${Machine_QR_Data_API}${machine_id}/`, {
+    setLoading(true);
+    const { id } = machineToDelete;
+    const url = `${Machine_QR_Data_API}/${id}/`;
+    console.log(url);
+    fetch(url, {
       method: "DELETE",
+      Authorization: `Token ${token}`, // Ensure this header matches what your server expects
     })
-      .then((res) => {
+      .then(async (res) => {
         if (!res.ok) {
-          throw new Error("Failed to delete machine");
+          const error = await res.text();
+          console.log("error", error);
         }
         return fetch(Machine_QR_Data_API);
       })
@@ -113,11 +124,15 @@ const QrCodeGenerator = () => {
       .then((updatedData) => {
         setData(updatedData);
         handleCloseDeleteConfirm();
+        setOpenDeleteConfirm(false);
+        setSucess(true);
+        window.location.reload();
       })
       .catch((error) => {
         console.error(error);
         alert(error.message);
       });
+    setLoading(false);
   };
 
   const columns = useMemo(
@@ -199,14 +214,17 @@ const QrCodeGenerator = () => {
           const machine = row.original;
           return (
             <Box sx={{ display: "flex", gap: 1 }}>
-              <Button
-                variant="contained"
-                color="error"
-                onClick={() => handleOpenDeleteConfirm(machine)}
-              >
-                Delete
-              </Button>
-              <MachineForm machine={machine} />
+              <DeleteModal
+                data_type={"machine"}
+                url={`${import.meta.env.VITE_MACHINE_MONITORING_DATA_API}${
+                  machine.id
+                }/`}
+              />
+              <MachineForm
+                machine={machine}
+                sucess={sucess}
+                setSucess={setSucess}
+              />
             </Box>
           );
         },
@@ -291,147 +309,159 @@ const QrCodeGenerator = () => {
   if (error) return <div>Error loading data: {error.message}</div>;
 
   return (
-    <Box
-      sx={{
-        width: "100%",
-        height: "100%",
-        position: "relative",
-        padding: "8px",
-      }}
-    >
-      <MaterialReactTable
-        columns={columns}
-        data={data}
-        enableStickyHeader
-        muiTableContainerProps={{
-          sx: {
-            maxHeight: "calc(100vh - 200px)",
-            overflow: "auto",
-          },
-        }}
-        renderBottomToolbarCustomActions={() => (
-          <button
-            className="px-12 py-3 bg-primary text-white font-semibold rounded-md"
-            onClick={handlePrintAllQrs}
-          >
-            Print QR
-          </button>
-        )}
-        renderTopToolbarCustomActions={() => <MachineForm />}
-        muiTableBodyCellProps={{
-          sx: {
-            padding: "4px 8px",
-            fontSize: "0.9rem",
-          },
-        }}
-        muiTableHeadCellProps={{
-          sx: {
-            padding: "4px 8px",
-            fontWeight: "bold",
-            fontSize: "0.9rem",
-          },
-        }}
-      />
+    <div>
+      {!loading ? (
+        <Box
+          sx={{
+            width: "100%",
+            height: "100%",
+            position: "relative",
+            padding: "8px",
+          }}
+        >
+          <MaterialReactTable
+            columns={columns}
+            data={data}
+            enableStickyHeader
+            muiTableContainerProps={{
+              sx: {
+                maxHeight: "calc(100vh - 200px)",
+                overflow: "auto",
+              },
+            }}
+            renderBottomToolbarCustomActions={() => (
+              <button
+                className="px-12 py-3 bg-primary text-white font-semibold rounded-md"
+                onClick={handlePrintAllQrs}
+              >
+                Print QR
+              </button>
+            )}
+            renderTopToolbarCustomActions={() => (
+              <MachineForm sucess={sucess} setSucess={setSucess} />
+            )}
+            muiTableBodyCellProps={{
+              sx: {
+                padding: "4px 8px",
+                fontSize: "0.9rem",
+              },
+            }}
+            muiTableHeadCellProps={{
+              sx: {
+                padding: "4px 8px",
+                fontWeight: "bold",
+                fontSize: "0.9rem",
+              },
+            }}
+          />
 
-      {/* Modal for QR code details */}
-      <Dialog
-        open={openModal}
-        onClose={handleCloseModal}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>Machine Details</DialogTitle>
-        <DialogContent>
-          {selectedMachine && (
-            <>
-              <p>
-                <strong>Machine ID:</strong> {selectedMachine.machine_id}
-              </p>
-              <p>
-                <strong>Category:</strong> {selectedMachine.category}
-              </p>
-              <p>
-                <strong>Model Number:</strong> {selectedMachine.model_number}
-              </p>
-              <p>
-                <strong>Type:</strong> {selectedMachine.type}
-              </p>
-              <p>
-                <strong>Brand:</strong> {selectedMachine.brand}
-              </p>
-              <p>
-                <strong>Serial No:</strong> {selectedMachine.serial_no}
-              </p>
-              <p>
-                <strong>Floor No:</strong> {selectedMachine.floor_no}
-              </p>
-              <p>
-                <strong>Line No:</strong> {selectedMachine.line_no}
-              </p>
-              <p>
-                <strong>Supplier:</strong> {selectedMachine.supplier}
-              </p>
-              <p>
-                <strong>Purchase Date:</strong> {selectedMachine.purchase_date}
-              </p>
-              <p>
-                <strong>Location:</strong> {selectedMachine.location}
-              </p>
-              <p>
-                <strong>Last Breakdown Start:</strong>{" "}
-                {selectedMachine.last_breakdown_start}
-              </p>
-              <p>
-                <strong>Status:</strong> {selectedMachine.status}
-              </p>
-
-              <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-                <QRCode value={selectedMachine.machine_id} size={128} />
-              </Box>
-            </>
-          )}
-        </DialogContent>
-        <DialogActions>
-          {selectedMachine && (
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={handlePrintQr}
-            >
-              Print
-            </Button>
-          )}
-          <Button
-            onClick={handleCloseModal}
-            variant="contained"
-            color="primary"
+          {/* Modal for QR code details */}
+          <Dialog
+            open={openModal}
+            onClose={handleCloseModal}
+            maxWidth="sm"
+            fullWidth
           >
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+            <DialogTitle>Machine Details</DialogTitle>
+            <DialogContent>
+              {selectedMachine && (
+                <>
+                  <p>
+                    <strong>Machine ID:</strong> {selectedMachine.machine_id}
+                  </p>
+                  <p>
+                    <strong>Category:</strong> {selectedMachine.category}
+                  </p>
+                  <p>
+                    <strong>Model Number:</strong>{" "}
+                    {selectedMachine.model_number}
+                  </p>
+                  <p>
+                    <strong>Type:</strong> {selectedMachine.type}
+                  </p>
+                  <p>
+                    <strong>Brand:</strong> {selectedMachine.brand}
+                  </p>
+                  <p>
+                    <strong>Serial No:</strong> {selectedMachine.serial_no}
+                  </p>
+                  <p>
+                    <strong>Floor No:</strong> {selectedMachine.floor_no}
+                  </p>
+                  <p>
+                    <strong>Line No:</strong> {selectedMachine.line_no}
+                  </p>
+                  <p>
+                    <strong>Supplier:</strong> {selectedMachine.supplier}
+                  </p>
+                  <p>
+                    <strong>Purchase Date:</strong>{" "}
+                    {selectedMachine.purchase_date}
+                  </p>
+                  <p>
+                    <strong>Location:</strong> {selectedMachine.location}
+                  </p>
+                  <p>
+                    <strong>Last Breakdown Start:</strong>{" "}
+                    {selectedMachine.last_breakdown_start}
+                  </p>
+                  <p>
+                    <strong>Status:</strong> {selectedMachine.status}
+                  </p>
 
-      {/* Delete Confirmation Dialog */}
-      <Dialog open={openDeleteConfirm} onClose={handleCloseDeleteConfirm}>
-        <DialogTitle>Delete Machine</DialogTitle>
-        <DialogContent>
-          Are you sure you want to delete this machine?
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDeleteConfirm} variant="text">
-            Cancel
-          </Button>
-          <Button
-            onClick={handleDeleteMachine}
-            variant="contained"
-            color="error"
-          >
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Box>
+                  <Box
+                    sx={{ display: "flex", justifyContent: "center", mt: 2 }}
+                  >
+                    <QRCode value={selectedMachine.machine_id} size={128} />
+                  </Box>
+                </>
+              )}
+            </DialogContent>
+            <DialogActions>
+              {selectedMachine && (
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={handlePrintQr}
+                >
+                  Print
+                </Button>
+              )}
+              <Button
+                onClick={handleCloseModal}
+                variant="contained"
+                color="primary"
+              >
+                Close
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          {/* Delete Confirmation Dialog */}
+          <Dialog open={openDeleteConfirm} onClose={handleCloseDeleteConfirm}>
+            <DialogTitle>Delete Machine</DialogTitle>
+            <DialogContent>
+              Are you sure you want to delete this machine?
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseDeleteConfirm} variant="text">
+                Cancel
+              </Button>
+              <Button
+                onClick={handleDeleteMachine}
+                variant="contained"
+                color="error"
+              >
+                Delete
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </Box>
+      ) : (
+        <DashboardLoading />
+      )}
+    </div>
   );
 };
 
-export default QrCodeGenerator;
+export default MachineTable;
