@@ -80,13 +80,13 @@ const MachineTable = () => {
               headers: { "Content-Type": "application/json" },
             }).then((res) => res.json()),
           ]);
-        console.log(line_data);
         const lines = line_data.map((d) => {
-          return { name: d.name, id: d.id };
+          return { name: d.name, id: d.id, floor: d.floor };
         });
+        console.log(lines);
         setlineOptions(lines);
         const brands = brand_data.map((d) => {
-          return { name: d.name, id: d.id };
+          return { name: d.name, id: d.id, floor: d.floor };
         });
         setBrandsOptions(brands);
         const suppliers = supplier_data.map((d) => {
@@ -106,7 +106,9 @@ const MachineTable = () => {
         console.log(error);
       }
     };
+    setLoading(true);
     fetchData();
+    setLoading(false);
   }, []);
 
   const statusColors = {
@@ -177,16 +179,77 @@ const MachineTable = () => {
         Cell: ({ row }) => row.index + 1,
       },
       { accessorKey: "machine_id", header: "Machine ID", size: 100 },
-      { accessorKey: "category", header: "Category", size: 100 },
-      { accessorKey: "type", header: "Type", size: 100 },
-      { accessorKey: "brand", header: "Brand", size: 100 },
+      {
+        accessorKey: "category",
+        header: "Category",
+        size: 100,
+        Cell: ({ row }) => {
+          const { category } = row.original;
+          const title = catsOptions.find((c) => c.id === category)?.name || "";
+
+          return <>{title}</>;
+        },
+      },
+      {
+        accessorKey: "type",
+        header: "Type",
+        size: 100,
+        Cell: ({ row }) => {
+          const { type } = row.original;
+          const title = typesOptions.find((c) => c.id === type)?.name || "";
+
+          return <>{title}</>;
+        },
+      },
+      {
+        accessorKey: "brand",
+        header: "Brand",
+        size: 100,
+        Cell: ({ row }) => {
+          const { brand } = row.original;
+          const title = brandsOptions.find((c) => c.id === brand)?.name || "";
+
+          return <>{title}</>;
+        },
+      },
       { accessorKey: "model_number", header: "Model Number", size: 150 },
       { accessorKey: "serial_no", header: "Serial No.", size: 150 },
-      { accessorKey: "floor_no", header: "Floor No.", size: 80 },
-      { accessorKey: "line_no", header: "Line No.", size: 80 },
-      { accessorKey: "supplier", header: "Supplier", size: 150 },
+      {
+        accessorKey: "floor_no",
+        header: "Floor No.",
+        size: 80,
+        Cell: ({ row }) => {
+          const { line } = row.original;
+          const title =
+            lineOptions.find((c) => c.id === line)?.floor?.name || "";
+          console.log(lineOptions.find((c) => c.id === line));
+          return <>{title}</>;
+        },
+      },
+      {
+        accessorKey: "line",
+        header: "Line No.",
+        size: 80,
+        Cell: ({ row }) => {
+          const { line } = row.original;
+          const title = lineOptions.find((c) => c.id === line)?.name || "";
+
+          return <>{title}</>;
+        },
+      },
+      {
+        accessorKey: "supplier",
+        header: "Supplier",
+        size: 150,
+        Cell: ({ row }) => {
+          const { supplier } = row.original;
+          const title =
+            suppliersOptions.find((c) => c.id === supplier)?.name || "";
+
+          return <>{title}</>;
+        },
+      },
       { accessorKey: "purchase_date", header: "Purchase Date", size: 120 },
-      { accessorKey: "location", header: "Location", size: 150 },
       {
         accessorKey: "last_breakdown_start",
         header: "Last Breakdown Start",
@@ -246,31 +309,34 @@ const MachineTable = () => {
         Cell: ({ row }) => {
           const machine = row.original;
           return (
-            <Box sx={{ display: "flex", gap: 1 }}>
-              <DeleteModal
-                data_type={"machine"}
-                url={`${import.meta.env.VITE_MACHINE_MONITORING_DATA_API}${
-                  machine.id
-                }/`}
-              />
-              <MachineForm
-                machine={machine}
-                sucess={sucess}
-                brandsOptions={brandsOptions}
-                catsOptions={catsOptions}
-                lineOptions={lineOptions}
-                suppliersOptions={suppliersOptions}
-                typesOptions={typesOptions}
-                setSucess={setSucess}
-              />
-            </Box>
+            <>
+              {!loading && (
+                <Box sx={{ display: "flex", gap: 1 }}>
+                  <DeleteModal
+                    data_type={"machine"}
+                    url={`${import.meta.env.VITE_MACHINE_MONITORING_DATA_API}${
+                      machine.id
+                    }/`}
+                  />
+                  <MachineForm
+                    machine={machine}
+                    sucess={sucess}
+                    brandsOptions={brandsOptions}
+                    catsOptions={catsOptions}
+                    lineOptions={lineOptions}
+                    suppliersOptions={suppliersOptions}
+                    typesOptions={typesOptions}
+                    setSucess={setSucess}
+                  />
+                </Box>
+              )}
+            </>
           );
         },
       },
     ],
-    []
+    [brandsOptions, catsOptions, lineOptions, suppliersOptions, typesOptions]
   );
-
   const handlePrintAllQrs = async () => {
     const finalData = data;
     if (finalData.length === 0) {
@@ -395,7 +461,6 @@ const MachineTable = () => {
             }}
           />
 
-          {/* Modal for QR code details */}
           <Dialog
             open={openModal}
             onClose={handleCloseModal}

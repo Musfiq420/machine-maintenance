@@ -194,7 +194,6 @@ const DashboardSidebar = () => {
 const DashboardMenu = ({ linkList, currPath, icon, menuName }) => {
   const links = linkList.map((link) => link.link);
   const [isOpen, setOpen] = useState(links.includes(currPath));
-  console.log(isOpen, menuName);
   const isActiveRoute = (route) => {
     return location.pathname === route;
   };

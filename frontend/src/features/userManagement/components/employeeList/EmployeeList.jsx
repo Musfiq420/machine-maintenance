@@ -10,10 +10,61 @@ const EmployeeList = () => {
   const { getToken } = useContext(UserContext);
 
   const [employees, setEmployees] = useState([]);
+  const [roleOptions, setRoleOptions] = useState([]);
+  const [departmentOptions, setDepartmentOptions] = useState([]);
+  const [companyOptions, setCompanyOptions] = useState([]);
+
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const employeesPerPage = 10; // Number of employees per page
 
+  useEffect(() => {
+    setLoading(true);
+    const fetchData = async () => {
+      const dept_url = `${
+        import.meta.env.VITE_URL_PREFIX
+      }/api/user_management/department/`;
+      const role_url = `${
+        import.meta.env.VITE_URL_PREFIX
+      }/api/user_management/designation/`;
+      const comp_url = `${
+        import.meta.env.VITE_URL_PREFIX
+      }/api/user_management/groups/`;
+      try {
+        const dept_res = await fetch(dept_url, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
+        const dept_data = await dept_res.json();
+        const role_res = await fetch(role_url, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
+        const role_data = await role_res.json();
+        const comp_res = await fetch(comp_url, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
+        const comp_data = await comp_res.json();
+        const roles = role_data.map((d) => {
+          return { name: d.title, id: d.id };
+        });
+        const comps = comp_data.map((d) => {
+          return { name: d.name, id: d.id };
+        });
+        const depts = dept_data.map((d) => {
+          return { name: d.name, id: d.id };
+        });
+        setRoleOptions(roles);
+        setDepartmentOptions(depts);
+        setCompanyOptions(comps);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+    setLoading(false);
+  }, []);
   useEffect(() => {
     const fetchEmployees = async () => {
       const token = getToken();
@@ -99,7 +150,12 @@ const EmployeeList = () => {
                   )}
                 </td>
                 <td className="p-3 gap-4 flex ">
-                  <EmployeeForm employee={employee} />
+                  <EmployeeForm
+                    employee={employee}
+                    departmentOptions={departmentOptions}
+                    roleOptions={roleOptions}
+                    companyOptions={companyOptions}
+                  />
                   <DeleteModal
                     data_type={"Employee"}
                     url={`${import.meta.env.VITE_EMPLOYEE_UPDATE_API}${

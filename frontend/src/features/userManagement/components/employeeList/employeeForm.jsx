@@ -17,7 +17,7 @@ export default function EmployeeForm({
 
   const [formData, setFormData] = useState({
     name: employee.name || "",
-    company: employee.company || "",
+    company: 1,
     department:
       departmentOptions?.find((d) => d.name === employee.department) || "",
     mobile: employee.mobile || "",
@@ -29,12 +29,7 @@ export default function EmployeeForm({
 
   const fields = [
     { id: "name", label: "Name", type: "text" },
-    {
-      id: "company",
-      label: "Company ",
-      type: "select",
-      options: companyOptions,
-    },
+
     {
       id: "department",
       label: "Department ",
