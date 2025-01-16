@@ -1,5 +1,6 @@
 fastTracker/
 backend/credentials/
+Towaha.txt
 
 
 # Ignore .env files at the root and inside frontend folder

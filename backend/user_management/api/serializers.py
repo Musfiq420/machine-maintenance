@@ -2,6 +2,7 @@ from django.contrib.auth.models import User, Group
 from rest_framework import serializers
 from company.models import Company  # Assuming these are in the company app
 from ..models import Employee, Department, Designation, DeviceToken
+from production.models import Line
 
 
 # --------------------------
@@ -120,7 +121,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         """
         Ensure the location exists.
         """
-        if not Location.objects.filter(id=value.id).exists():
+        if not Line.objects.filter(id=value.id).exists():
             raise serializers.ValidationError("Location does not exist.")
         return value
 
