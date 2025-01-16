@@ -4,16 +4,17 @@ import { Dialog, DialogTitle, DialogContent } from "@mui/material";
 import { UserContext } from "../../../../context/userProvider";
 import DashboardLoading from "../../../../shared/components/dashboard/dashboardLoading";
 
-export default function MachineForm({ machine = null }) {
+export default function MachineForm({
+  machine = null,
+  lineOptions,
+  brandsOptions,
+  suppliersOptions,
+  typesOptions,
+  catsOptions,
+}) {
   const { getToken, user } = useContext(UserContext);
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [brandsOptions, setBrandsOptions] = useState([]);
-  const [probsOptions, setProbsOptions] = useState([]);
-  const [suppliersOptions, setSuppliersOptions] = useState([]);
-  const [lineOptions, setlineOptions] = useState([]);
-  const [typesOptions, setTypesOptions] = useState([]);
-  const [catsOptions, setCatsOptions] = useState([]);
   const [errorFields, setErrorFields] = useState([]);
   const statusOptions = [
     {
@@ -34,80 +35,6 @@ export default function MachineForm({ machine = null }) {
     },
   ];
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const brand_url = `${
-        import.meta.env.VITE_URL_PREFIX
-      }/api/maintenance/brand/`;
-      const prob_url = `${
-        import.meta.env.VITE_URL_PREFIX
-      }/api/maintenance/problem-category/`;
-      const supplier_url = `${
-        import.meta.env.VITE_URL_PREFIX
-      }/api/maintenance/supplier/`;
-      const cat_url = `${
-        import.meta.env.VITE_URL_PREFIX
-      }/api/maintenance/category/`;
-      const type_url = `${
-        import.meta.env.VITE_URL_PREFIX
-      }/api/maintenance/type/`;
-      const line_url = `${
-        import.meta.env.VITE_URL_PREFIX
-      }/api/production/lines/`;
-
-      try {
-        const [brand_data, supplier_data, type_data, cat_data, line_data] =
-          await Promise.all([
-            fetch(brand_url, {
-              method: "GET",
-              headers: { "Content-Type": "application/json" },
-            }).then((res) => res.json()),
-            fetch(supplier_url, {
-              method: "GET",
-              headers: { "Content-Type": "application/json" },
-            }).then((res) => res.json()),
-            fetch(type_url, {
-              method: "GET",
-              headers: { "Content-Type": "application/json" },
-            }).then((res) => res.json()),
-            fetch(cat_url, {
-              method: "GET",
-              headers: { "Content-Type": "application/json" },
-            }).then((res) => res.json()),
-            fetch(line_url, {
-              method: "GET",
-              headers: { "Content-Type": "application/json" },
-            }).then((res) => res.json()),
-          ]);
-
-        const lines = line_data.map((d) => {
-          return { name: d.name, id: d.name };
-        });
-        setlineOptions(lines);
-        const brands = brand_data.map((d) => {
-          return { name: d.name, id: d.id };
-        });
-        setBrandsOptions(brands);
-        const suppliers = supplier_data.map((d) => {
-          return { name: d.name, id: d.id };
-        });
-        setSuppliersOptions(suppliers);
-
-        const types = type_data.map((d) => {
-          return { name: d.name, id: d.id };
-        });
-        setTypesOptions(types);
-        const cats = cat_data.map((d) => {
-          return { name: d.name, id: d.id };
-        });
-        setCatsOptions(cats);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchData();
-  }, []);
-
   const [formData, setFormData] = useState({
     machine_id: machine ? machine.machine_id || "" : "",
     category: machine ? machine.category || "" : "",
@@ -117,20 +44,21 @@ export default function MachineForm({ machine = null }) {
     serial_no: machine ? machine.serial_no || "" : "",
     supplier: machine ? machine.supplier || "" : "",
     purchase_date: machine ? machine.purchase_date || "" : "",
-    status: machine ? machine.status || "" : "",
+    sequence: machine ? machine.sequence || "" : "",
+    line: machine ? machine.line || "" : "",
   });
 
   const staticFields = {
     last_breakdown_start: null,
     last_problem: machine ? machine?.last_problem || "" : "",
-    sequence: null,
     mechanic: null,
     operator: null,
     location: "",
     company: 1,
-    line: null,
+    status: "active",
     // company_id: 1,
   };
+  console.log(lineOptions);
 
   const fields = [
     { id: "machine_id", label: "Machine Id", type: "text" },
@@ -139,19 +67,20 @@ export default function MachineForm({ machine = null }) {
     { id: "brand", label: "Brand", type: "select", options: brandsOptions },
     { id: "model_number", label: "Model Number", type: "text" },
     { id: "serial_no", label: "Serial No", type: "number" },
+    { id: "sequence", label: "Sequence No", type: "number" },
     {
       id: "supplier",
       label: "Supplier",
       type: "select",
       options: suppliersOptions,
     },
-    { id: "purchase_date", label: "Purchase Date", type: "date" },
     {
-      id: "status",
-      label: "Status",
+      id: "line",
+      label: "Line",
       type: "select",
-      options: statusOptions,
+      options: lineOptions,
     },
+    { id: "purchase_date", label: "Purchase Date", type: "date" },
   ];
   const handleInputChange = (id, value) => {
     if (Array.isArray(value)) {
@@ -179,7 +108,7 @@ export default function MachineForm({ machine = null }) {
     if (empty.length !== 0) {
       return;
     }
-    console.log(url);
+    console.log(formData);
     try {
       const res = await fetch(url, {
         method: machine ? "PUT" : "POST",
@@ -198,7 +127,7 @@ export default function MachineForm({ machine = null }) {
     }
     setLoading(false);
   };
-  console.log(loading);
+  console.log(formData);
   return (
     <>
       <div>

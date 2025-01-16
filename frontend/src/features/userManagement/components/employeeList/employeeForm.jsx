@@ -4,60 +4,16 @@ import { Dialog, DialogTitle, DialogContent } from "@mui/material";
 import { UserContext } from "../../../../context/userProvider";
 import DashboardLoading from "../../../../shared/components/dashboard/dashboardLoading";
 
-export default function EmployeeForm({ employee }) {
+export default function EmployeeForm({
+  employee,
+  roleOptions,
+  departmentOptions,
+  companyOptions,
+}) {
   const { getToken } = useContext(UserContext);
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [roleOptions, setRoleOptions] = useState([]);
-  const [departmentOptions, setDepartmentOptions] = useState([]);
-  const [companyOptions, setCompanyOptions] = useState([]);
   const [errorFields, setErrorFields] = useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const dept_url = `${
-        import.meta.env.VITE_URL_PREFIX
-      }/api/user_management/department/`;
-      const role_url = `${
-        import.meta.env.VITE_URL_PREFIX
-      }/api/user_management/designation/`;
-      const comp_url = `${
-        import.meta.env.VITE_URL_PREFIX
-      }/api/user_management/groups/`;
-      try {
-        const dept_res = await fetch(dept_url, {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        });
-        const dept_data = await dept_res.json();
-        const role_res = await fetch(role_url, {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        });
-        const role_data = await role_res.json();
-        const comp_res = await fetch(comp_url, {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        });
-        const comp_data = await comp_res.json();
-        const roles = role_data.map((d) => {
-          return { name: d.title, id: d.id };
-        });
-        const comps = comp_data.map((d) => {
-          return { name: d.name, id: d.id };
-        });
-        const depts = dept_data.map((d) => {
-          return { name: d.name, id: d.id };
-        });
-        setRoleOptions(roles);
-        setDepartmentOptions(depts);
-        setCompanyOptions(comps);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchData();
-  }, []);
 
   const [formData, setFormData] = useState({
     name: employee.name || "",
@@ -123,7 +79,6 @@ export default function EmployeeForm({ employee }) {
     if (empty.length !== 0) {
       return;
     }
-    console.log({ ...formData });
     try {
       const res = await fetch(url, {
         method: "PUT",

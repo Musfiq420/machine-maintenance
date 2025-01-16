@@ -10,7 +10,6 @@ import {
   // Imported CircularProgress
 } from "@mui/material";
 import QRCode from "react-qr-code";
-import { getApiUrl } from "../../../../shared/components/getApiUrl";
 
 import { jsPDF } from "jspdf";
 import qrcode from "qrcode"; // For generating QR code data URLs
@@ -30,9 +29,85 @@ const MachineTable = () => {
   const [openModal, setOpenModal] = useState(false);
   const [selectedMachine, setSelectedMachine] = useState(null);
 
-  // Delete Confirmation
-  const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
-  const [machineToDelete, setMachineToDelete] = useState(null);
+  const [lineOptions, setlineOptions] = useState([]);
+  const [brandsOptions, setBrandsOptions] = useState([]);
+  const [suppliersOptions, setSuppliersOptions] = useState([]);
+  const [typesOptions, setTypesOptions] = useState([]);
+  const [catsOptions, setCatsOptions] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const brand_url = `${
+        import.meta.env.VITE_URL_PREFIX
+      }/api/maintenance/brand/`;
+      const prob_url = `${
+        import.meta.env.VITE_URL_PREFIX
+      }/api/maintenance/problem-category/`;
+      const supplier_url = `${
+        import.meta.env.VITE_URL_PREFIX
+      }/api/maintenance/supplier/`;
+      const cat_url = `${
+        import.meta.env.VITE_URL_PREFIX
+      }/api/maintenance/category/`;
+      const type_url = `${
+        import.meta.env.VITE_URL_PREFIX
+      }/api/maintenance/type/`;
+      const line_url = `${
+        import.meta.env.VITE_URL_PREFIX
+      }/api/production/lines/`;
+
+      try {
+        const [brand_data, supplier_data, type_data, cat_data, line_data] =
+          await Promise.all([
+            fetch(brand_url, {
+              method: "GET",
+              headers: { "Content-Type": "application/json" },
+            }).then((res) => res.json()),
+            fetch(supplier_url, {
+              method: "GET",
+              headers: { "Content-Type": "application/json" },
+            }).then((res) => res.json()),
+            fetch(type_url, {
+              method: "GET",
+              headers: { "Content-Type": "application/json" },
+            }).then((res) => res.json()),
+            fetch(cat_url, {
+              method: "GET",
+              headers: { "Content-Type": "application/json" },
+            }).then((res) => res.json()),
+            fetch(line_url, {
+              method: "GET",
+              headers: { "Content-Type": "application/json" },
+            }).then((res) => res.json()),
+          ]);
+        console.log(line_data);
+        const lines = line_data.map((d) => {
+          return { name: d.name, id: d.id };
+        });
+        setlineOptions(lines);
+        const brands = brand_data.map((d) => {
+          return { name: d.name, id: d.id };
+        });
+        setBrandsOptions(brands);
+        const suppliers = supplier_data.map((d) => {
+          return { name: d.name, id: d.id };
+        });
+        setSuppliersOptions(suppliers);
+
+        const types = type_data.map((d) => {
+          return { name: d.name, id: d.id };
+        });
+        setTypesOptions(types);
+        const cats = cat_data.map((d) => {
+          return { name: d.name, id: d.id };
+        });
+        setCatsOptions(cats);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, []);
 
   const statusColors = {
     active: "#28a745",
@@ -41,7 +116,6 @@ const MachineTable = () => {
     broken: "#dc3545",
   };
 
-  const Machine_QR_Data_API = getApiUrl("Machine_QR_Data_API");
   const token = getToken();
   const getMachineData = () => {
     setLoading(true);
@@ -87,53 +161,12 @@ const MachineTable = () => {
     setSelectedMachine(null);
   };
 
-  const handleOpenDeleteConfirm = (machine) => {
-    setMachineToDelete(machine);
-    setOpenDeleteConfirm(true);
-  };
-
-  const handleCloseDeleteConfirm = () => {
-    setOpenDeleteConfirm(false);
-    setMachineToDelete(null);
-  };
   useEffect(() => {
     if (sucess) {
       getMachineData();
       setSucess(false);
     }
   }, []);
-
-  const handleDeleteMachine = () => {
-    if (!machineToDelete) return;
-    setLoading(true);
-    const { id } = machineToDelete;
-    const url = `${Machine_QR_Data_API}/${id}/`;
-    console.log(url);
-    fetch(url, {
-      method: "DELETE",
-      Authorization: `Token ${token}`, // Ensure this header matches what your server expects
-    })
-      .then(async (res) => {
-        if (!res.ok) {
-          const error = await res.text();
-          console.log("error", error);
-        }
-        return fetch(Machine_QR_Data_API);
-      })
-      .then((res) => res.json())
-      .then((updatedData) => {
-        setData(updatedData);
-        handleCloseDeleteConfirm();
-        setOpenDeleteConfirm(false);
-        setSucess(true);
-        window.location.reload();
-      })
-      .catch((error) => {
-        console.error(error);
-        alert(error.message);
-      });
-    setLoading(false);
-  };
 
   const columns = useMemo(
     () => [
@@ -223,6 +256,11 @@ const MachineTable = () => {
               <MachineForm
                 machine={machine}
                 sucess={sucess}
+                brandsOptions={brandsOptions}
+                catsOptions={catsOptions}
+                lineOptions={lineOptions}
+                suppliersOptions={suppliersOptions}
+                typesOptions={typesOptions}
                 setSucess={setSucess}
               />
             </Box>
@@ -301,13 +339,6 @@ const MachineTable = () => {
     doc.save(`${machine_id}_qr.pdf`);
   };
 
-  // Updated loading state with CircularProgress spinner
-  if (loading) {
-    return <DashboardLoading />;
-  }
-
-  if (error) return <div>Error loading data: {error.message}</div>;
-
   return (
     <div>
       {!loading ? (
@@ -338,7 +369,16 @@ const MachineTable = () => {
               </button>
             )}
             renderTopToolbarCustomActions={() => (
-              <MachineForm sucess={sucess} setSucess={setSucess} />
+              <MachineForm
+                machine={null}
+                brandsOptions={brandsOptions}
+                catsOptions={catsOptions}
+                lineOptions={lineOptions}
+                suppliersOptions={suppliersOptions}
+                typesOptions={typesOptions}
+                sucess={sucess}
+                setSucess={setSucess}
+              />
             )}
             muiTableBodyCellProps={{
               sx: {
@@ -433,26 +473,6 @@ const MachineTable = () => {
                 color="primary"
               >
                 Close
-              </Button>
-            </DialogActions>
-          </Dialog>
-
-          {/* Delete Confirmation Dialog */}
-          <Dialog open={openDeleteConfirm} onClose={handleCloseDeleteConfirm}>
-            <DialogTitle>Delete Machine</DialogTitle>
-            <DialogContent>
-              Are you sure you want to delete this machine?
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleCloseDeleteConfirm} variant="text">
-                Cancel
-              </Button>
-              <Button
-                onClick={handleDeleteMachine}
-                variant="contained"
-                color="error"
-              >
-                Delete
               </Button>
             </DialogActions>
           </Dialog>
