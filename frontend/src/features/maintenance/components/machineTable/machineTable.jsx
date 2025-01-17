@@ -19,11 +19,12 @@ import MachineForm from "./machineForm";
 import DeleteModal from "../../../../shared/components/ui/deleteModal";
 
 const MachineTable = () => {
-  const { getToken } = useContext(UserContext);
+  const { getToken, isMechanic, isHr, isAdmin } = useContext(UserContext);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sucess, setSucess] = useState(false);
+  const hasAccess = isAdmin || isMechanic;
 
   // Modals state
   const [openModal, setOpenModal] = useState(false);
@@ -302,38 +303,44 @@ const MachineTable = () => {
         },
         size: 100,
       },
-      {
-        id: "actions",
-        header: "Actions",
-        size: 150,
-        Cell: ({ row }) => {
-          const machine = row.original;
-          return (
-            <>
-              {!loading && (
-                <Box sx={{ display: "flex", gap: 1 }}>
-                  <DeleteModal
-                    data_type={"machine"}
-                    url={`${import.meta.env.VITE_MACHINE_MONITORING_DATA_API}${
-                      machine.id
-                    }/`}
-                  />
-                  <MachineForm
-                    machine={machine}
-                    sucess={sucess}
-                    brandsOptions={brandsOptions}
-                    catsOptions={catsOptions}
-                    lineOptions={lineOptions}
-                    suppliersOptions={suppliersOptions}
-                    typesOptions={typesOptions}
-                    setSucess={setSucess}
-                  />
-                </Box>
-              )}
-            </>
-          );
-        },
-      },
+      ...(hasAccess
+        ? [
+            {
+              id: "actions",
+              header: "Actions",
+              size: 150,
+              Cell: ({ row }) => {
+                const machine = row.original;
+                return (
+                  <>
+                    {!loading && (
+                      <Box sx={{ display: "flex", gap: 1 }}>
+                        <DeleteModal
+                          data_type={"machine"}
+                          url={`${
+                            import.meta.env.VITE_MACHINE_MONITORING_DATA_API
+                          }${machine.id}/`}
+                          hasAccess={hasAccess}
+                        />
+                        <MachineForm
+                          machine={machine}
+                          sucess={sucess}
+                          brandsOptions={brandsOptions}
+                          catsOptions={catsOptions}
+                          lineOptions={lineOptions}
+                          suppliersOptions={suppliersOptions}
+                          typesOptions={typesOptions}
+                          setSucess={setSucess}
+                          hasAccess={hasAccess}
+                        />
+                      </Box>
+                    )}
+                  </>
+                );
+              },
+            },
+          ]
+        : []),
     ],
     [brandsOptions, catsOptions, lineOptions, suppliersOptions, typesOptions]
   );

@@ -3,7 +3,7 @@ import { Dialog, DialogTitle, DialogContent } from "@mui/material";
 import { UserContext } from "../../../context/userProvider";
 import DashboardLoading from "../dashboard/dashboardLoading";
 
-export default function DeleteModal({ url, data_type }) {
+export default function DeleteModal({ url, data_type, hasAccess }) {
   const { getToken } = useContext(UserContext);
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -33,46 +33,48 @@ export default function DeleteModal({ url, data_type }) {
 
   return (
     <>
-      <div>
-        <button
-          className="px-8 py-3 font-semibold  w-fit text-white h-fit bg-red-600 rounded-md"
-          onClick={() => setOpenModal(true)}
-        >
-          Delete
-        </button>
-        <Dialog
-          open={openModal}
-          onClose={() => setOpenModal(false)}
-          maxWidth="sm"
-          fullWidth
-        >
-          {!loading ? (
-            <>
-              <DialogTitle>Delete {data_type}</DialogTitle>
-              <DialogContent>
-                <>Are You Sure You Want To Delete this {data_type}?</>
-                <div className=" flex justify-end items-center gap-8">
-                  <button
-                    className="text-primary font-semibold px-8 py-4 "
-                    onClick={() => setOpenModal(false)}
-                    variant="text"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleDelete}
-                    className="bg-red-600 text-white px-12 py-3 font-semibold "
-                  >
-                    Delete
-                  </button>
-                </div>
-              </DialogContent>
-            </>
-          ) : (
-            <DashboardLoading />
-          )}
-        </Dialog>
-      </div>
+      {hasAccess && (
+        <div>
+          <button
+            className="px-8 py-3 font-semibold  w-fit text-white h-fit bg-red-600 rounded-md"
+            onClick={() => setOpenModal(true)}
+          >
+            Delete
+          </button>
+          <Dialog
+            open={openModal}
+            onClose={() => setOpenModal(false)}
+            maxWidth="sm"
+            fullWidth
+          >
+            {!loading ? (
+              <>
+                <DialogTitle>Delete {data_type}</DialogTitle>
+                <DialogContent>
+                  <>Are You Sure You Want To Delete this {data_type}?</>
+                  <div className=" flex justify-end items-center gap-8">
+                    <button
+                      className="text-primary font-semibold px-8 py-4 "
+                      onClick={() => setOpenModal(false)}
+                      variant="text"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleDelete}
+                      className="bg-red-600 text-white px-12 py-3 font-semibold "
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </DialogContent>
+              </>
+            ) : (
+              <DashboardLoading />
+            )}
+          </Dialog>
+        </div>
+      )}
     </>
   );
 }

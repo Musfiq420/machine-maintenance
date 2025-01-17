@@ -30,10 +30,10 @@ export const router = createBrowserRouter([
         path: "/about", // Default route
         element: <About></About>, // Sign-up layout
       },
-      {
-        path: "/signup", // Dashboard route
-        element: <SignUpLayout></SignUpLayout>, // Example new page
-      },
+      // {
+      //   path: "/signup", // Dashboard route
+      //   element: <SignUpLayout></SignUpLayout>, // Example new page
+      // },
       {
         path: "/signin", // Dashboard route
         element: <SignInPage></SignInPage>, // Example new page
