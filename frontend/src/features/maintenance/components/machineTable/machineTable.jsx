@@ -451,6 +451,7 @@ const MachineTable = () => {
                 typesOptions={typesOptions}
                 sucess={sucess}
                 setSucess={setSucess}
+                hasAccess={hasAccess}
               />
             )}
             muiTableBodyCellProps={{
