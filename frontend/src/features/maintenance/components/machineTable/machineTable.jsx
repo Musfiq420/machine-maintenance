@@ -139,7 +139,7 @@ const MachineTable = () => {
       })
       .then((data) => {
         console.log(data);
-        setData(data.results || []);
+        setData(data || []);
         setLoading(false);
       })
       .catch((err) => {
