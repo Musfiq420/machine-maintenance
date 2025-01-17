@@ -315,13 +315,6 @@ const MachineTable = () => {
                   <>
                     {!loading && (
                       <Box sx={{ display: "flex", gap: 1 }}>
-                        <DeleteModal
-                          data_type={"machine"}
-                          url={`${
-                            import.meta.env.VITE_MACHINE_MONITORING_DATA_API
-                          }${machine.id}/`}
-                          hasAccess={hasAccess}
-                        />
                         <MachineForm
                           machine={machine}
                           sucess={sucess}
@@ -333,6 +326,14 @@ const MachineTable = () => {
                           setSucess={setSucess}
                           hasAccess={hasAccess}
                         />
+                        <DeleteModal
+                          data_type={"machine"}
+                          url={`${
+                            import.meta.env.VITE_MACHINE_MONITORING_DATA_API
+                          }${machine.id}/`}
+                          hasAccess={hasAccess}
+                        />
+                        
                       </Box>
                     )}
                   </>

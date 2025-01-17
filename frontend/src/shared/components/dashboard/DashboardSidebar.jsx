@@ -95,9 +95,9 @@ const DashboardSidebar = () => {
         <div className="md:hidden w-screen absolute top-0  inset-x-0 flex items-center justify-between bg-primary-light  p-4">
           <div className="flex items-center">
             <div className="w-8 h-8 bg-primary-dark flex items-center justify-center rounded">
-              <div className="text-white font-bold text-lg">F</div>
+              <div className="text-white font-bold text-lg">P</div>
             </div>
-            <h1 className="text-black font-bold text-xl ml-3">Fastracker</h1>
+            <h1 className="text-black font-bold text-xl ml-3">PanaMach</h1>
           </div>
           <button
             onClick={() => setSidebarOpen(!isSidebarOpen)}
@@ -117,9 +117,9 @@ const DashboardSidebar = () => {
       >
         <div className="hidden md:flex items-center px-6 py-4">
           <div className="w-8 h-8 bg-primary-dark flex items-center justify-center rounded">
-            <div className="text-white font-bold text-lg">F</div>
+            <div className="text-white font-bold text-lg">P</div>
           </div>
-          <h1 className="text-green-600 font-bold text-xl ml-3">Fastracker</h1>
+          <h1 className="text-green-600 font-bold text-xl ml-3">PanaMach</h1>
         </div>
         <ul className="mt-4 space-y-2 px-2">
           {/* Home */}
