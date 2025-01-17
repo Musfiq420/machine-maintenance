@@ -7,7 +7,6 @@ export default function DeleteModal({ url, data_type }) {
   const { getToken } = useContext(UserContext);
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
-  console.log(url);
   const handleDelete = async () => {
     const token = getToken();
     setLoading(true);

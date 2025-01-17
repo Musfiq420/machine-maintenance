@@ -58,7 +58,6 @@ export default function MachineForm({
     status: "active",
     // company_id: 1,
   };
-  console.log(lineOptions);
 
   const fields = [
     { id: "machine_id", label: "Machine Id", type: "text" },
@@ -106,6 +105,7 @@ export default function MachineForm({
     console.log(empty);
     setErrorFields(empty);
     if (empty.length !== 0) {
+      setLoading(false);
       return;
     }
     console.log(formData);
@@ -125,9 +125,8 @@ export default function MachineForm({
     } catch (error) {
       console.error(error);
     }
-    setLoading(false);
+    // setLoading(false);
   };
-  console.log(formData);
   return (
     <>
       <div>
