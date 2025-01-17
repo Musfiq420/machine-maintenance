@@ -69,7 +69,7 @@ const Navbar = () => {
         </div>
         <div className="navbar-center">
           <Link to="/" className="btn btn-ghost text-xl">
-            Fast Tracker
+            PanaMach
           </Link>
         </div>
         <div className="navbar-end">

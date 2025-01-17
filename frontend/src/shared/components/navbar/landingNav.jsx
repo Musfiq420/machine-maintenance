@@ -32,7 +32,7 @@ export default function LandingNav() {
       <div className="flex absolute z-20 inset-x-0 top-5  w-4/5 mx-auto justify-between items-center">
         <div className="">
           <Link to={"/"}>
-            <img src="fast_tracker.png" />
+            <img src="panamach.jpeg" />
           </Link>
         </div>
 
