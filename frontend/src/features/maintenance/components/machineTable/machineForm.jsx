@@ -11,6 +11,7 @@ export default function MachineForm({
   suppliersOptions,
   typesOptions,
   catsOptions,
+  hasAccess,
 }) {
   const { getToken, user } = useContext(UserContext);
   const [openModal, setOpenModal] = useState(false);
@@ -129,59 +130,61 @@ export default function MachineForm({
   };
   return (
     <>
-      <div>
-        <button
-          className="px-8 py-3 font-semibold  w-fit text-white h-fit bg-primary-dark rounded-md"
-          onClick={() => setOpenModal(true)}
-        >
-          {machine ? "Update" : "Add Machine"}
-        </button>
-        <Dialog
-          open={openModal}
-          onClose={() => setOpenModal(false)}
-          maxWidth="sm"
-          fullWidth
-        >
-          {!loading ? (
-            <>
-              <DialogTitle>Add Machine</DialogTitle>
-              <DialogContent>
-                <div>
-                  {fields.map(({ id, label, type, options }) => (
-                    <FormInputFields
-                      errorField={errorFields}
-                      input={formData[id]}
-                      name={label}
-                      setInput={handleInputChange}
-                      id={id}
-                      key={id}
-                      multiple={false}
-                      options={options}
-                      type={type}
-                    />
-                  ))}
-                </div>
-              </DialogContent>
+      {hasAccess && (
+        <div>
+          <button
+            className="px-8 py-3 font-semibold  w-fit text-white h-fit bg-primary-dark rounded-md"
+            onClick={() => setOpenModal(true)}
+          >
+            {machine ? "Update" : "Add Machine"}
+          </button>
+          <Dialog
+            open={openModal}
+            onClose={() => setOpenModal(false)}
+            maxWidth="sm"
+            fullWidth
+          >
+            {!loading ? (
+              <>
+                <DialogTitle>Add Machine</DialogTitle>
+                <DialogContent>
+                  <div>
+                    {fields.map(({ id, label, type, options }) => (
+                      <FormInputFields
+                        errorField={errorFields}
+                        input={formData[id]}
+                        name={label}
+                        setInput={handleInputChange}
+                        id={id}
+                        key={id}
+                        multiple={false}
+                        options={options}
+                        type={type}
+                      />
+                    ))}
+                  </div>
+                </DialogContent>
 
-              <button
-                className="text-primary font-semibold px-8 py-4 "
-                onClick={() => setOpenModal(false)}
-                variant="text"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSaveMachine}
-                className="bg-primary-dark text-white px-12 py-3 font-semibold "
-              >
-                {machine ? "Update Machine" : "Save Machine"}
-              </button>
-            </>
-          ) : (
-            <DashboardLoading />
-          )}
-        </Dialog>
-      </div>
+                <button
+                  className="text-primary font-semibold px-8 py-4 "
+                  onClick={() => setOpenModal(false)}
+                  variant="text"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveMachine}
+                  className="bg-primary-dark text-white px-12 py-3 font-semibold "
+                >
+                  {machine ? "Update Machine" : "Save Machine"}
+                </button>
+              </>
+            ) : (
+              <DashboardLoading />
+            )}
+          </Dialog>
+        </div>
+      )}
     </>
   );
 }

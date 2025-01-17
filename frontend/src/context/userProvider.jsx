@@ -5,6 +5,9 @@ export const UserContext = createContext({
   user: null,
   userRole: null,
   userLoading: false,
+  isHr: false,
+  isAdmin: false,
+  isMechanic: false,
   login: () => {},
   logout: () => {},
   getToken: () => {},
@@ -14,6 +17,9 @@ export default function UserProvider({ children }) {
   const [user, setUser] = useState(null);
   const [userRole, setUserRole] = useState(null);
   const [userLoading, setUserLoading] = useState(false);
+  const isHr = userRole === "HR Manager";
+  const isAdmin = userRole === "Admin Officer";
+  const isMechanic = userRole === "Mechanic";
 
   const getToken = () => {
     return (
@@ -93,10 +99,20 @@ export default function UserProvider({ children }) {
   useEffect(() => {
     loadUser();
   }, []);
+  console.log(userRole);
 
   return (
     <UserContext.Provider
-      value={{ user, login, logout, userRole, userLoading, getToken }}
+      value={{
+        user,
+        login,
+        logout,
+        userLoading,
+        getToken,
+        isHr,
+        isAdmin,
+        isMechanic,
+      }}
     >
       {children}
     </UserContext.Provider>

@@ -4,8 +4,7 @@ import { Dialog, DialogTitle, DialogContent } from "@mui/material";
 import { UserContext } from "../../../../context/userProvider";
 import DashboardLoading from "../../../../shared/components/dashboard/dashboardLoading";
 
-export default function EmployeeForm({
-  employee,
+export default function UserForm({
   roleOptions,
   departmentOptions,
   hasAccess,
@@ -15,17 +14,23 @@ export default function EmployeeForm({
   const [loading, setLoading] = useState(false);
   const [errorFields, setErrorFields] = useState([]);
   const [formData, setFormData] = useState({
-    name: employee?.name || "",
+    name: "",
+    email: "",
+    password: "",
+    confirm_password: "",
     company: 1,
-    department: employee?.department || "",
-    mobile: employee?.mobile || "",
-    designation: employee?.designation || "",
-    employee_id: employee?.employee_id || "",
-    date_of_joining: employee?.date_of_joining || "",
+    department: "",
+    mobile: "",
+    designation: "",
+    employee_id: "",
+    date_of_joining: "",
   });
 
   const fields = [
     { id: "name", label: "Name", type: "text" },
+    { id: "email", label: "Email", type: "text" },
+    { id: "password", label: "Password", type: "text" },
+    { id: "confirm_password", label: "Confirm Password", type: "text" },
     {
       id: "department",
       label: "Department ",
@@ -60,10 +65,7 @@ export default function EmployeeForm({
   const handleUpdate = async () => {
     setLoading(true);
 
-    const url = `${import.meta.env.VITE_EMPLOYEE_UPDATE_API}${
-      employee ? employee.id + "/" : ""
-    }`;
-    console.log("URL", url);
+    const url = `${import.meta.env.VITE_EMPLOYEE_UPDATE_API}`;
 
     const token = getToken();
     const empty = Object.keys(formData).filter(
@@ -76,7 +78,7 @@ export default function EmployeeForm({
     try {
       console.log({ ...formData });
       const res = await fetch(url, {
-        method: employee ? "PUT" : "POST",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: token, // Ensure the token is being sent
@@ -99,7 +101,7 @@ export default function EmployeeForm({
             className="px-8 py-3 font-semibold  w-fit text-white h-fit bg-primary-dark rounded-md"
             onClick={() => setOpenModal(true)}
           >
-            {employee ? "Update Employee" : "Add Employee"}
+            {"Add User"}
           </button>
           <Dialog
             open={openModal}
@@ -109,9 +111,7 @@ export default function EmployeeForm({
           >
             {!loading ? (
               <>
-                <DialogTitle>
-                  {employee ? "Update Employee" : "Add Employee"}
-                </DialogTitle>
+                <DialogTitle>{"Add User"}</DialogTitle>
                 <DialogContent>
                   <div>
                     {fields.map(({ id, label, type, options }) => (
@@ -141,7 +141,7 @@ export default function EmployeeForm({
                   onClick={handleUpdate}
                   className="bg-primary-dark text-white px-12 py-3 font-semibold "
                 >
-                  {employee ? "Update Employee" : "Add Employee"}{" "}
+                  {"Add User"}{" "}
                 </button>
               </>
             ) : (

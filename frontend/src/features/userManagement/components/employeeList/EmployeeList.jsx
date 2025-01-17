@@ -5,10 +5,12 @@ import DashboardLoading from "../../../../shared/components/dashboard/dashboardL
 import DeleteModal from "../../../../shared/components/ui/deleteModal";
 import EmployeeForm from "./employeeForm";
 import { constrainedMemory } from "process";
+import UserForm from "./userForm";
 
 const EmployeeList = () => {
   const navigate = useNavigate();
-  const { getToken } = useContext(UserContext);
+  const { getToken, isHr, isAdmin, isMechanic } = useContext(UserContext);
+  const hasAccess = isAdmin || isHr;
 
   const [employees, setEmployees] = useState([]);
   const [roleOptions, setRoleOptions] = useState([]);
@@ -123,7 +125,7 @@ const EmployeeList = () => {
                   <th className="p-3">Designation</th>
                   <th className="p-3">Mobile</th>
                   <th className="p-3">User Email</th>
-                  <th className="p-3">User Actions</th>
+                  {hasAccess && <th className="p-3">User Actions</th>}
                 </tr>
               </thead>
               <tbody>
@@ -146,32 +148,42 @@ const EmployeeList = () => {
                         <span className="text-red-500 font-semibold">N/A</span>
                       )}
                     </td>
-                    <td className="p-3 gap-4 flex ">
-                      <EmployeeForm
-                        employee={employee}
-                        departmentOptions={departmentOptions}
-                        roleOptions={roleOptions}
-                        companyOptions={companyOptions}
-                      />
-                      <DeleteModal
-                        data_type={"Employee"}
-                        url={`${import.meta.env.VITE_EMPLOYEE_UPDATE_API}${
-                          employee.id
-                        }/`}
-                      />
-                    </td>
+                    {hasAccess && (
+                      <td className="p-3 gap-4 flex ">
+                        <EmployeeForm
+                          employee={employee}
+                          departmentOptions={departmentOptions}
+                          roleOptions={roleOptions}
+                          companyOptions={companyOptions}
+                          hasAccess={hasAccess}
+                        />
+                        <DeleteModal
+                          data_type={"Employee"}
+                          url={`${import.meta.env.VITE_EMPLOYEE_UPDATE_API}${
+                            employee.id
+                          }/`}
+                          hasAccess={hasAccess}
+                        />
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
             </table>
-            <button
-              onClick={() => {
-                navigate("/signup");
-              }}
-              className="btn mt-5 bg-primary-dark text-white"
-            >
-              Add Employee
-            </button>
+            <div className="flex gap-8 my-5">
+              <EmployeeForm
+                employee={null}
+                departmentOptions={departmentOptions}
+                roleOptions={roleOptions}
+                companyOptions={companyOptions}
+                hasAccess={hasAccess}
+              />
+              <UserForm
+                departmentOptions={departmentOptions}
+                hasAccess={hasAccess}
+                roleOptions={roleOptions}
+              />
+            </div>
           </div>
 
           {/* Pagination */}
