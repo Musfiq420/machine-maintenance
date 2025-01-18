@@ -32,7 +32,7 @@ const EmployeeList = () => {
       }/api/user_management/designation/`;
       const comp_url = `${
         import.meta.env.VITE_URL_PREFIX
-      }/api/user_management/groups/`;
+      }/api/company/company/`;
       try {
         const dept_res = await fetch(dept_url, {
           method: "GET",
@@ -135,9 +135,9 @@ const EmployeeList = () => {
                     className="hover:bg-green-200 border-b cursor-pointer bg-white text-black border-primary-accent"
                   >
                     <td className="p-3">{employee.name || "N/A"}</td>
-                    <td className="p-3">{employee.company || "N/A"}</td>
-                    <td className="p-3">{employee.department || "N/A"}</td>
-                    <td className="p-3">{employee.designation || "N/A"}</td>
+                    <td className="p-3">{companyOptions.find((c) => c.id === employee.company)?.name || "N/A"}</td>
+                    <td className="p-3">{departmentOptions.find((c) => c.id === employee.department)?.name || "N/A"}</td>
+                    <td className="p-3">{roleOptions.find((c) => c.id === employee.designation)?.name || "N/A"}</td>
                     <td className="p-3">{employee.mobile || "N/A"}</td>
                     <td className="p-3">
                       {employee.user ? (

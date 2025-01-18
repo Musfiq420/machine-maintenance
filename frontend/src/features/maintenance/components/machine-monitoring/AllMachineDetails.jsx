@@ -78,8 +78,9 @@ const AllMachineDetails = () => {
         { stat: "Total Lost Time", value: res.total_lost_time },
         { stat: "Total Machines", value: res.total_machine_count },
         { stat: "Active", value: res.total_active_machines },
+        { stat: "Broken", value: (res.total_machine_count - (res.total_active_machines + res.total_repairing_machines + res.total_idle_machines)) },
         { stat: "Repairing", value: res.total_repairing_machines },
-        { stat: "Idle", value: res.total_idle_machines },
+        // { stat: "Idle", value: res.total_idle_machines },
       ]);
     } catch (error) {
       console.error("Error fetching machines:", error);
