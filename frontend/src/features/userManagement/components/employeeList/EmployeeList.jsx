@@ -157,13 +157,13 @@ const EmployeeList = () => {
                           companyOptions={companyOptions}
                           hasAccess={hasAccess}
                         />
-                        <DeleteModal
+                        {employee.user?.email?null:<DeleteModal
                           data_type={"Employee"}
                           url={`${import.meta.env.VITE_EMPLOYEE_UPDATE_API}${
                             employee.id
                           }/`}
                           hasAccess={hasAccess}
-                        />
+                        />}
                       </td>
                     )}
                   </tr>
