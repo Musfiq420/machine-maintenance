@@ -313,7 +313,7 @@ const MachineTable = () => {
                 const machine = row.original;
                 return (
                   <>
-                    { (
+                    {machine.status=='active' && (
                       <Box sx={{ display: "flex", gap: 1 }}>
                         <MachineForm
                           machine={machine}
