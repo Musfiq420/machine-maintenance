@@ -356,8 +356,8 @@ const MachineTable = () => {
     const pageWidth = doc.internal.pageSize.getWidth();
     const margin = 10;
     const qrSize = 30;
-    const perRow = 4;
-    const perPage = 40;
+    const perRow = 5;
+    const perPage = 30;
 
     let x = margin;
     let y = margin + 10;
