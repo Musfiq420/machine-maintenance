@@ -396,22 +396,27 @@ const MachineTable = () => {
     if (!selectedMachine) return;
     const machine_id = selectedMachine.machine_id;
     if (!machine_id) return;
-
+  
     const doc = new jsPDF();
     doc.setFontSize(14);
     doc.text("Machine QR Code", doc.internal.pageSize.getWidth() / 2, 20, {
       align: "center",
     });
-
-    const val = machine_id;
-    const qrDataURL = await qrcode.toDataURL(val, { width: 200 });
-
-    doc.addImage(qrDataURL, "PNG", 80, 40, 50, 50);
-    doc.setFontSize(12);
-    doc.text(`Machine ID: ${machine_id}`, 80, 100);
-
+  
+    const qrDataURL = await qrcode.toDataURL(machine_id, { width: 200 });
+  
+    const qrSize = 30;
+    const xCenter = (doc.internal.pageSize.getWidth() - qrSize) / 2;
+    doc.addImage(qrDataURL, "PNG", xCenter, 40, qrSize, qrSize);
+  
+    doc.setFontSize(10);
+    doc.text(`ID: ${machine_id}`, xCenter+15, 40 + qrSize + 4, {
+      align: "center",
+    });
+  
     doc.save(`${machine_id}_qr.pdf`);
   };
+  
 
   return (
     <div>
