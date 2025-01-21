@@ -17,12 +17,16 @@ import { UserContext } from "../../../../context/userProvider";
 import DashboardLoading from "../../../../shared/components/dashboard/dashboardLoading";
 import MachineForm from "./machineForm";
 import DeleteModal from "../../../../shared/components/ui/deleteModal";
+import PrintQrCode from "./printQrCode";
+import { useSearchParams } from "react-router-dom";
 
 const MachineTable = () => {
-  const { getToken, isMechanic, isHr, isAdmin } = useContext(UserContext);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { getToken, isMechanic, isAdmin } = useContext(UserContext);
   const [data, setData] = useState([]);
+  const [tabledata, settableData] = useState(null);
+  const [filtereddata, setFilteredData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [sucess, setSucess] = useState(false);
   const hasAccess = isAdmin || isMechanic;
 
@@ -36,123 +40,117 @@ const MachineTable = () => {
   const [typesOptions, setTypesOptions] = useState([]);
   const [catsOptions, setCatsOptions] = useState([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const brand_url = `${
-        import.meta.env.VITE_URL_PREFIX
-      }/api/maintenance/brand/`;
-      const prob_url = `${
-        import.meta.env.VITE_URL_PREFIX
-      }/api/maintenance/problem-category/`;
-      const supplier_url = `${
-        import.meta.env.VITE_URL_PREFIX
-      }/api/maintenance/supplier/`;
-      const cat_url = `${
-        import.meta.env.VITE_URL_PREFIX
-      }/api/maintenance/category/`;
-      const type_url = `${
-        import.meta.env.VITE_URL_PREFIX
-      }/api/maintenance/type/`;
-      const line_url = `${
-        import.meta.env.VITE_URL_PREFIX
-      }/api/production/lines/`;
-
-      try {
-        const [brand_data, supplier_data, type_data, cat_data, line_data] =
-          await Promise.all([
-            fetch(brand_url, {
-              method: "GET",
-              headers: { "Content-Type": "application/json" },
-            }).then((res) => res.json()),
-            fetch(supplier_url, {
-              method: "GET",
-              headers: { "Content-Type": "application/json" },
-            }).then((res) => res.json()),
-            fetch(type_url, {
-              method: "GET",
-              headers: { "Content-Type": "application/json" },
-            }).then((res) => res.json()),
-            fetch(cat_url, {
-              method: "GET",
-              headers: { "Content-Type": "application/json" },
-            }).then((res) => res.json()),
-            fetch(line_url, {
-              method: "GET",
-              headers: { "Content-Type": "application/json" },
-            }).then((res) => res.json()),
-          ]);
-        const lines = line_data.map((d) => {
-          return { name: d.name, id: d.id, floor: d.floor };
-        });
-        console.log(lines);
-        setlineOptions(lines);
-        const brands = brand_data.map((d) => {
-          return { name: d.name, id: d.id, floor: d.floor };
-        });
-        setBrandsOptions(brands);
-        const suppliers = supplier_data.map((d) => {
-          return { name: d.name, id: d.id };
-        });
-        setSuppliersOptions(suppliers);
-
-        const types = type_data.map((d) => {
-          return { name: d.name, id: d.id };
-        });
-        setTypesOptions(types);
-        const cats = cat_data.map((d) => {
-          return { name: d.name, id: d.id };
-        });
-        setCatsOptions(cats);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    setLoading(true);
-    fetchData();
-    setLoading(false);
-  }, []);
-
-  const statusColors = {
-    active: "#28a745",
-    inactive: "#6c757d",
-    maintenance: "#ffc107",
-    broken: "#dc3545",
-  };
-
-  const token = getToken();
-  const getMachineData = () => {
-    setLoading(true);
-    fetch(import.meta.env.VITE_MACHINE_DATA_API, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Token ${token}`, // Ensure this header matches what your server expects
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          // If the response is not ok, throw an error with the response details
-          return response.json().then((err) => {
-            throw new Error(err.detail || "An error occurred");
-          });
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log(data);
-        setData(data || []);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err);
-        setLoading(false);
-        setData([]);
+  const fetchAndParse = async (url) => {
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
       });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Error fetching data");
+      }
+      return response.json();
+    } catch (error) {
+      console.error(`Error fetching ${url}:`, error);
+      throw error;
+    }
+  };
+
+  const fetchData = async () => {
+    const baseURL = import.meta.env.VITE_URL_PREFIX;
+
+    const urls = {
+      brand: `${baseURL}/api/maintenance/brand/`,
+      supplier: `${baseURL}/api/maintenance/supplier/`,
+      type: `${baseURL}/api/maintenance/type/`,
+      category: `${baseURL}/api/maintenance/category/`,
+      line: `${baseURL}/api/production/lines/`,
+    };
+
+    try {
+      const [brandData, supplierData, typeData, catData, lineData] =
+        await Promise.all(Object.values(urls).map(fetchAndParse));
+
+      // Map and update state
+      setBrandsOptions(brandData.map((d) => ({ name: d.name, id: d.id })));
+      setSuppliersOptions(
+        supplierData.map((d) => ({ name: d.name, id: d.id }))
+      );
+      setTypesOptions(typeData.map((d) => ({ name: d.name, id: d.id })));
+      setCatsOptions(catData.map((d) => ({ name: d.name, id: d.id })));
+      setlineOptions(
+        lineData.map((d) => ({ name: d.name, id: d.id, floor: d.floor }))
+      );
+    } catch (error) {
+      console.error("Error fetching initial data:", error);
+    }
+  };
+
+  const getMachineData = async () => {
+    const token = getToken();
+    try {
+      const response = await fetch(import.meta.env.VITE_MACHINE_DATA_API, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Error fetching machine data");
+      }
+
+      const data = await response.json();
+
+      setData(data || []);
+    } catch (error) {
+      console.error("Error fetching machine data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getAllData = async () => {
+    setLoading(true);
+    try {
+      await fetchData();
+      await getMachineData();
+    } catch (error) {
+      console.error("Error fetching all data:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    getMachineData();
+    getAllData();
   }, []);
+
+  useEffect(() => {
+    const updatedData = data.map((machine) => {
+      const { category, brand, supplier, type, line } = machine;
+      return {
+        ...machine,
+        category: catsOptions.find((c) => c.id === category)?.name || "",
+        brand: brandsOptions.find((c) => c.id === brand)?.name || "",
+        supplier: suppliersOptions.find((c) => c.id === supplier)?.name || "",
+        type: typesOptions.find((c) => c.id === type)?.name || "",
+        line: lineOptions.find((c) => c.id === line)?.name || "",
+        floor: lineOptions.find((c) => c.id === line)?.floor?.name || "",
+      };
+    });
+    settableData(updatedData);
+  }, [
+    catsOptions,
+    brandsOptions,
+    suppliersOptions,
+    typesOptions,
+    data,
+    lineOptions,
+  ]);
 
   const handleOpenModal = (machine) => {
     setSelectedMachine(machine);
@@ -179,76 +177,49 @@ const MachineTable = () => {
         size: 50,
         Cell: ({ row }) => row.index + 1,
       },
-      { accessorKey: "machine_id", header: "Machine ID", size: 100 },
+      {
+        accessorKey: "machine_id",
+        header: "Machine ID",
+        size: 100,
+        enableColumnFilter: false,
+      },
       {
         accessorKey: "category",
         header: "Category",
+        filterVariant: "multi-select",
+        filterSelectOptions: catsOptions.map((c) => c.name) || [],
         size: 100,
-        Cell: ({ row }) => {
-          const { category } = row.original;
-          const title = catsOptions.find((c) => c.id === category)?.name || "";
-
-          return <>{title}</>;
-        },
       },
       {
         accessorKey: "type",
         header: "Type",
         size: 100,
-        Cell: ({ row }) => {
-          const { type } = row.original;
-          const title = typesOptions.find((c) => c.id === type)?.name || "";
-
-          return <>{title}</>;
-        },
+        filterVariant: "multi-select",
+        filterSelectOptions: typesOptions.map((c) => c.name) || [],
       },
       {
         accessorKey: "brand",
         header: "Brand",
         size: 100,
-        Cell: ({ row }) => {
-          const { brand } = row.original;
-          const title = brandsOptions.find((c) => c.id === brand)?.name || "";
-
-          return <>{title}</>;
-        },
+        filterVariant: "multi-select",
+        filterSelectOptions: brandsOptions.map((c) => c.name) || [],
       },
       { accessorKey: "model_number", header: "Model Number", size: 150 },
       { accessorKey: "serial_no", header: "Serial No.", size: 150 },
       {
-        accessorKey: "floor_no",
+        accessorKey: "floor",
         header: "Floor No.",
         size: 80,
-        Cell: ({ row }) => {
-          const { line } = row.original;
-          const title =
-            lineOptions.find((c) => c.id === line)?.floor?.name || "";
-          console.log(lineOptions.find((c) => c.id === line));
-          return <>{title}</>;
-        },
       },
       {
         accessorKey: "line",
         header: "Line No.",
         size: 80,
-        Cell: ({ row }) => {
-          const { line } = row.original;
-          const title = lineOptions.find((c) => c.id === line)?.name || "";
-
-          return <>{title}</>;
-        },
       },
       {
         accessorKey: "supplier",
         header: "Supplier",
         size: 150,
-        Cell: ({ row }) => {
-          const { supplier } = row.original;
-          const title =
-            suppliersOptions.find((c) => c.id === supplier)?.name || "";
-
-          return <>{title}</>;
-        },
       },
       { accessorKey: "purchase_date", header: "Purchase Date", size: 120 },
       {
@@ -258,29 +229,14 @@ const MachineTable = () => {
       },
       {
         accessorKey: "status",
+        enableColumnFilter: false,
         header: "Status",
         size: 100,
-        Cell: ({ cell }) => {
-          const val = cell.getValue();
-          const bgColor = statusColors[val] || "#17a2b8";
-          return (
-            <Box
-              sx={{
-                backgroundColor: bgColor,
-                color: "#fff",
-                textAlign: "center",
-                borderRadius: "4px",
-                padding: "4px",
-                fontSize: "0.9rem",
-              }}
-            >
-              {val}
-            </Box>
-          );
-        },
+        Cell: ({ cell }) => <StatusComp cell={cell} />,
       },
       {
         accessorKey: "qrCode",
+        enableColumnFilter: false,
         header: "QR Code",
         Cell: ({ row }) => {
           const { machine_id } = row.original;
@@ -307,6 +263,7 @@ const MachineTable = () => {
         ? [
             {
               id: "actions",
+              enableColumnFilter: false,
               header: "Actions",
               size: 150,
               Cell: ({ row }) => {
@@ -342,53 +299,36 @@ const MachineTable = () => {
           ]
         : []),
     ],
-    [brandsOptions, catsOptions, lineOptions, suppliersOptions, typesOptions]
+    [
+      brandsOptions,
+      catsOptions,
+      lineOptions,
+      suppliersOptions,
+      typesOptions,
+      hasAccess,
+      tabledata,
+    ]
   );
-  const handlePrintAllQrs = async () => {
-    const finalData = data;
-    if (finalData.length === 0) {
-      alert("No machines found.");
-      return;
+
+  const handleFilter = (updateFilter) => {
+    const filters = updateFilter();
+
+    if (filters.length !== 0) {
+      const { id, value } = filters[0];
+      const valueStr = encodeURI(value);
+      setSearchParams((prev) => {
+        prev.set(id, valueStr);
+        return prev;
+      });
     }
-
-    const doc = new jsPDF("p", "mm", "a4");
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const margin = 10;
-    const qrSize = 30;
-    const perRow = 4;
-    const perPage = 40;
-
-    let x = margin;
-    let y = margin + 10;
-
-    doc.setFontSize(14);
-    doc.text("All Machine QRs", pageWidth / 2, margin, { align: "center" });
-
-    for (let i = 0; i < finalData.length; i++) {
-      const machine = finalData[i];
-      const val = machine.machine_id;
-      const qrDataURL = await qrcode.toDataURL(val, { width: 200 });
-
-      doc.addImage(qrDataURL, "PNG", x, y, qrSize, qrSize);
-      doc.setFontSize(10);
-      doc.text(`ID: ${machine.machine_id}`, x, y + qrSize + 4);
-
-      x += qrSize + margin;
-
-      if ((i + 1) % perRow === 0) {
-        x = margin;
-        y += qrSize + 15;
-      }
-
-      if ((i + 1) % perPage === 0 && i + 1 < finalData.length) {
-        doc.addPage();
-        doc.text("All Machine QRs", pageWidth / 2, margin, { align: "center" });
-        x = margin;
-        y = margin + 10;
-      }
+  };
+  const handleSearch = (text) => {
+    if (text) {
+      setSearchParams((prev) => {
+        prev.set("search", text);
+        return prev;
+      });
     }
-
-    doc.save("all_qrs.pdf");
   };
 
   const handlePrintQr = async () => {
@@ -412,6 +352,51 @@ const MachineTable = () => {
     doc.save(`${machine_id}_qr.pdf`);
   };
 
+  useEffect(() => {
+    const filters = {};
+
+    searchParams.forEach((value, key) => {
+      filters[key] = decodeURI(value).split(","); // Handle comma-separated values
+    });
+
+    if (Object.keys(filters).length > 0 && tabledata) {
+      if (filters["search"]) {
+        const searchData = tabledata.filter((machine) =>
+          Object.values(machine).some((value) => {
+            return (
+              value !== null &&
+              value !== undefined && // Exclude null or undefined values
+              value
+                .toString()
+                .toLowerCase()
+                .includes(filters["search"]?.toString().toLowerCase())
+            );
+          })
+        );
+        delete filters["search"];
+
+        const newData = searchData.filter((machine) =>
+          Object.entries(filters).every(([key, values]) => {
+            return values.length === 1
+              ? machine[key].toLowerCase().includes(values[0].toLowerCase())
+              : values.includes(machine[key]);
+          })
+        );
+        setFilteredData(newData);
+      } else {
+        const newData = tabledata.filter((machine) =>
+          Object.entries(filters).every(([key, values]) => {
+            return values.length === 1
+              ? machine[key].toLowerCase().includes(values[0].toLowerCase())
+              : values.includes(machine[key]);
+          })
+        );
+        setFilteredData(newData);
+      }
+    }
+  }, [searchParams, tabledata]);
+  console.log(lineOptions);
+
   return (
     <div>
       {!loading ? (
@@ -423,51 +408,49 @@ const MachineTable = () => {
             padding: "8px",
           }}
         >
-          <MaterialReactTable
-            columns={columns}
-            data={data}
-            enableStickyHeader
-            muiTableContainerProps={{
-              sx: {
-                maxHeight: "calc(100vh - 200px)",
-                overflow: "auto",
-              },
-            }}
-            renderBottomToolbarCustomActions={() => (
-              <button
-                className="px-12 py-3 bg-primary text-white font-semibold rounded-md"
-                onClick={handlePrintAllQrs}
-              >
-                Print QR
-              </button>
-            )}
-            renderTopToolbarCustomActions={() => (
-              <MachineForm
-                machine={null}
-                brandsOptions={brandsOptions}
-                catsOptions={catsOptions}
-                lineOptions={lineOptions}
-                suppliersOptions={suppliersOptions}
-                typesOptions={typesOptions}
-                sucess={sucess}
-                setSucess={setSucess}
-                hasAccess={hasAccess}
-              />
-            )}
-            muiTableBodyCellProps={{
-              sx: {
-                padding: "4px 8px",
-                fontSize: "0.9rem",
-              },
-            }}
-            muiTableHeadCellProps={{
-              sx: {
-                padding: "4px 8px",
-                fontWeight: "bold",
-                fontSize: "0.9rem",
-              },
-            }}
-          />
+          {tabledata && (
+            <MaterialReactTable
+              columns={columns}
+              data={filtereddata ? filtereddata : tabledata}
+              enableStickyHeader
+              muiTableContainerProps={{
+                sx: {
+                  maxHeight: "calc(100vh - 200px)",
+                  overflow: "auto",
+                },
+              }}
+              onGlobalFilterChange={handleSearch}
+              manualFiltering={true}
+              onColumnFiltersChange={handleFilter}
+              renderBottomToolbarCustomActions={() => <PrintQrCode />}
+              renderTopToolbarCustomActions={() => (
+                <MachineForm
+                  machine={null}
+                  brandsOptions={brandsOptions}
+                  catsOptions={catsOptions}
+                  lineOptions={lineOptions}
+                  suppliersOptions={suppliersOptions}
+                  typesOptions={typesOptions}
+                  sucess={sucess}
+                  setSucess={setSucess}
+                  hasAccess={hasAccess}
+                />
+              )}
+              muiTableBodyCellProps={{
+                sx: {
+                  padding: "4px 8px",
+                  fontSize: "0.9rem",
+                },
+              }}
+              muiTableHeadCellProps={{
+                sx: {
+                  padding: "4px 8px",
+                  fontWeight: "bold",
+                  fontSize: "0.9rem",
+                },
+              }}
+            />
+          )}
 
           <Dialog
             open={openModal}
@@ -558,3 +541,29 @@ const MachineTable = () => {
 };
 
 export default MachineTable;
+
+function StatusComp({ cell }) {
+  const val = cell.getValue();
+  const statusColors = {
+    active: "#28a745",
+    inactive: "#6c757d",
+    maintenance: "#ffc107",
+    broken: "#dc3545",
+  };
+
+  const bgColor = statusColors[val] || "#17a2b8";
+  return (
+    <Box
+      sx={{
+        backgroundColor: bgColor,
+        color: "#fff",
+        textAlign: "center",
+        borderRadius: "4px",
+        padding: "4px",
+        fontSize: "0.9rem",
+      }}
+    >
+      {val}
+    </Box>
+  );
+}
