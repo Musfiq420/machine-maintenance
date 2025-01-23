@@ -1,4 +1,7 @@
-import React from "react";
+import QRCode from "react-qr-code";
+
+import { jsPDF } from "jspdf";
+import qrcode from "qrcode"; // For generating QR code data URLs
 
 export default function PrintQrCode({ data }) {
   const handlePrintAllQrs = async () => {
@@ -10,10 +13,12 @@ export default function PrintQrCode({ data }) {
 
     const doc = new jsPDF("p", "mm", "a4");
     const pageWidth = doc.internal.pageSize.getWidth();
-    const margin = 10;
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 15; // Updated margin
     const qrSize = 30;
     const perRow = 4;
-    const perPage = 40;
+    const perPage =
+      Math.floor((pageHeight - 2 * margin - 10) / (qrSize + 15)) * perRow; // Adjust per page count dynamically
 
     let x = margin;
     let y = margin + 10;
@@ -32,11 +37,13 @@ export default function PrintQrCode({ data }) {
 
       x += qrSize + margin;
 
+      // Move to the next row if current row is full
       if ((i + 1) % perRow === 0) {
         x = margin;
         y += qrSize + 15;
       }
 
+      // Add a new page if current page is full
       if ((i + 1) % perPage === 0 && i + 1 < finalData.length) {
         doc.addPage();
         doc.text("All Machine QRs", pageWidth / 2, margin, { align: "center" });
