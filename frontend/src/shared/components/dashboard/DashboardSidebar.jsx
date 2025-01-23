@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   FaHome,
   FaTachometerAlt,
@@ -22,6 +22,7 @@ import { MdStorage } from "react-icons/md";
 
 const DashboardSidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { logout } = useContext(UserContext);
 
   const maintenanceLinks = [
@@ -87,6 +88,10 @@ const DashboardSidebar = () => {
   };
 
   const [isUserManagementOpen, setUserOpen] = useState(false);
+  const logoutHandler = () => {
+    logout();
+    navigate("/");
+  };
 
   return (
     <>
@@ -169,7 +174,7 @@ const DashboardSidebar = () => {
           {/* Logout (Optional) */}
           <li className="absolute bottom-4 w-full">
             <button
-              onClick={logout}
+              onClick={logoutHandler}
               className="flex items-center px-4 py-2 rounded hover:bg-primary-dark hover:text-white"
             >
               <FaSignOutAlt className="mr-3" />

@@ -49,11 +49,15 @@ const AllMachineDetails = () => {
         }
         return acc;
       }, []);
+      console.log(formattedLocation);
       setLocation(formattedLocation);
+      setSelectedFloor([1]);
+      setSelectedLine([1]);
     } catch (error) {
       console.error("Error fetching lines:", error);
     }
   };
+  console.log(selectedFloor, selectedLine);
 
   // Fetch machine data based on selected floor and lines
   const fetchMachines = async (floor, lines) => {
@@ -62,7 +66,9 @@ const AllMachineDetails = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `${import.meta.env.VITE_URL_PREFIX}/api/maintenance/breakdown-logs/total-lost-time-per-location/?floor=${floor}&line=${lines}`,
+        `${
+          import.meta.env.VITE_URL_PREFIX
+        }/api/maintenance/breakdown-logs/total-lost-time-per-location/?floor=${floor}&line=${lines}`,
         {
           method: "GET",
           headers: {
@@ -78,7 +84,14 @@ const AllMachineDetails = () => {
         { stat: "Total Lost Time", value: res.total_lost_time },
         { stat: "Total Machines", value: res.total_machine_count },
         { stat: "Active", value: res.total_active_machines },
-        { stat: "Broken", value: (res.total_machine_count - (res.total_active_machines + res.total_repairing_machines + res.total_idle_machines)) },
+        {
+          stat: "Broken",
+          value:
+            res.total_machine_count -
+            (res.total_active_machines +
+              res.total_repairing_machines +
+              res.total_idle_machines),
+        },
         { stat: "Repairing", value: res.total_repairing_machines },
         // { stat: "Idle", value: res.total_idle_machines },
       ]);
@@ -109,8 +122,7 @@ const AllMachineDetails = () => {
             .filter((l) => selectedFloor.includes(l.id))
             .reduce((prev, curr) => [...prev, ...curr?.line], [])
         ),
-      ]
-        .map((line) => ({ id: line.id, name: line.name })), // Pass value and label
+      ].map((line) => ({ id: line.id, name: line.name })), // Pass value and label
       setInput: (id, value) => setSelectedLine(value),
     },
   ];
@@ -151,13 +163,11 @@ const AllMachineDetails = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-6">
-            {stats.map((stat) => (
-              <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-4 flex flex-col space-y-2">
-                <h2 className="text-sm text-gray-500 font-semibold">
-                  {stat.stat}
-                </h2>
-                <p className="text-2xl font-bold text-gray-800">{stat.value}</p>
-                {/* {stat.change && (
+        {stats.map((stat) => (
+          <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-4 flex flex-col space-y-2">
+            <h2 className="text-sm text-gray-500 font-semibold">{stat.stat}</h2>
+            <p className="text-2xl font-bold text-gray-800">{stat.value}</p>
+            {/* {stat.change && (
                   <div
                     className={`flex items-center ${
                       stat.change > 0 ? "text-green-500" : "text-red-500"
@@ -167,20 +177,20 @@ const AllMachineDetails = () => {
                     <span> {stat.change}</span>
                   </div>
                 )} */}
-              </div>
-            ))}
           </div>
+        ))}
+      </div>
 
       {/* Machine Grid */}
       <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-            {machines.map((machine) => (
-              <MachineCards
-                machine_id={encodeURIComponent(machine.machine_id)}
-                status={machine.status}
-                type={machine.type}
-              />
-            ))}
-          </div>
+        {machines.map((machine) => (
+          <MachineCards
+            machine_id={encodeURIComponent(machine.machine_id)}
+            status={machine.status}
+            type={machine.type}
+          />
+        ))}
+      </div>
     </div>
   );
 };
