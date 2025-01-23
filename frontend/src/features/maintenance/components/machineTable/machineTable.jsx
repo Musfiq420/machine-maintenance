@@ -395,7 +395,6 @@ const MachineTable = () => {
       }
     }
   }, [searchParams, tabledata]);
-  console.log(lineOptions);
 
   return (
     <div>
@@ -423,7 +422,7 @@ const MachineTable = () => {
               manualFiltering={true}
               onColumnFiltersChange={handleFilter}
               renderBottomToolbarCustomActions={() => (
-                <PrintQrCode data={tabledata || filtereddata} />
+                <PrintQrCode data={filtereddata || tabledata} />
               )}
               renderTopToolbarCustomActions={() => (
                 <MachineForm

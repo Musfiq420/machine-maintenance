@@ -49,7 +49,6 @@ const AllMachineDetails = () => {
         }
         return acc;
       }, []);
-      console.log(formattedLocation);
       setLocation(formattedLocation);
       setSelectedFloor([1]);
       setSelectedLine([1]);
@@ -57,8 +56,6 @@ const AllMachineDetails = () => {
       console.error("Error fetching lines:", error);
     }
   };
-  console.log(selectedFloor, selectedLine);
-
   // Fetch machine data based on selected floor and lines
   const fetchMachines = async (floor, lines) => {
     setError(false);
