@@ -8,16 +8,14 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User, Group
 from django.shortcuts import redirect
 
-from ..models import Employee, Department, Designation, DeviceToken
+from ..models import Employee, Department, Designation, DeviceToken, Company
 from .serializers import (
     UserRegistrationSerializer,
     UserLoginSerializer,
     AddEmployeeSerializer,
     DepartmentSerializer,
     DesignationSerializer,
-
     DeviceTokenSerializer,
-
     GroupSerializer
 )
 from permissions.base_permissions import (
@@ -35,13 +33,9 @@ from permissions.base_permissions import (
 # Registration View
 # -----------------------------------------------------
 class UserRegistrationView(generics.CreateAPIView):
-    # permission_classes = [IsAdminOrHR]
     serializer_class = UserRegistrationSerializer
 
     def create(self, request, *args, **kwargs):
-        """
-        Create a new user (and the associated Employee model).
-        """
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -53,6 +47,23 @@ class UserRegistrationView(generics.CreateAPIView):
                 status=status.HTTP_201_CREATED
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # def get(self, request, *args, **kwargs):
+    #     """
+    #     Get data for dropdown: companies, departments, and designations
+    #     """
+    #     companies = Company.objects.all().values('id', 'name')
+    #     departments = Department.objects.all().values('id', 'name')
+    #     designations = Designation.objects.all().values('id', 'title')
+
+    #     return Response(
+    #         {
+    #             "companies": list(companies),
+    #             "departments": list(departments),
+    #             "designations": list(designations),
+    #         },
+    #         status=status.HTTP_200_OK
+    #     )
 
 
 # -----------------------------------------------------
@@ -117,18 +128,47 @@ class UserListView(APIView):
 # -----------------------------------------------------
 # List All Employees
 # -----------------------------------------------------
+
 class EmployeeListAPIView(APIView):
     # permission_classes = [IsAuthenticated]
 
-    def get(self, request):
+    def get(self, request, id=None):
         """
-        Retrieve a list of all Employees.
+        Retrieve a list of all Employees or a specific Employee by ID.
         """
-        employees = Employee.objects.all()
-        # Reuse the UserRegistrationSerializer just for demonstration:
-        # In many cases, you'd use a simpler read-only Employee serializer.
-        serializer = UserRegistrationSerializer(employees, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        if id:
+            try:
+                # Retrieve a specific employee by ID
+                employee = Employee.objects.get(id=id)
+            except Employee.DoesNotExist:
+                return Response({"detail": "Employee not found."}, status=status.HTTP_404_NOT_FOUND)
+            
+            # Serialize and return the specific employee
+            serializer = UserRegistrationSerializer(employee)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        else:
+            # Retrieve all employees
+            employees = Employee.objects.all()
+            serializer = UserRegistrationSerializer(employees, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def delete(self, request, id=None):
+        """
+        Delete a specific Employee by ID.
+        """
+        if id:
+            try:
+                employee = Employee.objects.get(id=id)
+            except Employee.DoesNotExist:
+                return Response({"detail": "Employee not found."}, status=status.HTTP_404_NOT_FOUND)
+            
+            # Delete the employee
+            employee.delete()
+            return Response({"detail": "Employee deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+        
+        return Response({"detail": "ID is required to delete an employee."}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 # -----------------------------------------------------

@@ -65,7 +65,7 @@ export default function UserForm({
   const handleUpdate = async () => {
     setLoading(true);
 
-    const url = `${import.meta.env.VITE_EMPLOYEE_UPDATE_API}`;
+    const url = `${import.meta.env.VITE_USER_REGISTRATION_API}`;
 
     const token = getToken();
     const empty = Object.keys(formData).filter(
@@ -76,18 +76,33 @@ export default function UserForm({
       return;
     }
     try {
-      console.log({ ...formData });
+      
+      const transformedData = {
+        user: {
+          email: formData.email || "",
+          password: formData.password || "",
+          confirm_password: formData.confirm_password || ""
+        },
+        name: formData.name || "",
+        // company: formData.company || "",
+        department: formData.department || "",
+        mobile: formData.mobile || "",
+        designation: formData.designation || "",
+        employee_id: formData.employee_id || "",
+        date_of_joining: formData.date_of_joining || null
+      };
+      console.log({ ...transformedData });
       const res = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: token, // Ensure the token is being sent
         },
-        body: JSON.stringify({ ...formData, company: 1 }),
+        body: JSON.stringify({ ...transformedData, company: 1 }),
       });
 
       const data = await res.text();
-      window.location.reload();
+      // window.location.reload();
     } catch (error) {
       console.error(error);
     }

@@ -99,7 +99,7 @@ export default function EmployeeForm({
             className="px-8 py-3 font-semibold  w-fit text-white h-fit bg-primary-dark rounded-md"
             onClick={() => setOpenModal(true)}
           >
-            {employee ? "Update Employee" : "Add Employee"}
+            {employee ? "Update" : "Add Employee"}
           </button>
           <Dialog
             open={openModal}

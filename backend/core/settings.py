@@ -17,8 +17,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # FIREBASE_CREDENTIALS= "../credentials/firebase_service_account.json"
 # FIREBASE_CREDENTIALS = os.path.join(os.path.dirname(__file__), 'firebase_service_account.json')
-# FIREBASE_CREDENTIALS = os.path.join(BASE_DIR, 'credentials', 'firebase_service_account.json')
-FIREBASE_CREDENTIALS = '/etc/secrets/firebase_service_account.json'
+FIREBASE_CREDENTIALS = os.path.join(BASE_DIR, 'credentials', 'firebase_service_account.json')
+
+# FIREBASE_CREDENTIALS = '/etc/secrets/firebase_service_account.json'
 # FIREBASE_CREDENTIALS = os.getenv('FIREBASE_CREDENTIALS', os.path.join(BASE_DIR, 'credentials', 'firebase_service_account.json'))
 
 # Quick-start development settings - unsuitable for production
@@ -36,6 +37,7 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    'whitenoise.runserver_nostatic',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -57,6 +59,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -64,7 +67,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
@@ -152,7 +155,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'  # Ensure this line is already there
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # Add this line
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -161,7 +166,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
      "http://localhost:5173",  # or your frontend URL
-     "https://machine-maintenance.onrender.com"
+     "https://machine-maintenance.onrender.com",
+     "https://machine-maintenance-two.vercel.app",
+     "http://panamech.com",
  ]
 
 # settings.py
@@ -169,5 +176,6 @@ CORS_ALLOWED_ORIGINS = [
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
     'https://fast-tracker-bo3s.onrender.com',
+    'https://machine-maintenance-two.vercel.app',
 ]
 
