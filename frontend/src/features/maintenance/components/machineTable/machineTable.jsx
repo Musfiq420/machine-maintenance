@@ -24,6 +24,7 @@ const MachineTable = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { getToken, isMechanic, isAdmin } = useContext(UserContext);
   const [data, setData] = useState([]);
+  const [colFilters, setColFilters] = useState([]);
   const [tabledata, settableData] = useState(null);
   const [filtereddata, setFilteredData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -181,7 +182,6 @@ const MachineTable = () => {
         accessorKey: "machine_id",
         header: "Machine ID",
         size: 100,
-        enableColumnFilter: false,
       },
       {
         accessorKey: "category",
@@ -315,19 +315,19 @@ const MachineTable = () => {
     ]
   );
 
-  const handleFilter = (updateFilter) => {
-    const filters = updateFilter();
-    console.log(filters, "filter");
-
-    if (filters.length !== 0) {
-      const { id, value } = filters[0];
-      const valueStr = encodeURI(value);
-      setSearchParams((prev) => {
-        prev.set(id, valueStr);
-        return prev;
+  useEffect(() => {
+    const filters = colFilters.reduce((acc, f) => {
+      acc[f.id] = encodeURI(f.value);
+      return acc;
+    }, {});
+    setSearchParams((prev) => {
+      const newParams = new URLSearchParams(); // Clone the current parameters
+      Object.keys(filters).forEach((key) => {
+        newParams.set(key, filters[key]); // Update the parameters with filters
       });
-    }
-  };
+      return newParams;
+    });
+  }, [colFilters]);
   const handleSearch = (text) => {
     if (text) {
       setSearchParams((prev) => {
@@ -378,6 +378,8 @@ const MachineTable = () => {
         );
         setFilteredData(newData);
       }
+    } else {
+      setFilteredData(tabledata || []);
     }
   }, [searchParams, tabledata]);
 
@@ -405,7 +407,8 @@ const MachineTable = () => {
               }}
               onGlobalFilterChange={handleSearch}
               manualFiltering={true}
-              onColumnFiltersChange={handleFilter}
+              onColumnFiltersChange={setColFilters}
+              state={{ columnFilters: colFilters }}
               renderBottomToolbarCustomActions={() => (
                 <PrintQrCode data={filtereddata || tabledata} />
               )}
