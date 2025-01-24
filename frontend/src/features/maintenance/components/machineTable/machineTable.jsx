@@ -503,13 +503,12 @@ const MachineTable = () => {
               )}
             </DialogContent>
             <DialogActions>
-              <Button
+              <button
+                className="bg-none mx-6 text-primary font-semibold"
                 onClick={handleCloseModal}
-                variant="contained"
-                color="primary"
               >
                 Close
-              </Button>
+              </button>
               {selectedMachine && <PrintQrCode data={[selectedMachine]} />}
             </DialogActions>
           </Dialog>
