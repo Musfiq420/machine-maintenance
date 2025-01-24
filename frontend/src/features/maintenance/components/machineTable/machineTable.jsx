@@ -210,10 +210,15 @@ const MachineTable = () => {
         accessorKey: "floor",
         header: "Floor No.",
         size: 80,
+        filterVariant: "multi-select",
+        filterSelectOptions:
+          [...new Set(lineOptions.map((c) => c.floor.name))] || [],
       },
       {
         accessorKey: "line",
         header: "Line No.",
+        filterVariant: "multi-select",
+        filterSelectOptions: lineOptions.map((c) => c.name) || [],
         size: 80,
       },
       {
@@ -312,6 +317,7 @@ const MachineTable = () => {
 
   const handleFilter = (updateFilter) => {
     const filters = updateFilter();
+    console.log(filters, "filter");
 
     if (filters.length !== 0) {
       const { id, value } = filters[0];
@@ -329,27 +335,6 @@ const MachineTable = () => {
         return prev;
       });
     }
-  };
-
-  const handlePrintQr = async () => {
-    if (!selectedMachine) return;
-    const machine_id = selectedMachine.machine_id;
-    if (!machine_id) return;
-
-    const doc = new jsPDF();
-    doc.setFontSize(14);
-    doc.text("Machine QR Code", doc.internal.pageSize.getWidth() / 2, 20, {
-      align: "center",
-    });
-
-    const val = machine_id;
-    const qrDataURL = await qrcode.toDataURL(val, { width: 200 });
-
-    doc.addImage(qrDataURL, "PNG", 80, 40, 50, 50);
-    doc.setFontSize(12);
-    doc.text(`Machine ID: ${machine_id}`, 80, 100);
-
-    doc.save(`${machine_id}_qr.pdf`);
   };
 
   useEffect(() => {
@@ -515,15 +500,6 @@ const MachineTable = () => {
               )}
             </DialogContent>
             <DialogActions>
-              {selectedMachine && (
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={handlePrintQr}
-                >
-                  Print
-                </Button>
-              )}
               <Button
                 onClick={handleCloseModal}
                 variant="contained"
@@ -531,6 +507,7 @@ const MachineTable = () => {
               >
                 Close
               </Button>
+              {selectedMachine && <PrintQrCode data={[selectedMachine]} />}
             </DialogActions>
           </Dialog>
         </Box>

@@ -24,7 +24,8 @@ export default function PrintQrCode({ data }) {
     let y = margin + 10;
 
     doc.setFontSize(14);
-    doc.text("All Machine QRs", pageWidth / 2, margin, { align: "center" });
+    const title = data.length === 1 ? "" : "All Machine QRs";
+    doc.text(title, pageWidth / 2, margin, { align: "center" });
 
     for (let i = 0; i < finalData.length; i++) {
       const machine = finalData[i];
@@ -52,12 +53,14 @@ export default function PrintQrCode({ data }) {
       }
     }
 
-    doc.save("all_qrs.pdf");
+    const fileName =
+      data.length === 1 ? `${data[0].machine_id}_qr.pdf` : "all_qrs.pdf";
+    doc.save(fileName);
   };
 
   return (
     <button
-      className="px-12 py-3 bg-primary text-white font-semibold rounded-md"
+      className="px-12 py-3 bg-primary-dark text-white font-semibold rounded-md"
       onClick={handlePrintAllQrs}
     >
       Print QR
