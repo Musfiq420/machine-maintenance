@@ -217,7 +217,8 @@ const MachineTable = () => {
         size: 100,
         filterVariant: "multi-select",
 
-        filterSelectOptions: lineOptions.map((c) => c.floor.name) || [],
+        filterSelectOptions:
+          [...new Set(lineOptions.map((c) => c.floor.name))] || [],
       },
 
       {
@@ -348,8 +349,8 @@ const MachineTable = () => {
       filters[key] = decodeURI(value).split(","); // Handle comma-separated values
     });
 
-    delete filters["floor"];
-    delete filters["line"];
+    // delete filters["floor"];
+    // delete filters["line"];
 
     if (Object.keys(filters).length > 0 && tabledata) {
       if (filters["search"]) {
