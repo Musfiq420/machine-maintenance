@@ -23,6 +23,8 @@ import MachineLineForm from "../../../../shared/components/forms/machineLineForm
 
 const MachineTable = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const line = searchParams.get("line");
+  const floor = searchParams.get("floor");
   const { getToken, isMechanic, isAdmin } = useContext(UserContext);
   const [data, setData] = useState([]);
   const [colFilters, setColFilters] = useState([]);
@@ -200,6 +202,24 @@ const MachineTable = () => {
 
         filterSelectOptions: typesOptions.map((c) => c.name) || [],
       },
+      {
+        accessorKey: "line",
+        header: "Line",
+        size: 100,
+        filterVariant: "multi-select",
+
+        filterSelectOptions: lineOptions.map((c) => c.name) || [],
+      },
+
+      {
+        accessorKey: "floor",
+        header: "Floor",
+        size: 100,
+        filterVariant: "multi-select",
+
+        filterSelectOptions: lineOptions.map((c) => c.floor.name) || [],
+      },
+
       {
         accessorKey: "brand",
         header: "Brand",
@@ -381,7 +401,6 @@ const MachineTable = () => {
             padding: "8px",
           }}
         >
-          <MachineLineForm />
           {tabledata && (
             <MaterialReactTable
               columns={columns}

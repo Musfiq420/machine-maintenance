@@ -18,13 +18,11 @@ const LoginLayout = () => {
     <div>
       {!userLoading ? (
         <>
-          <Navbar></Navbar>
           <div className="mt-8">
             {" "}
             {/* Add margin-top */}
             <Login />
           </div>
-          <Footer></Footer>
         </>
       ) : (
         <Loader />
