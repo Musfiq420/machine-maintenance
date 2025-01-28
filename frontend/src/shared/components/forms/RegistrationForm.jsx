@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import FormInputFields from "../../../../shared/components/ui/formInputFields";
+import FormInputFields from "../ui/formInputFields";
 
 const RegisterForm = () => {
   const navigate = useNavigate();

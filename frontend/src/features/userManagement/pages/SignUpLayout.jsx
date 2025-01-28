@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import Footer from "../../../shared/components/footer/Footer";
 import Navbar from "../../../shared/components/navbar/Navbar";
-import RegisterForm from "../components/registerForm/RegistrationForm";
+import RegisterForm from "../../../shared/components/forms/RegistrationForm";
 import { UserContext } from "../../../context/userProvider";
 import ErrorPage from "../../../shared/components/ui/errorPage";
 import DashboardWrapper from "../../../shared/components/dashboard/dashboardWrapper";

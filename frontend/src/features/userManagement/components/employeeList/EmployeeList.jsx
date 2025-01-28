@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { UserContext } from "../../../../context/userProvider";
 import DashboardLoading from "../../../../shared/components/dashboard/dashboardLoading";
 import DeleteModal from "../../../../shared/components/ui/deleteModal";
-import EmployeeForm from "./employeeForm";
+import EmployeeForm from "../../../../shared/components/forms/employeeForm";
 import { constrainedMemory } from "process";
 import UserForm from "./userForm";
 
@@ -135,9 +135,19 @@ const EmployeeList = () => {
                     className="hover:bg-green-200 border-b cursor-pointer bg-white text-black border-primary-accent"
                   >
                     <td className="p-3">{employee.name || "N/A"}</td>
-                    <td className="p-3">{companyOptions.find((c) => c.id === employee.company)?.name || "N/A"}</td>
-                    <td className="p-3">{departmentOptions.find((c) => c.id === employee.department)?.name || "N/A"}</td>
-                    <td className="p-3">{roleOptions.find((c) => c.id === employee.designation)?.name || "N/A"}</td>
+                    <td className="p-3">
+                      {companyOptions.find((c) => c.id === employee.company)
+                        ?.name || "N/A"}
+                    </td>
+                    <td className="p-3">
+                      {departmentOptions.find(
+                        (c) => c.id === employee.department
+                      )?.name || "N/A"}
+                    </td>
+                    <td className="p-3">
+                      {roleOptions.find((c) => c.id === employee.designation)
+                        ?.name || "N/A"}
+                    </td>
                     <td className="p-3">{employee.mobile || "N/A"}</td>
                     <td className="p-3">
                       {employee.user ? (
@@ -157,13 +167,15 @@ const EmployeeList = () => {
                           companyOptions={companyOptions}
                           hasAccess={hasAccess}
                         />
-                        {employee.user?.email?null:<DeleteModal
-                          data_type={"Employee"}
-                          url={`${import.meta.env.VITE_EMPLOYEE_UPDATE_API}${
-                            employee.id
-                          }/`}
-                          hasAccess={hasAccess}
-                        />}
+                        {employee.user?.email ? null : (
+                          <DeleteModal
+                            data_type={"Employee"}
+                            url={`${import.meta.env.VITE_EMPLOYEE_UPDATE_API}${
+                              employee.id
+                            }/`}
+                            hasAccess={hasAccess}
+                          />
+                        )}
                       </td>
                     )}
                   </tr>

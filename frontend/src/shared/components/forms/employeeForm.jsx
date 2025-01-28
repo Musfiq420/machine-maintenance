@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
-import FormInputFields from "../../../../shared/components/ui/formInputFields";
+import FormInputFields from "../ui/formInputFields";
 import { Dialog, DialogTitle, DialogContent } from "@mui/material";
-import { UserContext } from "../../../../context/userProvider";
-import DashboardLoading from "../../../../shared/components/dashboard/dashboardLoading";
+import { UserContext } from "../../../context/userProvider";
+import DashboardLoading from "../dashboard/dashboardLoading";
 
 export default function EmployeeForm({
   employee,

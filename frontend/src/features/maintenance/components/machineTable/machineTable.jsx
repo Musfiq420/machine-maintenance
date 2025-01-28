@@ -15,16 +15,20 @@ import { jsPDF } from "jspdf";
 import qrcode from "qrcode"; // For generating QR code data URLs
 import { UserContext } from "../../../../context/userProvider";
 import DashboardLoading from "../../../../shared/components/dashboard/dashboardLoading";
-import MachineForm from "./machineForm";
+import MachineForm from "../../../../shared/components/forms/machineForm";
 import DeleteModal from "../../../../shared/components/ui/deleteModal";
 import PrintQrCode from "./printQrCode";
 import { useSearchParams } from "react-router-dom";
+import MachineLineForm from "../../../../shared/components/forms/machineLineForm";
 
 const MachineTable = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const line = searchParams.get("line");
+  const floor = searchParams.get("floor");
   const { getToken, isMechanic, isAdmin } = useContext(UserContext);
   const [data, setData] = useState([]);
   const [colFilters, setColFilters] = useState([]);
+  const [searchFilter, setSearchFilter] = useState("");
   const [tabledata, settableData] = useState(null);
   const [filtereddata, setFilteredData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -193,10 +197,30 @@ const MachineTable = () => {
       {
         accessorKey: "type",
         header: "Type",
-        size: 100,
+        size: 180,
         filterVariant: "multi-select",
+
         filterSelectOptions: typesOptions.map((c) => c.name) || [],
       },
+      {
+        accessorKey: "line",
+        header: "Line",
+        size: 100,
+        filterVariant: "multi-select",
+
+        filterSelectOptions: lineOptions.map((c) => c.name) || [],
+      },
+
+      {
+        accessorKey: "floor",
+        header: "Floor",
+        size: 100,
+        filterVariant: "multi-select",
+
+        filterSelectOptions:
+          [...new Set(lineOptions.map((c) => c.floor.name))] || [],
+      },
+
       {
         accessorKey: "brand",
         header: "Brand",
@@ -206,32 +230,14 @@ const MachineTable = () => {
       },
       { accessorKey: "model_number", header: "Model Number", size: 150 },
       { accessorKey: "serial_no", header: "Serial No.", size: 150 },
-      {
-        accessorKey: "floor",
-        header: "Floor No.",
-        size: 80,
-        filterVariant: "multi-select",
-        filterSelectOptions:
-          [...new Set(lineOptions.map((c) => c.floor.name))] || [],
-      },
-      {
-        accessorKey: "line",
-        header: "Line No.",
-        filterVariant: "multi-select",
-        filterSelectOptions: lineOptions.map((c) => c.name) || [],
-        size: 80,
-      },
+
       {
         accessorKey: "supplier",
         header: "Supplier",
         size: 150,
       },
       { accessorKey: "purchase_date", header: "Purchase Date", size: 120 },
-      {
-        accessorKey: "last_breakdown_start",
-        header: "Last Breakdown Start",
-        size: 180,
-      },
+
       {
         accessorKey: "status",
         enableColumnFilter: false,
@@ -328,14 +334,13 @@ const MachineTable = () => {
       return newParams;
     });
   }, [colFilters]);
-  const handleSearch = (text) => {
-    if (text) {
-      setSearchParams((prev) => {
-        prev.set("search", text);
-        return prev;
-      });
-    }
-  };
+
+  useEffect(() => {
+    setSearchParams((prev) => {
+      prev.set("search", searchFilter);
+      return prev;
+    });
+  }, [searchFilter]);
 
   useEffect(() => {
     const filters = {};
@@ -343,6 +348,9 @@ const MachineTable = () => {
     searchParams.forEach((value, key) => {
       filters[key] = decodeURI(value).split(","); // Handle comma-separated values
     });
+
+    // delete filters["floor"];
+    // delete filters["line"];
 
     if (Object.keys(filters).length > 0 && tabledata) {
       if (filters["search"]) {
@@ -405,10 +413,10 @@ const MachineTable = () => {
                   overflow: "auto",
                 },
               }}
-              onGlobalFilterChange={handleSearch}
+              onGlobalFilterChange={setSearchFilter}
               manualFiltering={true}
               onColumnFiltersChange={setColFilters}
-              state={{ columnFilters: colFilters }}
+              state={{ columnFilters: colFilters, globalFilter: searchFilter }}
               renderBottomToolbarCustomActions={() => (
                 <PrintQrCode data={filtereddata || tabledata} />
               )}
