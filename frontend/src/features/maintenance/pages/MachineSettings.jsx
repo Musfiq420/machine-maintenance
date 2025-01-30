@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DashboardWrapper from "../../../shared/components/dashboard/dashboardWrapper";
+import SettingsForm from "../../../shared/components/forms/settingsForm";
+import DeleteModal from "../../../shared/components/ui/deleteModal";
 
 export default function MachineSettings() {
   const baseURL = import.meta.env.VITE_URL_PREFIX;
@@ -160,33 +162,56 @@ export default function MachineSettings() {
 
       <div className="text-black p-10">
         {activeTab?.data && (
-          <table className="table-auto  w-full">
-            <thead>
-              <tr>
-                {Object.keys(activeTab.data[0]).map((key) => (
+          <>
+            <SettingsForm activeTab={activeTab} />
+            <table className="table-auto  w-full">
+              <thead>
+                <tr>
+                  {Object.keys(activeTab.data[0]).map((key) => (
+                    <th
+                      colSpan={3}
+                      className="capitalize w-[200px] pb-2 pr-12 text-left font-bold "
+                    >
+                      {key.replace("_", " ")}
+                    </th>
+                  ))}
                   <th
                     colSpan={3}
                     className="capitalize w-[200px] pb-2 pr-12 text-left font-bold "
                   >
-                    {key.replace("_", " ")}
+                    Actions
                   </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {Object.values(activeTab.data).map((d) => {
-                return (
-                  <tr>
-                    {Object.values(d).map((d) => (
-                      <td className="pb-2 w-[50px] pr-12" colSpan={3}>
-                        {d}
+                </tr>
+              </thead>
+              <tbody>
+                {Object.values(activeTab.data).map((d) => {
+                  return (
+                    <tr>
+                      {Object.values(d).map((d) => (
+                        <td className="pb-2 w-[50px] pr-12" colSpan={3}>
+                          {d}
+                        </td>
+                      ))}
+                      <td
+                        className="pb-2 w-[415px] flex gap-2 pr-12"
+                        colSpan={4}
+                      >
+                        <DeleteModal
+                          data_type={activeTab.title}
+                          url={`${activeTab.link}${d.id}/`}
+                          hasAccess={true}
+                        />
+                        <SettingsForm
+                          activeTab={activeTab}
+                          currData={flattenObject(d)}
+                        />
                       </td>
-                    ))}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </>
         )}
       </div>
     </DashboardWrapper>
