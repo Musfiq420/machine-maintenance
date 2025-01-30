@@ -3,7 +3,11 @@ import React, { useContext, useEffect, useState } from "react";
 import FormInputFields from "../ui/formInputFields";
 import { UserContext } from "../../../context/userProvider";
 
-export default function SettingsForm({ activeTab, currData = null }) {
+export default function SettingsForm({
+  activeTab,
+  currData = null,
+  categories = {},
+}) {
   const [modalOpen, setModalOpen] = useState();
   const [errorField, setErrorField] = useState([]);
   const { getToken } = useContext(UserContext);
@@ -36,8 +40,14 @@ export default function SettingsForm({ activeTab, currData = null }) {
     );
     setErrorField(empty);
     try {
+      if (id === "lines" || id === "floors") {
+        formData["floor"] = {
+          name: formData["floor_name"],
+          company: 1,
+        };
+      }
       const url = link + `${currData ? `${currData.id}/` : ""}`;
-      console.log(url);
+      console.log(formData);
       const res = await fetch(url, {
         method: currData ? "PUT" : "POST",
         headers: {
@@ -79,8 +89,9 @@ export default function SettingsForm({ activeTab, currData = null }) {
                 setInput={inputHandler}
                 name={capitalizeProper(f.replace("_", " "))}
                 id={f}
-                type="string"
+                type={categories[f] ? "select" : "string"}
                 key={f}
+                options={categories[f]}
               />
             ))}
           </div>

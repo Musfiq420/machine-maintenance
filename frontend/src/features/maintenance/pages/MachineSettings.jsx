@@ -134,6 +134,12 @@ export default function MachineSettings() {
     setDepartment(departmentData.map((d) => flattenObject(d)));
     setDesignations(designationsData.map((d) => flattenObject(d)));
     setActiveTab(tabs[0]);
+    console.log(linesData);
+  };
+  const categories = {
+    category_type: category,
+    operation_type: [{ name: "sewing", id: "sewing" }],
+    severity: [{ name: "minor", id: "minor" }],
   };
   useEffect(() => {
     fetchData();
@@ -163,7 +169,7 @@ export default function MachineSettings() {
       <div className="text-black p-10">
         {activeTab?.data && (
           <>
-            <SettingsForm activeTab={activeTab} />
+            <SettingsForm categories={categories} activeTab={activeTab} />
             <table className="table-auto  w-full">
               <thead>
                 <tr>
@@ -203,6 +209,7 @@ export default function MachineSettings() {
                         />
                         <SettingsForm
                           activeTab={activeTab}
+                          categories={categories}
                           currData={flattenObject(d)}
                         />
                       </td>
