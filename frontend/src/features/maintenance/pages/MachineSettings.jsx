@@ -5,7 +5,7 @@ import DeleteModal from "../../../shared/components/ui/deleteModal";
 
 export default function MachineSettings() {
   const baseURL = import.meta.env.VITE_URL_PREFIX;
-  const [types, setTypes] = useState();
+  const [type, setType] = useState();
   const [brand, setBrand] = useState();
   const [category, setCategory] = useState();
   const [supplier, setSupplier] = useState();
@@ -14,13 +14,11 @@ export default function MachineSettings() {
   const [problemCategories, setProblemCategories] = useState();
   const [department, setDepartment] = useState();
   const [designations, setDesignations] = useState();
-  const [activeTab, setActiveTab] = useState(null);
-
   const tabs = [
     {
-      title: "Types",
-      data: types,
-      id: "types",
+      title: "Type",
+      data: type,
+      id: "type",
       link: `${baseURL}/api/maintenance/type/`,
     },
     {
@@ -41,18 +39,18 @@ export default function MachineSettings() {
       id: "supplier",
       link: `${baseURL}/api/maintenance/supplier/`,
     },
-    {
-      title: "Lines",
-      data: lines,
-      id: "lines",
-      link: `${baseURL}/api/production/lines/`,
-    },
-    {
-      title: "Floors",
-      data: floors,
-      id: "floors",
-      link: `${baseURL}/api/production/lines/`,
-    },
+    // {
+    //   title: "Lines",
+    //   data: lines,
+    //   id: "lines",
+    //   link: `${baseURL}/api/production/lines/`,
+    // },
+    // {
+    //   title: "Floors",
+    //   data: floors,
+    //   id: "floors",
+    //   link: `${baseURL}/api/production/lines/`,
+    // },
     {
       title: "Problem Categories",
       data: problemCategories,
@@ -72,6 +70,8 @@ export default function MachineSettings() {
       link: `${baseURL}/api/user_management/designation/`,
     },
   ];
+  const [activeTab, setActiveTab] = useState(tabs[0]);
+
   const flattenObject = (obj, prefix = "") => {
     let flattened = {};
     for (let key in obj) {
@@ -102,7 +102,7 @@ export default function MachineSettings() {
   };
   const fetchData = async () => {
     const urls = {
-      types: `${baseURL}/api/maintenance/type/`,
+      type: `${baseURL}/api/maintenance/type/`,
       brand: `${baseURL}/api/maintenance/brand/`,
       category: `${baseURL}/api/maintenance/category/`,
       supplier: `${baseURL}/api/maintenance/supplier/`,
@@ -114,7 +114,7 @@ export default function MachineSettings() {
     };
 
     const [
-      typesData,
+      typeData,
       brandData,
       categoryData,
       supplierData,
@@ -124,7 +124,7 @@ export default function MachineSettings() {
       departmentData,
       designationsData,
     ] = await Promise.all(Object.values(urls).map(fetchAndParse));
-    setTypes(typesData.map((d) => flattenObject(d)));
+    setType(typeData.map((d) => flattenObject(d)));
     setBrand(brandData.map((d) => flattenObject(d)));
     setCategory(categoryData.map((d) => flattenObject(d)));
     setSupplier(supplierData.map((d) => flattenObject(d)));
@@ -133,8 +133,6 @@ export default function MachineSettings() {
     setProblemCategories(problemCategoriesData.map((d) => flattenObject(d)));
     setDepartment(departmentData.map((d) => flattenObject(d)));
     setDesignations(designationsData.map((d) => flattenObject(d)));
-    setActiveTab(tabs[0]);
-    console.log(linesData);
   };
   const categories = {
     category_type: category,
@@ -144,10 +142,13 @@ export default function MachineSettings() {
   useEffect(() => {
     fetchData();
   }, []);
+  useEffect(() => {
+    setActiveTab(tabs[0]);
+  }, [type]);
 
   return (
     <DashboardWrapper>
-      <div className=" flex overflow-scroll gap-2 py-5 px-3 lg:rounded-full  text-primary-dark bg-primary-accent flex-wrap justify-center text-lg font-semibold">
+      <div className=" w-fit mx-auto flex overflow-scroll gap-2 py-5 px-3 lg:rounded-full  text-primary-dark bg-primary-accent flex-wrap justify-center text-lg font-semibold">
         {tabs.map((tab) => (
           <>
             <button
@@ -170,54 +171,56 @@ export default function MachineSettings() {
         {activeTab?.data && (
           <>
             <SettingsForm categories={categories} activeTab={activeTab} />
-            <table className="table-auto  w-full">
-              <thead>
-                <tr>
-                  {Object.keys(activeTab.data[0]).map((key) => (
+            <div className="w-fit mx-auto">
+              <table className="table-auto  w-full">
+                <thead>
+                  <tr>
+                    {Object.keys(activeTab.data[0]).map((key) => (
+                      <th
+                        colSpan={3}
+                        className="capitalize w-[200px] pb-2 pr-12 text-left font-bold "
+                      >
+                        {key.replace("_", " ")}
+                      </th>
+                    ))}
                     <th
                       colSpan={3}
                       className="capitalize w-[200px] pb-2 pr-12 text-left font-bold "
                     >
-                      {key.replace("_", " ")}
+                      Actions
                     </th>
-                  ))}
-                  <th
-                    colSpan={3}
-                    className="capitalize w-[200px] pb-2 pr-12 text-left font-bold "
-                  >
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {Object.values(activeTab.data).map((d) => {
-                  return (
-                    <tr>
-                      {Object.values(d).map((d) => (
-                        <td className="pb-2 w-[50px] pr-12" colSpan={3}>
-                          {d}
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.values(activeTab.data).map((d) => {
+                    return (
+                      <tr>
+                        {Object.values(d).map((d) => (
+                          <td className="pb-2 w-[50px] pr-12" colSpan={3}>
+                            {d}
+                          </td>
+                        ))}
+                        <td
+                          className="pb-2 w-[415px] flex gap-2 pr-12"
+                          colSpan={4}
+                        >
+                          <DeleteModal
+                            data_type={activeTab.title}
+                            url={`${activeTab.link}${d.id}/`}
+                            hasAccess={true}
+                          />
+                          <SettingsForm
+                            activeTab={activeTab}
+                            categories={categories}
+                            currData={flattenObject(d)}
+                          />
                         </td>
-                      ))}
-                      <td
-                        className="pb-2 w-[415px] flex gap-2 pr-12"
-                        colSpan={4}
-                      >
-                        <DeleteModal
-                          data_type={activeTab.title}
-                          url={`${activeTab.link}${d.id}/`}
-                          hasAccess={true}
-                        />
-                        <SettingsForm
-                          activeTab={activeTab}
-                          categories={categories}
-                          currData={flattenObject(d)}
-                        />
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </>
         )}
       </div>
