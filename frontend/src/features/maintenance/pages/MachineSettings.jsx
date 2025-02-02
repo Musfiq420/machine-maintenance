@@ -71,6 +71,7 @@ export default function MachineSettings() {
     },
   ];
   const [activeTab, setActiveTab] = useState(tabs[0]);
+  const [success, setSuccess] = useState(false);
 
   const flattenObject = (obj, prefix = "") => {
     let flattened = {};
@@ -127,18 +128,28 @@ export default function MachineSettings() {
     setType(typeData.map((d) => flattenObject(d)));
     setBrand(brandData.map((d) => flattenObject(d)));
     setCategory(categoryData.map((d) => flattenObject(d)));
+
     setSupplier(supplierData.map((d) => flattenObject(d)));
     setLines(linesData.map((d) => flattenObject(d)));
     setFloors(floorsData.map((d) => flattenObject(d)));
+
     setProblemCategories(problemCategoriesData.map((d) => flattenObject(d)));
     setDepartment(departmentData.map((d) => flattenObject(d)));
     setDesignations(designationsData.map((d) => flattenObject(d)));
   };
   const categories = {
-    category_type: category,
+    category_type: problemCategories,
     operation_type: [{ name: "sewing", id: "sewing" }],
     severity: [{ name: "minor", id: "minor" }],
+    department: department,
   };
+  useEffect(() => {
+    if (success) {
+      fetchData();
+      setSuccess(false);
+    }
+  }, [success]);
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -170,7 +181,11 @@ export default function MachineSettings() {
       <div className="text-black p-10">
         {activeTab?.data && (
           <>
-            <SettingsForm categories={categories} activeTab={activeTab} />
+            <SettingsForm
+              setSuccess={setSuccess}
+              categories={categories}
+              activeTab={activeTab}
+            />
             <div className="w-fit mx-auto">
               <table className="table-auto  w-full">
                 <thead>
@@ -195,21 +210,30 @@ export default function MachineSettings() {
                   {Object.values(activeTab.data).map((d) => {
                     return (
                       <tr>
-                        {Object.values(d).map((d) => (
-                          <td className="pb-2 w-[50px] pr-12" colSpan={3}>
-                            {d}
-                          </td>
-                        ))}
+                        {Object.entries(d).map((d) => {
+                          return (
+                            <td
+                              className="pb-4 w-[50px] align-middle pr-12"
+                              colSpan={3}
+                            >
+                              {categories[d[0]]?.find((c) => c.id == d[1])
+                                ?.name || d[1]}
+                            </td>
+                          );
+                        })}
                         <td
-                          className="pb-2 w-[415px] flex gap-2 pr-12"
+                          className="pb-4 w-[415px] flex gap-2 pr-12"
                           colSpan={4}
                         >
                           <DeleteModal
                             data_type={activeTab.title}
                             url={`${activeTab.link}${d.id}/`}
                             hasAccess={true}
+                            success={success}
+                            setSuccess={setSuccess}
                           />
                           <SettingsForm
+                            setSuccess={setSuccess}
                             activeTab={activeTab}
                             categories={categories}
                             currData={flattenObject(d)}

@@ -3,7 +3,13 @@ import { Dialog, DialogTitle, DialogContent } from "@mui/material";
 import { UserContext } from "../../../context/userProvider";
 import DashboardLoading from "../dashboard/dashboardLoading";
 
-export default function DeleteModal({ url, data_type, hasAccess }) {
+export default function DeleteModal({
+  url,
+  data_type,
+  hasAccess,
+  setSuccess,
+  success = null,
+}) {
   const { getToken } = useContext(UserContext);
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -22,13 +28,16 @@ export default function DeleteModal({ url, data_type, hasAccess }) {
         return fetch(url);
       })
       .then((res) => res.json())
-      .then(() => {
-        window.location.reload();
-      })
+
       .catch((error) => {
         console.log(error);
       });
-    // setLoading(false);
+    if (success !== null) {
+      setSuccess(true);
+      setLoading(false);
+    } else {
+      window.location.reload();
+    }
   };
 
   return (
