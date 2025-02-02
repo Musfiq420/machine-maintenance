@@ -12,6 +12,7 @@ export default function MachineSettings() {
   const [lines, setLines] = useState();
   const [floors, setFloors] = useState();
   const [problemCategories, setProblemCategories] = useState();
+  const [problemType, setProblemType] = useState();
   const [department, setDepartment] = useState();
   const [designations, setDesignations] = useState();
   const tabs = [
@@ -110,6 +111,7 @@ export default function MachineSettings() {
       lines: `${baseURL}/api/production/lines/`,
       floors: `${baseURL}/api/production/lines/`,
       problemCategories: `${baseURL}/api/maintenance/problem-category/`,
+      problemType: `${baseURL}/api/maintenance/problem-category-type/`,
       department: `${baseURL}/api/user_management/department/`,
       designations: `${baseURL}/api/user_management/designation/`,
     };
@@ -122,6 +124,8 @@ export default function MachineSettings() {
       linesData,
       floorsData,
       problemCategoriesData,
+      problemTypesData,
+
       departmentData,
       designationsData,
     ] = await Promise.all(Object.values(urls).map(fetchAndParse));
@@ -134,11 +138,12 @@ export default function MachineSettings() {
     setFloors(floorsData.map((d) => flattenObject(d)));
 
     setProblemCategories(problemCategoriesData.map((d) => flattenObject(d)));
+    setProblemType(problemTypesData.map((d) => flattenObject(d)));
     setDepartment(departmentData.map((d) => flattenObject(d)));
     setDesignations(designationsData.map((d) => flattenObject(d)));
   };
   const categories = {
-    category_type: problemCategories,
+    category_type: problemType,
     operation_type: [{ name: "sewing", id: "sewing" }],
     severity: [{ name: "minor", id: "minor" }],
     department: department,
