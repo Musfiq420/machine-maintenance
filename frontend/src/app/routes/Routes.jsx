@@ -14,6 +14,7 @@ import LandingPage from "../../features/landingPage/pages/landingPage";
 import About from "../../features/landingPage/pages/About";
 import ErrorPage from "../../shared/components/ui/errorPage";
 import Dashboard from "../layout/Dashboard";
+import MachineSettings from "../../features/maintenance/pages/MachineSettings";
 
 export const router = createBrowserRouter([
   {
@@ -81,6 +82,10 @@ export const router = createBrowserRouter([
       {
         path: "/dashboard/employees", // Dashboard route
         element: <EmployeeListLayout></EmployeeListLayout>, // Example new page
+      },
+      {
+        path: "/dashboard/settings", // Dashboard route
+        element: <MachineSettings></MachineSettings>, // Example new page
       },
       {
         path: "*", // 404 Page Route
