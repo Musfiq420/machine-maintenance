@@ -165,8 +165,10 @@ export default function MachineSettings() {
   const getWidth = (key) => {
     return key == "name"
       ? ""
+      : key.includes("id")
+      ? "w-[80px]"
       : key.includes("description")
-      ? "w-[250px]"
+      ? "w-[280px]"
       : "w-[150px]";
   };
 
@@ -180,7 +182,7 @@ export default function MachineSettings() {
                 tab.id === activeTab?.id
                   ? "bg-primary-light text-white"
                   : "bg-none text-white"
-              }  rounded-full text-[16px] px-8 py-1 `}
+              }  rounded-full text-[16px] px-6 py-1 `}
               onClick={() => {
                 setActiveTab(tab);
               }}
@@ -199,7 +201,7 @@ export default function MachineSettings() {
               categories={categories}
               activeTab={activeTab}
             />
-            <div className="mx-auto">
+            <div className="overflow-auto">
               <table className="my-20  w-full">
                 <thead>
                   <tr className="bg-primary-accent   text-black font-semibold text-sm">
