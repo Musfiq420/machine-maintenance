@@ -162,17 +162,25 @@ export default function MachineSettings() {
     setActiveTab(tabs[0]);
   }, [type]);
 
+  const getWidth = (key) => {
+    return key == "name"
+      ? ""
+      : key.includes("description")
+      ? "w-[250px]"
+      : "w-[150px]";
+  };
+
   return (
     <DashboardWrapper>
-      <div className=" w-fit mx-auto flex overflow-scroll gap-2 py-5 px-3 lg:rounded-full  text-primary-dark bg-primary-accent flex-wrap justify-center text-lg font-semibold">
+      <div className=" w-fit mx-auto flex overflow-scroll gap-2 py-2 px-3 lg:rounded-full  text-primary-dark bg-primary-dark flex-wrap justify-center text-lg font-semibold">
         {tabs.map((tab) => (
           <>
             <button
               className={`${
                 tab.id === activeTab?.id
-                  ? "bg-primary-dark text-white"
-                  : "bg-none"
-              }  rounded-full px-8 py-2 `}
+                  ? "bg-primary-light text-white"
+                  : "bg-none text-white"
+              }  rounded-full text-[16px] px-8 py-1 `}
               onClick={() => {
                 setActiveTab(tab);
               }}
@@ -191,45 +199,43 @@ export default function MachineSettings() {
               categories={categories}
               activeTab={activeTab}
             />
-            <div className="w-fit mx-auto">
-              <table className="table-auto  w-full">
+            <div className="mx-auto">
+              <table className="my-20  w-full">
                 <thead>
-                  <tr>
+                  <tr className="bg-primary-accent   text-black font-semibold text-sm">
                     {Object.keys(activeTab.data[0]).map((key) => (
                       <th
-                        colSpan={3}
-                        className="capitalize w-[200px] pb-2 pr-12 text-left font-bold "
+                        className={`capitalize  ${getWidth(
+                          key
+                        )} p-3 text-left font-bold `}
                       >
                         {key.replace("_", " ")}
                       </th>
                     ))}
-                    <th
-                      colSpan={3}
-                      className="capitalize w-[200px] pb-2 pr-12 text-left font-bold "
-                    >
+                    <th className="capitalize w-[150px]  p-3 pr-12 text-left font-bold ">
                       Actions
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {Object.values(activeTab.data).map((d) => {
+                  {Object.values(activeTab.data).map((d, index) => {
                     return (
-                      <tr>
+                      <tr
+                        className={`border-b-2 ${
+                          index % 2 != 0 ? "bg-gray-100" : "bg-white"
+                        } border-gray-300`}
+                      >
                         {Object.entries(d).map((d) => {
                           return (
                             <td
-                              className="pb-4 w-[50px] align-middle pr-12"
-                              colSpan={3}
+                              className={`${getWidth(d[0])} align-middle p-3`}
                             >
                               {categories[d[0]]?.find((c) => c.id == d[1])
                                 ?.name || d[1]}
                             </td>
                           );
                         })}
-                        <td
-                          className="pb-4 w-[415px] flex gap-2 pr-12"
-                          colSpan={4}
-                        >
+                        <td className="p-3 w-[420px] items-center h-full flex gap-2 ">
                           <DeleteModal
                             data_type={activeTab.title}
                             url={`${activeTab.link}${d.id}/`}

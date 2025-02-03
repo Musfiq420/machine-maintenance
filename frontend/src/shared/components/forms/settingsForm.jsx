@@ -76,7 +76,7 @@ export default function SettingsForm({
     <div>
       <button
         onClick={() => setModalOpen(true)}
-        className="bg-primary-dark ml-auto w-fit block mb-8 px-6 py-3 rounded-md text-white"
+        className="bg-primary-dark ml-auto w-fit block px-6 py-3 rounded-md text-white"
       >
         {formTitle}
       </button>
