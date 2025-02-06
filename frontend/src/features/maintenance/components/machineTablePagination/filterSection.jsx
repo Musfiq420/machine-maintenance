@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { IoMdCloseCircle } from "react-icons/io";
-import './MachineTable.css';
+import './machineTable.css';
 
 // eslint-disable-next-line react/prop-types
 const FilterSection = ({ setMachinesData, filterOpen, setFilterOpen, filterCategory, filterBrand, filterType, filterLine, filterSupplier, setFilterUrl }) => {
@@ -157,7 +157,7 @@ const FilterSection = ({ setMachinesData, filterOpen, setFilterOpen, filterCateg
 
     return (
         <>
-            <div className="filter-menu" style={{ display: filterOpen ? 'flex' : 'none' }}>
+            <div className="filter-menu"  style={{ display: filterOpen ? 'flex' : 'none' }}>
 
                 <div className="filter-options">
                     <IoMdCloseCircle className="close-icon" title="Close" onClick={() => setFilterOpen(false)} />
