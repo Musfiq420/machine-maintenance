@@ -4,6 +4,7 @@ import { jsPDF } from "jspdf";
 import qrcode from "qrcode"; // For generating QR code data URLs
 
 export default function PrintQrCode({ data }) {
+  
   const handlePrintAllQrs = async () => {
     const finalData = data;
     if (finalData.length === 0) {
@@ -60,7 +61,7 @@ export default function PrintQrCode({ data }) {
 
   return (
     <button
-      className="px-12 py-3 bg-primary-dark text-white font-semibold rounded-md"
+      className="px-2 py-1 mx-2 mb-2 bg-primary-dark text-white font-semibold rounded-md"
       onClick={handlePrintAllQrs}
     >
       Print QR
