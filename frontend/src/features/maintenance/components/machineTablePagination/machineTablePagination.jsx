@@ -147,6 +147,7 @@ const MachineTable = () => {
             <section className="machine-table-section text-center">
                 <h1>Machine List & Details Table</h1>
                 <div className="filter-reset-button">
+                    <div className='flex '>
                     <MachineForm
                                       machine={null}
                                       brandsOptions={brandsOptions}
@@ -156,7 +157,10 @@ const MachineTable = () => {
                                       typesOptions={typesOptions}
                                       hasAccess={true}
                                     />
+                                    <PrintQrCode data={machinesData} />
+                                    </div>
                     <div>
+                        
                         <div className="filter" onClick={() => handleFilterClick()} title="Filter">
                             <p className="filter-text">Filter</p>
                             <FaFilter />
