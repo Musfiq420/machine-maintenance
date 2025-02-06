@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import { Dialog, DialogTitle, DialogContent } from "@mui/material";
 import { UserContext } from "../../../context/userProvider";
 import DashboardLoading from "../dashboard/dashboardLoading";
+import {  MdDelete  } from "react-icons/md";
 
 export default function DeleteModal({ url, data_type, hasAccess }) {
   const { getToken } = useContext(UserContext);
@@ -36,10 +37,10 @@ export default function DeleteModal({ url, data_type, hasAccess }) {
       {hasAccess && (
         <div>
           <button
-            className="px-8 py-3 font-semibold  w-fit text-white h-fit bg-red-600 rounded-md"
+            className="px-2 py-2 font-semibold  w-fit text-white h-fit bg-red-600 rounded-md"
             onClick={() => setOpenModal(true)}
           >
-            Delete
+            <MdDelete />
           </button>
           <Dialog
             open={openModal}

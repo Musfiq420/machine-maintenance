@@ -3,6 +3,7 @@ import FormInputFields from "../ui/formInputFields";
 import { Dialog, DialogTitle, DialogContent } from "@mui/material";
 import { UserContext } from "../../../context/userProvider";
 import DashboardLoading from "../dashboard/dashboardLoading";
+import { MdEdit, MdDelete  } from "react-icons/md";
 
 export default function MachineForm({
   machine = null,
@@ -133,10 +134,10 @@ export default function MachineForm({
       {hasAccess && (
         <div>
           <button
-            className="px-8 py-3 font-semibold  w-fit text-white h-fit bg-primary-dark rounded-md"
+            className="px-2 py-2 font-semibold  w-fit text-white h-fit bg-primary-dark rounded-md"
             onClick={() => setOpenModal(true)}
           >
-            {machine ? "Update" : "Add Machine"}
+            {machine ? <MdEdit /> : "Add Machine"}
           </button>
           <Dialog
             open={openModal}
