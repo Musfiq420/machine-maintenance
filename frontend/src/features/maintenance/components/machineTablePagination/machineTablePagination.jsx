@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { FaFilter } from "react-icons/fa";
 import { RiResetRightLine } from "react-icons/ri";
 
-import './MachineTable.css';
+import './machineTable.css';
 import FilterSection from './filterSection';
 import TablePagination from './tablePagination';
 import { Box, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
