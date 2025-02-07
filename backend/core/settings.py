@@ -114,31 +114,31 @@ WSGI_APPLICATION = 'core.wsgi.application'
 #####################################################################################################
 ######################## AWS Database ######################
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'panaceatech',       # Database name you created on RDS
-        'USER': 'panaceatech',   # The username you set for RDS
-        'PASSWORD': 'panaceatech',  # The password you set for RDS
-        'HOST': 'garments-tracker-db-01.cnmyoyiw8zrt.ap-southeast-2.rds.amazonaws.com',  # RDS endpoint
-        'PORT': '5432',  # Default PostgreSQL port
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'panaceatech',       # Database name you created on RDS
+#         'USER': 'panaceatech',   # The username you set for RDS
+#         'PASSWORD': 'panaceatech',  # The password you set for RDS
+#         'HOST': 'garments-tracker-db-01.cnmyoyiw8zrt.ap-southeast-2.rds.amazonaws.com',  # RDS endpoint
+#         'PORT': '5432',  # Default PostgreSQL port
+#     }
+# }
 
 ########################################################################################################
 ########################################################################################################
 ###################### Supabase Database #############################
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'postgres',
-#         'USER': 'postgres.wcwfjxivmbtypagaomge',
-#         'PASSWORD': 'Iam@6074#',
-#         'HOST': 'aws-0-eu-west-1.pooler.supabase.com',
-#         'PORT': '6543'
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres.wcwfjxivmbtypagaomge',
+        'PASSWORD': 'Iam@6074#',
+        'HOST': 'aws-0-eu-west-1.pooler.supabase.com',
+        'PORT': '6543'
+    }
+}
 
 ########################################################################################################
 ########################################################################################################

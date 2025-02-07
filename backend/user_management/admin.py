@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Employee, Department, Designation, DeviceToken
+from .models import Employee, Department, Designation, DeviceToken, Access
 
 class EmployeeAdmin(admin.ModelAdmin):
     list_display = (
@@ -25,7 +25,16 @@ class DepartmentAdmin(admin.ModelAdmin):
 class DesignationAdmin(admin.ModelAdmin):
     list_display = ('title', 'company')
 
+class AccessAdmin(admin.ModelAdmin):
+    list_display = ('group_name', 'slug', 'permission_name')
+    search_fields = ('group_name',)
+    list_filter = ('permission_name',)
+    ordering = ('group_name',)
+
+
+
 admin.site.register(Employee, EmployeeAdmin)
 admin.site.register(Department, DepartmentAdmin)
 admin.site.register(Designation, DesignationAdmin)
 admin.site.register(DeviceToken)
+admin.site.register(Access, AccessAdmin)
