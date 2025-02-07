@@ -17,6 +17,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # FIREBASE_CREDENTIALS= "../credentials/firebase_service_account.json"
 # FIREBASE_CREDENTIALS = os.path.join(os.path.dirname(__file__), 'firebase_service_account.json')
+
+
 FIREBASE_CREDENTIALS = os.path.join(BASE_DIR, 'credentials', 'firebase_service_account.json')
 
 # FIREBASE_CREDENTIALS = '/etc/secrets/firebase_service_account.json'
@@ -109,17 +111,37 @@ WSGI_APPLICATION = 'core.wsgi.application'
 #     }
 # }
 
+#####################################################################################################
+######################## AWS Database ######################
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'panaceatech',       # Database name you created on RDS
+#         'USER': 'panaceatech',   # The username you set for RDS
+#         'PASSWORD': 'panaceatech',  # The password you set for RDS
+#         'HOST': 'garments-tracker-db-01.cnmyoyiw8zrt.ap-southeast-2.rds.amazonaws.com',  # RDS endpoint
+#         'PORT': '5432',  # Default PostgreSQL port
+#     }
+# }
+
+########################################################################################################
+########################################################################################################
+###################### Supabase Database #############################
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'panaceatech',       # Database name you created on RDS
-        'USER': 'panaceatech',   # The username you set for RDS
-        'PASSWORD': 'panaceatech',  # The password you set for RDS
-        'HOST': 'garments-tracker-db-01.cnmyoyiw8zrt.ap-southeast-2.rds.amazonaws.com',  # RDS endpoint
-        'PORT': '5432',  # Default PostgreSQL port
+        'NAME': 'postgres',
+        'USER': 'postgres.wcwfjxivmbtypagaomge',
+        'PASSWORD': 'Iam@6074#',
+        'HOST': 'aws-0-eu-west-1.pooler.supabase.com',
+        'PORT': '6543'
     }
 }
+
+########################################################################################################
+########################################################################################################
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -168,7 +190,7 @@ CORS_ALLOWED_ORIGINS = [
      "http://localhost:5173",  # or your frontend URL
      "https://machine-maintenance.onrender.com",
      "https://machine-maintenance-two.vercel.app",
-     "http://panamech.com",
+     "https://panamach.com",
  ]
 
 # settings.py

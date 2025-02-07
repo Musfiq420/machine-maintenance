@@ -8,7 +8,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User, Group
 from django.shortcuts import redirect
 
-from ..models import Employee, Department, Designation, DeviceToken, Company
+from ..models import Employee, Department, Designation, DeviceToken, Company, Access
 from .serializers import (
     UserRegistrationSerializer,
     UserLoginSerializer,
@@ -16,17 +16,18 @@ from .serializers import (
     DepartmentSerializer,
     DesignationSerializer,
     DeviceTokenSerializer,
-    GroupSerializer
+    GroupSerializer,
+    AccessSerializer,
 )
-from permissions.base_permissions import (
-    IsAdmin, 
-    IsHR, 
-    IsMechanic, 
-    IsSupervisor, 
-    IsAdminOrSupervisorOrMechanic, 
-    IsAdminOrMechanic, 
-    IsAdminOrHR
-)
+# from permissions.base_permissions import (
+#     IsAdmin, 
+#     IsHR, 
+#     IsMechanic, 
+#     IsSupervisor, 
+#     IsAdminOrSupervisorOrMechanic, 
+#     IsAdminOrMechanic, 
+#     IsAdminOrHR
+# )
 
 
 # -----------------------------------------------------
@@ -247,5 +248,11 @@ class GroupViewSet(ReadOnlyModelViewSet):
     """
     queryset = Group.objects.all()  # Query all groups
     serializer_class = GroupSerializer
-    
 
+ # -----------------------------------------------------
+# Access ViewSet
+# -----------------------------------------------------   
+
+class AccessViewSet(ModelViewSet):
+    queryset = Access.objects.all()
+    serializer_class = AccessSerializer

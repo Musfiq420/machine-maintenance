@@ -1,20 +1,32 @@
 pip install djangorestframework-simplejwt  # For JWT-based authentication
 pip install django-cors-headers           # For Cross-Origin Resource Sharing (CORS) headers
 
-
+email: rifat@example.com
+pass: PassMe123!
 
 # Login
 
 # Admin
 {
-     "email": "nazia.hossain@example.com",
+     "email": "mechanic1@gmail.com",
     "password": "panaceatech"
-
 }
 # Hr
 {
     "email": "jamil.rahman@example.com",
     "password": "PassMe123!"
+}
+
+{
+    "group_name": "Supervisor",
+    "permission_name": [
+        "list",
+        "retrieve",
+        "create",
+        "update",
+        "partial_update",
+        "destroy"
+    ]
 }
 
 
@@ -94,3 +106,6 @@ pip install django-cors-headers           # For Cross-Origin Resource Sharing (C
 #         fields = '__all__'
 
 ##---
+
+
+

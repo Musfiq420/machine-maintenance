@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from .views import EmployeeNameAPIView, UserRegistrationView, EmployeeListAPIView, UserLoginApiView, UserLogoutView, UserListView, DepartmentViewSet, DesignationViewSet, AddEmployeeViewset, GroupViewSet
+from .views import EmployeeNameAPIView, UserRegistrationView, EmployeeListAPIView, UserLoginApiView, UserLogoutView, UserListView, DepartmentViewSet, DesignationViewSet, AddEmployeeViewset, GroupViewSet, AccessViewSet
 
 
 router = DefaultRouter()
@@ -10,6 +10,7 @@ router.register(r'designation', DesignationViewSet, basename='designation')
 router.register(r'add-employee', AddEmployeeViewset, basename='add-employee')
 
 router.register(r'groups', GroupViewSet, basename='group')
+router.register(r'access', AccessViewSet, basename='access')
 
 urlpatterns = [
     path('', include(router.urls)),  # Include router URLs

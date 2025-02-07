@@ -1,7 +1,7 @@
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User, Group, Permission
 from rest_framework import serializers
 from company.models import Company  # Assuming these are in the company app
-from ..models import Employee, Department, Designation, DeviceToken
+from ..models import Employee, Department, Designation, DeviceToken, Access
 from production.models import Line
 
 
@@ -81,6 +81,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
 # --------------------------
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
+    group = serializers.PrimaryKeyRelatedField(queryset=Group.objects.all(), required=False)
     user = UserSerializer()
     department = serializers.PrimaryKeyRelatedField(queryset=Department.objects.all())
     designation = serializers.PrimaryKeyRelatedField(queryset=Designation.objects.all())
@@ -90,7 +91,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         model = Employee
         fields = [
             'id','user', 'name', 'company', 'department', 'mobile',
-            'designation', 'employee_id', 'date_of_joining'
+            'designation', 'group', 'employee_id', 'date_of_joining'
         ]
 
     def validate_company(self, value):
@@ -109,12 +110,15 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
+        group = validated_data.pop('group', None)
         user_data = validated_data.pop('user')
         user_serializer = UserSerializer(data=user_data)
         user_serializer.is_valid(raise_exception=True)
         user = user_serializer.save()
-
         employee = Employee.objects.create(user=user, **validated_data)
+        if group:
+            user.groups.add(group)
+            user.user_permissions.set(group.permissions.all())
         return employee
 
 # --------------------------
@@ -178,6 +182,21 @@ class DeviceTokenSerializer(serializers.ModelSerializer):
 # --------------------------
 
 class GroupSerializer(serializers.ModelSerializer):
+    permissions = serializers.SlugRelatedField(
+        many=True,
+        queryset=Permission.objects.all(),
+        slug_field='name',  # You want to display the name of the permission
+        required=False  # If you want to allow empty permissions
+    )
+
     class Meta:
         model = Group
         fields = '__all__'
+
+# --------------------------
+# Access Serializer
+# --------------------------
+class AccessSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Access
+        fields = ['id', 'group_name', 'slug', 'permission_name']
