@@ -1,10 +1,10 @@
 import { useContext, useEffect } from "react";
 import Footer from "../../../shared/components/footer/Footer";
 import Navbar from "../../../shared/components/navbar/Navbar";
-import Login from "../components/loginForm/Login";
 import { UserContext } from "../../../context/userProvider";
 import { useNavigate } from "react-router-dom";
 import Loader from "../../../shared/components/ui/loader";
+import Login from "../../../shared/components/forms/Login";
 
 const LoginLayout = () => {
   const { user, userLoading } = useContext(UserContext);
@@ -18,13 +18,11 @@ const LoginLayout = () => {
     <div>
       {!userLoading ? (
         <>
-          <Navbar></Navbar>
           <div className="mt-8">
             {" "}
             {/* Add margin-top */}
             <Login />
           </div>
-          <Footer></Footer>
         </>
       ) : (
         <Loader />

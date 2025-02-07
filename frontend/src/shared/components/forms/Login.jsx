@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { UserContext } from "../../../../context/userProvider";
+import { UserContext } from "../../../context/userProvider";
 
 const Login = () => {
   const [email, setEmail] = useState("");

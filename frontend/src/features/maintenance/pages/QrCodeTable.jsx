@@ -1,11 +1,12 @@
 import React from "react";
-import QrCodeGenerator from "../components/machineTable/machineTable";
 import DashboardWrapper from "../../../shared/components/dashboard/dashboardWrapper";
+import MachineTable from "../components/machineTablePagination/machineTablePagination"
 
 const QrCodeTable = () => {
   return (
     <DashboardWrapper>
-      <QrCodeGenerator />
+      {/* <MachineTable /> */}
+      <MachineTable />
     </DashboardWrapper>
   );
 };

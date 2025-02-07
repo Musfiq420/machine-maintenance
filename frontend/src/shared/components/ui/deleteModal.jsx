@@ -2,8 +2,15 @@ import React, { useContext, useState } from "react";
 import { Dialog, DialogTitle, DialogContent } from "@mui/material";
 import { UserContext } from "../../../context/userProvider";
 import DashboardLoading from "../dashboard/dashboardLoading";
+import {  MdDelete  } from "react-icons/md";
 
-export default function DeleteModal({ url, data_type, hasAccess }) {
+export default function DeleteModal({
+  url,
+  data_type,
+  hasAccess,
+  setSuccess,
+  success = null,
+}) {
   const { getToken } = useContext(UserContext);
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -22,13 +29,16 @@ export default function DeleteModal({ url, data_type, hasAccess }) {
         return fetch(url);
       })
       .then((res) => res.json())
-      .then(() => {
-        window.location.reload();
-      })
+
       .catch((error) => {
         console.log(error);
       });
-    // setLoading(false);
+    if (success !== null) {
+      setSuccess(true);
+      setLoading(false);
+    } else {
+      window.location.reload();
+    }
   };
 
   return (
@@ -36,10 +46,10 @@ export default function DeleteModal({ url, data_type, hasAccess }) {
       {hasAccess && (
         <div>
           <button
-            className="px-8 py-3 font-semibold  w-fit text-white h-fit bg-red-600 rounded-md"
+            className="px-2 py-2 font-semibold  w-fit text-white h-fit bg-red-600 rounded-md"
             onClick={() => setOpenModal(true)}
           >
-            Delete
+            <MdDelete />
           </button>
           <Dialog
             open={openModal}
