@@ -14,6 +14,8 @@ import {
   FaClipboardList,
   FaUsers,
   FaUserAlt,
+  FaChartPie,
+  FaChartBar,
 } from "react-icons/fa"; // Importing icons from React Icons
 import { UserContext } from "../../../context/userProvider";
 import { FaGear, FaGears } from "react-icons/fa6";

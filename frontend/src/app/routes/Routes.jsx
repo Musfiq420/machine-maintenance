@@ -15,6 +15,8 @@ import About from "../../features/landingPage/pages/About";
 import ErrorPage from "../../shared/components/ui/errorPage";
 import Dashboard from "../layout/Dashboard";
 import MachineSettings from "../../features/maintenance/pages/MachineSettings";
+import LostTimeVisualDashboard from "../../features/maintenance/components/machine-monitoring/VisualDashboard";
+import VisualDashboardPage from "../../features/maintenance/pages/VisualDashboardPage";
 
 export const router = createBrowserRouter([
   {
