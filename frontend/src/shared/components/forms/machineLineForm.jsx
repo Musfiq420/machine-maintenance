@@ -7,6 +7,9 @@ export default function MachineLineForm({}) {
   const [selectedFloor, setSelectedFloor] = useState([]);
   const [selectedLine, setSelectedLine] = useState([]);
   const [location, setLocation] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
   const [searchParams, setSearchParams] = useSearchParams();
   const { getToken } = useContext(UserContext);
   const fetchLines = async () => {
@@ -77,22 +80,29 @@ export default function MachineLineForm({}) {
       ].map((line) => ({ id: line.id, name: line.name })), // Pass value and label
       setInput: (id, value) => setSelectedLine(value),
     },
+    {
+      input: selectedDate,
+      name: "Date",
+      id: "date",
+      setInput: (id, value) => setSelectedDate(value),
+    },
   ];
 
   useEffect(() => {
-    if (selectedFloor && selectedLine) {
+    if ((selectedFloor && selectedLine) || selectedDate) {
       setSearchParams((prev) => {
         prev.set("floor", selectedFloor);
         prev.set("line", selectedLine);
+        prev.set("date", selectedDate);
         return prev;
       });
     }
-  }, [selectedFloor, selectedLine]);
+  }, [selectedFloor, selectedLine, selectedDate]);
 
   return (
     <div>
       {" "}
-      <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-6">
         {fields.map((f) => (
           <FormInputFields
             key={f.id}
@@ -103,8 +113,8 @@ export default function MachineLineForm({}) {
             option_pref={f.prefix}
             setInput={f.setInput}
             errorField={[]}
-            multiple={true}
-            type="select"
+            multiple={f.options ? true : false}
+            type={f.options ? "select" : "date"}
           />
         ))}
       </div>
