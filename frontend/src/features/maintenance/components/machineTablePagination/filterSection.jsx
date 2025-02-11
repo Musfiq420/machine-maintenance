@@ -65,11 +65,11 @@ const FilterSection = ({ setMachinesData, filterOpen, setFilterOpen, filterCateg
         setFilterUrl(`&machine_id=${machineId}&model_number=${modelNumber}&status=${status}&category=${category}&type=${type}&brand=${brand}&line=${line}&supplier=${supplier}`)
         setFilterOpen(false);
         // try {
-        //     const getFilteredMachines = await fetch(`https://machine-maintenance.ddns.net/api/maintenance/machinepagination/?machine_id=${machineId}&model_number=${modelNumber}&status=${status}&category=${category}&type=${type}&brand=${brand}&line=${line}&supplier=${supplier}`);
+        //     const getFilteredMachines = await fetch(`https://api.panamach.com/maintenance/machinepagination/?machine_id=${machineId}&model_number=${modelNumber}&status=${status}&category=${category}&type=${type}&brand=${brand}&line=${line}&supplier=${supplier}`);
         //     const res = await getFilteredMachines.json();
         //     const data = res.results
         //     console.log(data)
-        //     // console.log(`https://machine-maintenance.ddns.net/api/maintenance/machines/?machine_id=${machineId}&model_number=${modelNumber}&status=${status}&category=${category}&type=${type}&brand=${brand}&line=${line}&supplier=${supplier}`);
+        //     // console.log(`https://api.panamach.com/maintenance/machines/?machine_id=${machineId}&model_number=${modelNumber}&status=${status}&category=${category}&type=${type}&brand=${brand}&line=${line}&supplier=${supplier}`);
 
         //     // this code will be an reusable function later
         //     // all machine category id (not duplicated)
@@ -90,16 +90,16 @@ const FilterSection = ({ setMachinesData, filterOpen, setFilterOpen, filterCateg
 
 
         //     // fetch machine category, type, brand, supplier, line data for each related id
-        //     const categoriesDataFetchRequests = machinesCategoryId.map((categoryId) => fetch(`https://machine-maintenance.ddns.net/api/maintenance/category/${categoryId}/`).then((res) => res.json()));
+        //     const categoriesDataFetchRequests = machinesCategoryId.map((categoryId) => fetch(`https://api.panamach.com/maintenance/category/${categoryId}/`).then((res) => res.json()));
 
-        //     const typeDataFetchRequests = machinesTypeId.map((typeId) => fetch(`https://machine-maintenance.ddns.net/api/maintenance/type/${typeId}/`).then((res) => res.json()));
+        //     const typeDataFetchRequests = machinesTypeId.map((typeId) => fetch(`https://api.panamach.com/maintenance/type/${typeId}/`).then((res) => res.json()));
 
-        //     const brandDataFetchRequests = machinesBrandId.map((brandId) => fetch(`https://machine-maintenance.ddns.net/api/maintenance/brand/${brandId}/`).then((res) => res.json()));
+        //     const brandDataFetchRequests = machinesBrandId.map((brandId) => fetch(`https://api.panamach.com/maintenance/brand/${brandId}/`).then((res) => res.json()));
 
 
-        //     const lineDataFetchRequests = machinesLineId.map((linesId) => fetch(`https://machine-maintenance.ddns.net/api/production/lines/${linesId}/`).then((res) => res.json()));
+        //     const lineDataFetchRequests = machinesLineId.map((linesId) => fetch(`https://api.panamach.com/production/lines/${linesId}/`).then((res) => res.json()));
 
-        //     const supplierDataFetchRequests = machinesSupplierId.map((supplierId) => fetch(`https://machine-maintenance.ddns.net/api/maintenance/supplier/${supplierId}/`).then((res) => res.json()));
+        //     const supplierDataFetchRequests = machinesSupplierId.map((supplierId) => fetch(`https://api.panamach.com/maintenance/supplier/${supplierId}/`).then((res) => res.json()));
 
 
         //     // wait for all promises to resolve

@@ -109,13 +109,13 @@ const RegisterForm = () => {
     const fetchData = async () => {
       const dept_url = `${
         import.meta.env.VITE_URL_PREFIX
-      }/api/user_management/department/`;
+      }/user_management/department/`;
       const role_url = `${
         import.meta.env.VITE_URL_PREFIX
-      }/api/user_management/designation/`;
+      }/user_management/designation/`;
       const comp_url = `${
         import.meta.env.VITE_URL_PREFIX
-      }/api/user_management/groups/`;
+      }/user_management/groups/`;
       try {
         const dept_res = await fetch(dept_url, {
           method: "GET",

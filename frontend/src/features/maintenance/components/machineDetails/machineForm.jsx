@@ -47,22 +47,22 @@ export default function MachineForm({ machine = null, sucess, setSucess }) {
     const fetchData = async () => {
       const brand_url = `${
         import.meta.env.VITE_URL_PREFIX
-      }/api/maintenance/brand/`;
+      }/maintenance/brand/`;
       const prob_url = `${
         import.meta.env.VITE_URL_PREFIX
-      }/api/maintenance/problem-category/`;
+      }/maintenance/problem-category/`;
       const supplier_url = `${
         import.meta.env.VITE_URL_PREFIX
-      }/api/maintenance/supplier/`;
+      }/maintenance/supplier/`;
       const cat_url = `${
         import.meta.env.VITE_URL_PREFIX
-      }/api/maintenance/category/`;
+      }/maintenance/category/`;
       const type_url = `${
         import.meta.env.VITE_URL_PREFIX
-      }/api/maintenance/type/`;
+      }/maintenance/type/`;
       const line_url = `${
         import.meta.env.VITE_URL_PREFIX
-      }/api/production/lines/`;
+      }/production/lines/`;
 
       try {
         const [brand_data, supplier_data, type_data, cat_data, line_data] =

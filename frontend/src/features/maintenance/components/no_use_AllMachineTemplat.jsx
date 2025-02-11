@@ -16,7 +16,7 @@ const AllMachineDetails = () => {
   const [lines, setLines] = useState([]);
 
   // API URL
-  const MACHINE_QR_DATA_API = 'https://fast-tracker-bo3s.onrender.com/api/maintenance/machines/';
+  const MACHINE_QR_DATA_API = 'https://fast-tracker-bo3s.onrender.com/maintenance/machines/';
 
   // Fetch machine data from API
   useEffect(() => {

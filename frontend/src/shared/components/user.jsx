@@ -12,7 +12,7 @@ const EmployeeName = () => {
     useEffect(() => {
         const fetchEmployeeName = async () => {
             try {
-                const response = await fetch('http://127.0.0.1:8000/api/user_management/employee/', {
+                const response = await fetch('http://127.0.0.1:8000/user_management/employee/', {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Token ${token}`, // Ensure this header matches what your server expects
