@@ -71,6 +71,7 @@ const AllMachineDetails = () => {
       fetchMachines(selectedFloor, selectedLine);
     }
   }, [searchParams]);
+  console.log(machines);
 
   return (
     <div className="bg-gradient-to-br from-gray-100 via-white to-gray-100 p-6 min-h-screen">
@@ -103,7 +104,7 @@ const AllMachineDetails = () => {
 
       {/* Machine Grid */}
       <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-        {machines.map((machine) => (
+        {machines?.map((machine) => (
           <MachineCards
             machine_id={encodeURIComponent(machine.machine_id)}
             status={machine.status}
