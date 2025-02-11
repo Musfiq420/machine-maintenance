@@ -40,7 +40,8 @@ const AllMachineDetails = () => {
         }
       );
       const res = await response.json();
-      setMachines(res.machines);
+      console.log(res.summary_by_machine_id);
+      setMachines(res.summary_by_machine_id);
       setLoading(false);
       setStats([
         { stat: "Total Lost Time", value: res.total_lost_time },
