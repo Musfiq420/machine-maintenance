@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { FaArrowUp, FaArrowDown, FaQuestionCircle } from 'react-icons/fa';
+import React, { useState, useEffect } from "react";
+import { FaArrowUp, FaArrowDown, FaQuestionCircle } from "react-icons/fa";
 
-import PieChartComponent from '../../../shared/components/PieChartComponent';
+import PieChartComponent from "../../../shared/components/PieChartComponent";
 
 const AllMachineDetails = () => {
   const [machines, setMachines] = useState([]);
@@ -9,14 +9,16 @@ const AllMachineDetails = () => {
   const [error, setError] = useState(false);
 
   // Dropdown states for floor and line selection
-  const [selectedFloor, setSelectedFloor] = useState('All Floors');
-  const [selectedLine, setSelectedLine] = useState('All Lines');
+  const [selectedFloor, setSelectedFloor] = useState("All Floors");
+  const [selectedLine, setSelectedLine] = useState("All Lines");
 
   const [floors, setFloors] = useState([]);
   const [lines, setLines] = useState([]);
 
   // API URL
-  const MACHINE_QR_DATA_API = 'https://fast-tracker-bo3s.onrender.com/api/maintenance/machines/';
+  const MACHINE_QR_DATA_API = `${
+    import.meta.env.VITE_URL_PREFIX
+  }/maintenance/machines/`;
 
   // Fetch machine data from API
   useEffect(() => {
@@ -25,32 +27,32 @@ const AllMachineDetails = () => {
         setLoading(true);
         const response = await fetch(MACHINE_QR_DATA_API);
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
         const data = await response.json();
         if (Array.isArray(data)) {
           setMachines(data);
           // Extract unique floor numbers
           const uniqueFloors = Array.from(
-            new Set(data.map(machine => machine.floor_no))
+            new Set(data.map((machine) => machine.floor_no))
           )
-            .filter(floor => floor !== null)
+            .filter((floor) => floor !== null)
             .sort((a, b) => a - b);
           setFloors(uniqueFloors);
 
           // Extract unique line numbers
           const uniqueLines = Array.from(
-            new Set(data.map(machine => machine.line_no))
+            new Set(data.map((machine) => machine.line_no))
           )
-            .filter(line => line !== null)
+            .filter((line) => line !== null)
             .sort((a, b) => a - b);
           setLines(uniqueLines);
         } else {
-          throw new Error('Invalid data format received from API');
+          throw new Error("Invalid data format received from API");
         }
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching machines:', error);
+        console.error("Error fetching machines:", error);
         setError(true);
         setLoading(false);
       }
@@ -60,35 +62,35 @@ const AllMachineDetails = () => {
   }, [MACHINE_QR_DATA_API]);
 
   // Determine colors and icons based on machine status
-  const getStatusStyles = status => {
+  const getStatusStyles = (status) => {
     switch (status?.toLowerCase()) {
-      case 'active':
+      case "active":
         return {
-          bgColor: 'bg-green-100',
-          textColor: 'text-green-700',
-          indicatorColor: 'bg-green-500',
+          bgColor: "bg-green-100",
+          textColor: "text-green-700",
+          indicatorColor: "bg-green-500",
           icon: <FaArrowUp />,
         };
-      case 'broken':
-      case 'inactive':
+      case "broken":
+      case "inactive":
         return {
-          bgColor: 'bg-red-100',
-          textColor: 'text-red-700',
-          indicatorColor: 'bg-red-500',
+          bgColor: "bg-red-100",
+          textColor: "text-red-700",
+          indicatorColor: "bg-red-500",
           icon: <FaArrowDown />,
         };
-      case 'under maintenance':
+      case "under maintenance":
         return {
-          bgColor: 'bg-yellow-100',
-          textColor: 'text-yellow-700',
-          indicatorColor: 'bg-yellow-500',
+          bgColor: "bg-yellow-100",
+          textColor: "text-yellow-700",
+          indicatorColor: "bg-yellow-500",
           icon: <FaQuestionCircle />,
         };
       default:
         return {
-          bgColor: 'bg-gray-100',
-          textColor: 'text-gray-700',
-          indicatorColor: 'bg-gray-500',
+          bgColor: "bg-gray-100",
+          textColor: "text-gray-700",
+          indicatorColor: "bg-gray-500",
           icon: <FaQuestionCircle />,
         };
     }
@@ -96,28 +98,28 @@ const AllMachineDetails = () => {
 
   // Compute statistics based on filtered machine data
   const computeStats = () => {
-    const filteredMachines = machines.filter(machine => {
+    const filteredMachines = machines.filter((machine) => {
       const floorMatch =
-        selectedFloor === 'All Floors' || machine.floor_no === selectedFloor;
+        selectedFloor === "All Floors" || machine.floor_no === selectedFloor;
       const lineMatch =
-        selectedLine === 'All Lines' || machine.line_no === selectedLine;
+        selectedLine === "All Lines" || machine.line_no === selectedLine;
       return floorMatch && lineMatch;
     });
 
     const totalMachines = filteredMachines.length;
     const active = filteredMachines.filter(
-      machine => machine.status?.toLowerCase() === 'active'
+      (machine) => machine.status?.toLowerCase() === "active"
     ).length;
     const repairing = filteredMachines.filter(
-      machine => machine.status?.toLowerCase() === 'under maintenance'
+      (machine) => machine.status?.toLowerCase() === "under maintenance"
     ).length;
-    const idle = filteredMachines.filter(machine => {
+    const idle = filteredMachines.filter((machine) => {
       const status = machine.status?.toLowerCase();
-      return status === 'broken' || status === 'inactive';
+      return status === "broken" || status === "inactive";
     }).length;
 
     // Placeholder for Total Lost Time (implement actual computation as needed)
-    const totalLostTime = '2:13 hrs'; // Replace with actual computation if available
+    const totalLostTime = "2:13 hrs"; // Replace with actual computation if available
 
     return {
       totalLostTime,
@@ -131,10 +133,10 @@ const AllMachineDetails = () => {
   const stats = computeStats();
 
   // Determine color and icon based on change (placeholder values)
-  const getChangeStyles = percentage => ({
-    color: percentage >= 0 ? 'text-green-600' : 'text-red-600',
+  const getChangeStyles = (percentage) => ({
+    color: percentage >= 0 ? "text-green-600" : "text-red-600",
     icon: percentage >= 0 ? <FaArrowUp /> : <FaArrowDown />,
-    percentage: `${percentage >= 0 ? '+' : ''}${percentage}%`,
+    percentage: `${percentage >= 0 ? "+" : ""}${percentage}%`,
   });
 
   // Placeholder: Replace with actual percentage calculations
@@ -143,13 +145,13 @@ const AllMachineDetails = () => {
   // Group machines by line_no
   const groupMachinesByLine = () => {
     const grouped = {};
-    machines.forEach(machine => {
+    machines.forEach((machine) => {
       const floorMatch =
-        selectedFloor === 'All Floors' || machine.floor_no === selectedFloor;
+        selectedFloor === "All Floors" || machine.floor_no === selectedFloor;
       const lineMatch =
-        selectedLine === 'All Lines' || machine.line_no === selectedLine;
+        selectedLine === "All Lines" || machine.line_no === selectedLine;
       if (floorMatch && lineMatch) {
-        const line = machine.line_no || 'Unknown Line';
+        const line = machine.line_no || "Unknown Line";
         if (!grouped[line]) {
           grouped[line] = [];
         }
@@ -165,17 +167,18 @@ const AllMachineDetails = () => {
   const uniqueLines = Array.from(
     new Set(
       machines
-        .filter(machine => {
+        .filter((machine) => {
           const floorMatch =
-            selectedFloor === 'All Floors' || machine.floor_no === selectedFloor;
+            selectedFloor === "All Floors" ||
+            machine.floor_no === selectedFloor;
           const lineMatch =
-            selectedLine === 'All Lines' || machine.line_no === selectedLine;
+            selectedLine === "All Lines" || machine.line_no === selectedLine;
           return floorMatch && lineMatch;
         })
-        .map(machine => machine.line_no)
+        .map((machine) => machine.line_no)
     )
   )
-    .filter(line => line !== null)
+    .filter((line) => line !== null)
     .sort((a, b) => a - b);
 
   return (
@@ -193,10 +196,10 @@ const AllMachineDetails = () => {
           <select
             id="floor-select"
             value={selectedFloor}
-            onChange={e =>
+            onChange={(e) =>
               setSelectedFloor(
-                e.target.value === 'All Floors'
-                  ? 'All Floors'
+                e.target.value === "All Floors"
+                  ? "All Floors"
                   : Number(e.target.value)
               )
             }
@@ -204,7 +207,7 @@ const AllMachineDetails = () => {
             aria-label="Select Floor"
           >
             <option value="All Floors">All Floors</option>
-            {floors.map(floor => (
+            {floors.map((floor) => (
               <option key={floor} value={floor}>
                 Floor {floor}
               </option>
@@ -223,10 +226,10 @@ const AllMachineDetails = () => {
           <select
             id="line-select"
             value={selectedLine}
-            onChange={e =>
+            onChange={(e) =>
               setSelectedLine(
-                e.target.value === 'All Lines'
-                  ? 'All Lines'
+                e.target.value === "All Lines"
+                  ? "All Lines"
                   : Number(e.target.value)
               )
             }
@@ -234,7 +237,7 @@ const AllMachineDetails = () => {
             aria-label="Select Line"
           >
             <option value="All Lines">All Lines</option>
-            {lines.map(line => (
+            {lines.map((line) => (
               <option key={line} value={line}>
                 Line {line}
               </option>
@@ -287,11 +290,11 @@ const AllMachineDetails = () => {
           {/* Header */}
           <div className="flex justify-between items-center border-b border-gray-200 pb-4">
             <h2 className="text-xl font-bold text-gray-800 tracking-wide">
-              {selectedFloor === 'All Floors' && selectedLine === 'All Lines'
-                ? 'All Machines'
-                : selectedFloor !== 'All Floors' && selectedLine === 'All Lines'
+              {selectedFloor === "All Floors" && selectedLine === "All Lines"
+                ? "All Machines"
+                : selectedFloor !== "All Floors" && selectedLine === "All Lines"
                 ? `Floor ${selectedFloor} Machines`
-                : selectedFloor === 'All Floors' && selectedLine !== 'All Lines'
+                : selectedFloor === "All Floors" && selectedLine !== "All Lines"
                 ? `Line ${selectedLine} Machines`
                 : `Floor ${selectedFloor} | Line ${selectedLine} Machines`}
             </h2>
@@ -388,7 +391,7 @@ const AllMachineDetails = () => {
           {/* Machine Grid Grouped by Line */}
           <div className="mt-8">
             {uniqueLines.length > 0 ? (
-              uniqueLines.map(line => (
+              uniqueLines.map((line) => (
                 <div key={line} className="mb-8">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">
                     Line {line}
@@ -396,18 +399,14 @@ const AllMachineDetails = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                     {machines
                       .filter(
-                        machine =>
+                        (machine) =>
                           machine.line_no === line &&
-                          (selectedFloor === 'All Floors' ||
+                          (selectedFloor === "All Floors" ||
                             machine.floor_no === selectedFloor)
                       )
-                      .map(machine => {
-                        const {
-                          bgColor,
-                          textColor,
-                          indicatorColor,
-                          icon,
-                        } = getStatusStyles(machine.status);
+                      .map((machine) => {
+                        const { bgColor, textColor, indicatorColor, icon } =
+                          getStatusStyles(machine.status);
 
                         return (
                           <div
@@ -418,23 +417,19 @@ const AllMachineDetails = () => {
                               <div
                                 className={`w-2 h-2 rounded-full ${indicatorColor}`}
                               ></div>
-                              <span
-                                className={`font-semibold ${textColor}`}
-                              >
+                              <span className={`font-semibold ${textColor}`}>
                                 {icon}
                               </span>
                             </div>
-                            <h3
-                              className={`font-bold ${textColor} text-lg`}
-                            >
-                              {machine.machine_id || 'N/A'}
+                            <h3 className={`font-bold ${textColor} text-lg`}>
+                              {machine.machine_id || "N/A"}
                             </h3>
                             <PieChartComponent status={machine.status} />
                             <p className="text-sm font-medium text-gray-800">
-                              {machine.type || 'N/A'}
+                              {machine.type || "N/A"}
                             </p>
                             <p className="text-xs text-gray-600 capitalize">
-                              {machine.status || 'N/A'}
+                              {machine.status || "N/A"}
                             </p>
                           </div>
                         );

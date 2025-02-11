@@ -66,11 +66,11 @@ const MachineTable = () => {
     const baseURL = import.meta.env.VITE_URL_PREFIX;
 
     const urls = {
-      brand: `${baseURL}/api/maintenance/brand/`,
-      supplier: `${baseURL}/api/maintenance/supplier/`,
-      type: `${baseURL}/api/maintenance/type/`,
-      category: `${baseURL}/api/maintenance/category/`,
-      line: `${baseURL}/api/production/lines/`,
+      brand: `${baseURL}/maintenance/brand/`,
+      supplier: `${baseURL}/maintenance/supplier/`,
+      type: `${baseURL}/maintenance/type/`,
+      category: `${baseURL}/maintenance/category/`,
+      line: `${baseURL}/production/lines/`,
     };
 
     try {

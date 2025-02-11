@@ -16,7 +16,7 @@ export default function MachineLineForm({}) {
     const token = getToken();
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_URL_PREFIX}/api/production/lines/`,
+        `${import.meta.env.VITE_URL_PREFIX}/production/lines/`,
         {
           method: "GET",
           headers: {

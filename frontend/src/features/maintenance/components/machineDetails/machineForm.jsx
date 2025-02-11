@@ -3,17 +3,13 @@ import FormInputFields from "../../../../shared/components/ui/formInputFields";
 import { Dialog, DialogTitle, DialogContent } from "@mui/material";
 import { UserContext } from "../../../../context/userProvider";
 
-export default function MachineForm({ machine = null, sucess, setSucess }) {
+export default function MachineForm({ machine, sucess, setSucess }) {
   const initialForm = {
     machine_id: machine ? machine.machine_id || "" : "",
-    category: machine ? machine.category || "" : "",
-    type: machine ? machine.type || "" : "",
-    brand: machine ? machine.brand || "" : "",
-    model_number: machine ? machine.model_number || "" : "",
-    serial_no: machine ? machine.serial_no || "" : "",
-    supplier: machine ? machine.supplier || "" : "",
-    purchase_date: machine ? machine.purchase_date || "" : "",
     status: machine ? machine.status || "" : "",
+    last_breakdown_start: null,
+    last_problem: "",
+    line: null,
   };
   const { getToken, user } = useContext(UserContext);
   const [openModal, setOpenModal] = useState(false);
@@ -45,24 +41,18 @@ export default function MachineForm({ machine = null, sucess, setSucess }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const brand_url = `${
-        import.meta.env.VITE_URL_PREFIX
-      }/api/maintenance/brand/`;
+      const brand_url = `${import.meta.env.VITE_URL_PREFIX}/maintenance/brand/`;
       const prob_url = `${
         import.meta.env.VITE_URL_PREFIX
-      }/api/maintenance/problem-category/`;
+      }/maintenance/problem-category/`;
       const supplier_url = `${
         import.meta.env.VITE_URL_PREFIX
-      }/api/maintenance/supplier/`;
+      }/maintenance/supplier/`;
       const cat_url = `${
         import.meta.env.VITE_URL_PREFIX
-      }/api/maintenance/category/`;
-      const type_url = `${
-        import.meta.env.VITE_URL_PREFIX
-      }/api/maintenance/type/`;
-      const line_url = `${
-        import.meta.env.VITE_URL_PREFIX
-      }/api/production/lines/`;
+      }/maintenance/category/`;
+      const type_url = `${import.meta.env.VITE_URL_PREFIX}/maintenance/type/`;
+      const line_url = `${import.meta.env.VITE_URL_PREFIX}/production/lines/`;
 
       try {
         const [brand_data, supplier_data, type_data, cat_data, line_data] =
@@ -119,16 +109,6 @@ export default function MachineForm({ machine = null, sucess, setSucess }) {
 
   const [formData, setFormData] = useState(initialForm);
 
-  const staticFields = {
-    last_breakdown_start: null,
-    last_problem: machine ? machine?.last_problem || "" : "",
-    sequence: null,
-    mechanic: null,
-    operator: null,
-    company: 1,
-    line: null,
-  };
-
   const fields = [
     { id: "machine_id", label: "Machine Id", type: "text" },
     { id: "category", label: "Category", type: "select", options: catsOptions },
@@ -150,12 +130,14 @@ export default function MachineForm({ machine = null, sucess, setSucess }) {
       options: statusOptions,
     },
   ];
+
   useEffect(() => {
     if (sucess) {
       setFormData(initialForm);
       setOpenModal(false);
     }
   }, [sucess]);
+
   const handleInputChange = (id, value) => {
     if (Array.isArray(value)) {
       setFormData({

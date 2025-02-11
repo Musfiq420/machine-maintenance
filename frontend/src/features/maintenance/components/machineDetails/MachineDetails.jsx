@@ -22,7 +22,9 @@ const MachineDetails = () => {
     const fetchMachineData = async () => {
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_URL_PREFIX}/api/maintenance/breakdown-logs/machines-monitoring/?machine_id=${machine_id}`
+          `${
+            import.meta.env.VITE_URL_PREFIX
+          }/maintenance/breakdown-logs/machines-monitoring/?machine_id=${machine_id}`
         );
         const data = await response.json();
         setMachineData(data);
@@ -45,9 +47,7 @@ const MachineDetails = () => {
     const lostTimeParts = breakdown["lost-time"].split(":");
     const lostTimeInMinutes =
       parseInt(lostTimeParts[0]) * 60 + parseInt(lostTimeParts[1]);
-    const breakdownDate = new Date(
-      breakdown["date"]
-    ).toLocaleDateString();
+    const breakdownDate = new Date(breakdown["date"]).toLocaleDateString();
     return {
       date: breakdownDate,
       lostTime: lostTimeInMinutes,

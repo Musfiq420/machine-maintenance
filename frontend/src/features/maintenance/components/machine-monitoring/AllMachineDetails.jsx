@@ -30,7 +30,7 @@ const AllMachineDetails = () => {
       const response = await fetch(
         `${
           import.meta.env.VITE_URL_PREFIX
-        }/api/maintenance/breakdown-logs/total-lost-time-per-location/?floor=${floor}&line=${lines}`,
+        }/maintenance/breakdown-logs/total-lost-time-per-location/?floor=${floor}&line=${lines}`,
         {
           method: "GET",
           headers: {

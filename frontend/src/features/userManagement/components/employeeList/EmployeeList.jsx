@@ -26,13 +26,11 @@ const EmployeeList = () => {
     const fetchData = async () => {
       const dept_url = `${
         import.meta.env.VITE_URL_PREFIX
-      }/api/user_management/department/`;
+      }/user_management/department/`;
       const role_url = `${
         import.meta.env.VITE_URL_PREFIX
-      }/api/user_management/designation/`;
-      const comp_url = `${
-        import.meta.env.VITE_URL_PREFIX
-      }/api/company/company/`;
+      }/user_management/designation/`;
+      const comp_url = `${import.meta.env.VITE_URL_PREFIX}/company/company/`;
       try {
         const dept_res = await fetch(dept_url, {
           method: "GET",
@@ -69,9 +67,7 @@ const EmployeeList = () => {
       const token = getToken();
       try {
         const response = await fetch(
-          `${
-            import.meta.env.VITE_URL_PREFIX
-          }/api/user_management/employee-list/`,
+          `${import.meta.env.VITE_URL_PREFIX}/user_management/employee-list/`,
           {
             headers: {
               Authorization: token, // Ensure the token is being sent
