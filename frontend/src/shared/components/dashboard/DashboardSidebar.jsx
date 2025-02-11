@@ -37,6 +37,11 @@ const DashboardSidebar = () => {
       link: "/dashboard/machine-details",
       icon: <FaTable />,
     },
+    {
+      name: "Settings",
+      link: "/dashboard/settings",
+      icon: <FaGear />,
+    },
   ];
 
   const sewingLinks = [
@@ -138,18 +143,6 @@ const DashboardSidebar = () => {
             >
               <FaHome className="mr-3" />
               Home
-            </Link>
-          </li>
-          {/* Settings */}
-          <li>
-            <Link
-              to="/dashboard/settings"
-              className={`flex items-center px-4 py-2 rounded hover:bg-primary-dark hover:text-white ${
-                isActiveRoute("/dashboard/settings") ? "bg-green-200" : ""
-              }`}
-            >
-              <Settings className="mr-3" />
-              Settings
             </Link>
           </li>
 
