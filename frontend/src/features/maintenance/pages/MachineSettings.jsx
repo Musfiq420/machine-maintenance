@@ -20,55 +20,55 @@ export default function MachineSettings() {
       title: "Type",
       data: type,
       id: "type",
-      link: `${baseURL}/api/maintenance/type/`,
+      link: `${baseURL}/maintenance/type/`,
     },
     {
       title: "Brand",
       data: brand,
       id: "brand",
-      link: `${baseURL}/api/maintenance/brand/`,
+      link: `${baseURL}/maintenance/brand/`,
     },
     {
       title: "Category",
       data: category,
       id: "category",
-      link: `${baseURL}/api/maintenance/category/`,
+      link: `${baseURL}/maintenance/category/`,
     },
     {
       title: "Supplier",
       data: supplier,
       id: "supplier",
-      link: `${baseURL}/api/maintenance/supplier/`,
+      link: `${baseURL}/maintenance/supplier/`,
     },
     // {
     //   title: "Lines",
     //   data: lines,
     //   id: "lines",
-    //   link: `${baseURL}/api/production/lines/`,
+    //   link: `${baseURL}/production/lines/`,
     // },
     // {
     //   title: "Floors",
     //   data: floors,
     //   id: "floors",
-    //   link: `${baseURL}/api/production/lines/`,
+    //   link: `${baseURL}/production/lines/`,
     // },
     {
       title: "Problem Categories",
       data: problemCategories,
       id: "problem-categories",
-      link: `${baseURL}/api/maintenance/problem-category/`,
+      link: `${baseURL}/maintenance/problem-category/`,
     },
     {
       title: "Department",
       data: department,
       id: "department",
-      link: `${baseURL}/api/user_management/department/`,
+      link: `${baseURL}/user_management/department/`,
     },
     {
       title: "Designations ",
       data: designations,
       id: "designations ",
-      link: `${baseURL}/api/user_management/designation/`,
+      link: `${baseURL}/user_management/designation/`,
     },
   ];
   const [activeTab, setActiveTab] = useState(tabs[0]);
@@ -104,16 +104,16 @@ export default function MachineSettings() {
   };
   const fetchData = async () => {
     const urls = {
-      type: `${baseURL}/api/maintenance/type/`,
-      brand: `${baseURL}/api/maintenance/brand/`,
-      category: `${baseURL}/api/maintenance/category/`,
-      supplier: `${baseURL}/api/maintenance/supplier/`,
-      lines: `${baseURL}/api/production/lines/`,
-      floors: `${baseURL}/api/production/lines/`,
-      problemCategories: `${baseURL}/api/maintenance/problem-category/`,
-      problemType: `${baseURL}/api/maintenance/problem-category-type/`,
-      department: `${baseURL}/api/user_management/department/`,
-      designations: `${baseURL}/api/user_management/designation/`,
+      type: `${baseURL}/maintenance/type/`,
+      brand: `${baseURL}/maintenance/brand/`,
+      category: `${baseURL}/maintenance/category/`,
+      supplier: `${baseURL}/maintenance/supplier/`,
+      lines: `${baseURL}/production/lines/`,
+      floors: `${baseURL}/production/lines/`,
+      problemCategories: `${baseURL}/maintenance/problem-category/`,
+      problemType: `${baseURL}/maintenance/problem-category-type/`,
+      department: `${baseURL}/user_management/department/`,
+      designations: `${baseURL}/user_management/designation/`,
     };
 
     const [

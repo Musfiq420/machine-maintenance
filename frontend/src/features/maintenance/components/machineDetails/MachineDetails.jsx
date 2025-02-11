@@ -22,7 +22,7 @@ const MachineDetails = () => {
     const fetchMachineData = async () => {
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_URL_PREFIX}/api/maintenance/breakdown-logs/machines-monitoring/?machine_id=${machine_id}`
+          `${import.meta.env.VITE_URL_PREFIX}/maintenance/breakdown-logs/machines-monitoring/?machine_id=${machine_id}`
         );
         const data = await response.json();
         setMachineData(data);

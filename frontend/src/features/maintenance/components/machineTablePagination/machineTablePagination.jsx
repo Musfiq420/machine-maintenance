@@ -53,17 +53,17 @@ const MachineTable = () => {
         const fetchMachines = async (page) => {
             try {
                 setLoading(true);
-                const response = await fetch(`https://machine-maintenance.ddns.net/api/maintenance/machinepagination/?page=${page}${filterUrl}`);
+                const response = await fetch(`https://api.panamach.com/maintenance/machinepagination/?page=${page}${filterUrl}`);
                 const data = await response.json();
                 const machinesData = data.results;
                 setCount(data.count);
                 setCurrentPage(page);
 
-                const categoriesData = await fetch(`https://machine-maintenance.ddns.net/api/maintenance/category/`).then((res) => res.json());
-                const typesData = await fetch(`https://machine-maintenance.ddns.net/api/maintenance/type/`).then((res) => res.json());
-                const brandsData = await fetch(`https://machine-maintenance.ddns.net/api/maintenance/brand/`).then((res) => res.json());
-                const linesData = await fetch(`https://machine-maintenance.ddns.net/api/production/lines/`).then((res) => res.json());
-                const suppliersData = await fetch(`https://machine-maintenance.ddns.net/api/maintenance/supplier/`).then((res) => res.json());
+                const categoriesData = await fetch(`https://api.panamach.com/maintenance/category/`).then((res) => res.json());
+                const typesData = await fetch(`https://api.panamach.com/maintenance/type/`).then((res) => res.json());
+                const brandsData = await fetch(`https://api.panamach.com/maintenance/brand/`).then((res) => res.json());
+                const linesData = await fetch(`https://api.panamach.com/production/lines/`).then((res) => res.json());
+                const suppliersData = await fetch(`https://api.panamach.com/maintenance/supplier/`).then((res) => res.json());
 
                 
                 setBrandsOptions(brandsData.map((d) => ({ name: d.name, id: d.id })));

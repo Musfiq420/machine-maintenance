@@ -14,7 +14,7 @@ const CompleteStatus = () => {
 
   // API URL
   const Machine_QR_Data_API = getApiUrl('Machine_QR_Data_API'); // Ensure this function returns the correct API URL
-  // const Machine_QR_Data_API = 'http://127.0.0.1:8000/api/maintenance/machines/'; // Ensure this function returns the correct API URL
+  // const Machine_QR_Data_API = 'http://127.0.0.1:8000/maintenance/machines/'; // Ensure this function returns the correct API URL
 
   // Fetch machine data from API
   useEffect(() => {

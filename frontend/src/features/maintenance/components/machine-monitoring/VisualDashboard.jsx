@@ -195,7 +195,7 @@ export default function LostTimeVisualDashboard() {
     try {
       const token = getToken();
       const res = await fetch(
-        `${import.meta.env.VITE_URL_PREFIX}/api/production/floors/`,
+        `${import.meta.env.VITE_URL_PREFIX}/production/floors/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -213,7 +213,7 @@ export default function LostTimeVisualDashboard() {
     try {
       const token = getToken();
       const res = await fetch(
-        `${import.meta.env.VITE_URL_PREFIX}/api/production/lines/`,
+        `${import.meta.env.VITE_URL_PREFIX}/production/lines/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -242,7 +242,7 @@ export default function LostTimeVisualDashboard() {
     try {
       const token = getToken();
       const res = await fetch(
-        `${import.meta.env.VITE_URL_PREFIX}/api/maintenance/breakdown-logs/total-lost-time-per-location/${query}`,
+        `${import.meta.env.VITE_URL_PREFIX}/maintenance/breakdown-logs/total-lost-time-per-location/${query}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

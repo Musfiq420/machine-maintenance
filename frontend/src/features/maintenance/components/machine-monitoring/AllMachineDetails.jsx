@@ -752,7 +752,7 @@ export default function AllMachineDetails() {
     try {
       const token = getToken();
       const res = await fetch(
-        `${import.meta.env.VITE_URL_PREFIX}/api/production/floors/`,
+        `${import.meta.env.VITE_URL_PREFIX}/production/floors/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -771,7 +771,7 @@ export default function AllMachineDetails() {
     try {
       const token = getToken();
       const res = await fetch(
-        `${import.meta.env.VITE_URL_PREFIX}/api/production/lines/`,
+        `${import.meta.env.VITE_URL_PREFIX}/production/lines/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -799,7 +799,7 @@ export default function AllMachineDetails() {
     const queryString = query.length > 0 ? `?${query.join("&")}` : "";
 
     try {
-      const url = `${import.meta.env.VITE_URL_PREFIX}/api/maintenance/breakdown-logs/total-lost-time-per-location/${queryString}`;
+      const url = `${import.meta.env.VITE_URL_PREFIX}/maintenance/breakdown-logs/total-lost-time-per-location/${queryString}`;
       const res = await fetch(url, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -907,7 +907,7 @@ export default function AllMachineDetails() {
 //       const response = await fetch(
 //         `${
 //           import.meta.env.VITE_URL_PREFIX
-//         }/api/maintenance/breakdown-logs/total-lost-time-per-location/?floor=${floor}&line=${lines}`,
+//         }/maintenance/breakdown-logs/total-lost-time-per-location/?floor=${floor}&line=${lines}`,
 //         {
 //           method: "GET",
 //           headers: {
